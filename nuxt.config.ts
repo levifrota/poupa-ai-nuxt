@@ -5,6 +5,11 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
   css: ['~/app/assets/css/tailwind.css'],
+  runtimeConfig: {
+    public: { 
+      firebaseApiKey: process.env.NUXT_FIREBASE_API_KEY,
+    },
+  },
 
   modules: [
     '@nuxt/content',
