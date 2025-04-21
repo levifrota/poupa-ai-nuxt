@@ -1,10 +1,16 @@
-import { db } from '@/lib/firebase';
-import { Timestamp, collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from "@/lib/firebase";
+import {
+  Timestamp,
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import type {
   TransactionCategory,
   TransactionPaymentMethod,
   TransactionType,
-} from '@/constants/transactions';
+} from "@/constants/transactions";
 
 interface Transaction {
   id: string;
@@ -21,10 +27,13 @@ interface Transaction {
 }
 
 export const getDashboard = async (month: string) => {
-  const userId = 'BNiGb55yRRdoSOGsCVS7B6WRu032';
+  // const user = auth.currentUser;
+  // console.log('user', user);
+  
+  const userId = "BNiGb55yRRdoSOGsCVS7B6WRu032";
 
   if (!userId) {
-    throw new Error('Unauthorized');
+    throw new Error("Unauthorized");
   }
 
   const year = 2025;
@@ -37,9 +46,9 @@ export const getDashboard = async (month: string) => {
 
   try {
     const transactionsQuery = query(
-      collection(db, 'users', userId, 'transactions'),
-      where('date', '>=', startDate),
-      where('date', '<', endDate)
+      collection(db, "users", userId, "transactions"),
+      where("date", ">=", startDate),
+      where("date", "<", endDate),
     );
 
     const querySnapshot = await getDocs(transactionsQuery);
@@ -62,22 +71,22 @@ export const getDashboard = async (month: string) => {
     });
 
     const depositsTotal = transactions
-      .filter((t) => t.type === 'DEPOSIT')
+      .filter((t) => t.type === "DEPOSIT")
       .reduce((acc, t) => acc + Number(t.amount || 0), 0);
 
     const investmentsTotal = transactions
-      .filter((t) => t.type === 'INVESTMENT')
+      .filter((t) => t.type === "INVESTMENT")
       .reduce((acc, t) => acc + Number(t.amount || 0), 0);
 
     const expensesTotal = transactions
-      .filter((t) => t.type === 'EXPENSE')
+      .filter((t) => t.type === "EXPENSE")
       .reduce((acc, t) => acc + Number(t.amount || 0), 0);
 
     const balance = depositsTotal - investmentsTotal - expensesTotal;
 
     const transactionsTotal = transactions.reduce(
       (acc, t) => acc + Number(t.amount || 0),
-      0
+      0,
     );
 
     const calcPercentage = (part: number, total: number) =>
@@ -89,14 +98,16 @@ export const getDashboard = async (month: string) => {
       INVESTMENT: calcPercentage(investmentsTotal, transactionsTotal),
     };
 
-    const expenseTransactions = transactions.filter((t) => t.type === 'EXPENSE');
+    const expenseTransactions = transactions.filter(
+      (t) => t.type === "EXPENSE",
+    );
     const categoryMap = new Map<string, number>();
 
     expenseTransactions.forEach((t) => {
-      const category = t.category || 'UNKNOWN';
+      const category = t.category || "UNKNOWN";
       categoryMap.set(
         category,
-        (categoryMap.get(category) || 0) + Number(t.amount || 0)
+        (categoryMap.get(category) || 0) + Number(t.amount || 0),
       );
     });
 
@@ -105,7 +116,7 @@ export const getDashboard = async (month: string) => {
         category,
         totalAmount,
         percentageOfTotal: calcPercentage(totalAmount, expensesTotal),
-      })
+      }),
     );
 
     const lastTransactions = transactions
@@ -122,7 +133,7 @@ export const getDashboard = async (month: string) => {
       lastTransactions,
     };
   } catch (error) {
-    console.error('Erro ao buscar transações:', error);
-    throw new Error('Erro ao buscar transações');
+    console.error("Erro ao buscar transações:", error);
+    throw new Error("Erro ao buscar transações");
   }
 };

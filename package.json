@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^1.3.16",
     "@nuxt/content": "^3.4.0",
     "@nuxt/eslint": "^1.3.0",
     "@nuxt/fonts": "^0.11.1",
@@ -19,8 +20,10 @@
     "@tailwindcss/vite": "^4.1.3",
     "@unhead/vue": "^2.0.5",
     "@vite-pwa/nuxt": "^1.0.0",
+    "ai": "^4.3.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "eslint": "^9.24.0",
     "firebase-admin": "^13.2.0",
     "git-commit-msg-linter": "^5.0.8",
@@ -35,6 +38,8 @@
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
-    "firebase": "^11.6.0"
+    "firebase": "^11.6.0",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11"
   }
 }
