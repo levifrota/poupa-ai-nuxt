@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     "@nuxt/scripts",
     "shadcn-nuxt",
     "@vite-pwa/nuxt",
+    "@pinia/nuxt",
   ],
 
   vite: {

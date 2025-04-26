@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { useThemeStore } from './app/_composables/useThemeStore';
 
+useThemeStore();
 </script>
 
 <template>
-  <div class="p-4 space-y-4">
-    <NuxtPage />
-  </div>
+  <NuxtLayout name="default" />
 </template>
