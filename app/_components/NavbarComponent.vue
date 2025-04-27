@@ -16,24 +16,22 @@ const linkClasses = (href: string) => {
     <div
       class="flex w-[100%] flex-row justify-center gap-10 md:w-auto md:items-center"
     >
-      <div v-if="themeStore.theme === 'dark'">
-        <img
+        <NuxtImg
+          v-if="themeStore.theme === 'dark'"
+          src="/logo.svg"
           class="self-center md:self-auto"
-          src="../../public/logo.svg"
           width="173"
           height="39"
           alt="Poupa Aí"
-        >
-      </div>
-      <div v-else>
-        <img
+        />
+        <NuxtImg
+          v-else
           class="self-center md:self-auto"
-          src="../../public/logo-light.svg"
+          src="/logo-light.svg"
           width="173"
           height="39"
           alt="Poupa Aí"
-        >
-      </div>
+        />
       <div class="hidden gap-6 md:flex">
         <NuxtLink to="/" :class="linkClasses('/')"> Painel </NuxtLink>
         <NuxtLink to="/transactions" :class="linkClasses('/transactions')">
@@ -48,8 +46,11 @@ const linkClasses = (href: string) => {
       </div>
     </div>
     <div class="hidden md:block">
-      <!-- Replace with your auth component -->
-      <div class="text-primary">User Menu</div>
+      <div class="text-primary">
+        <Button variant="ghost" size="sm">
+          <Icon name="lucide:user" />
+        </Button>
+      </div>
     </div>
   </nav>
 </template>
