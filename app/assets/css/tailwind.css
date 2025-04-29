@@ -4,6 +4,10 @@
 @custom-variant dark (&:is(.dark *));
 @custom-variant light (&:is(.light *));
 @custom-variant colorblind (&:is(.colorblind *));
+@custom-variant protanopia (&:is(.protanopia *));
+@custom-variant deuteranopia (&:is(.deuteranopia *));
+@custom-variant tritanopia (&:is(.tritanopia *));
+@custom-variant high-contrast (&:is(.high-contrast *));
 
 @theme inline {
   --color-background: var(--background);
@@ -184,6 +188,150 @@
   --sidebar-accent-foreground: oklch(0.1 0 0);
   --sidebar-border: oklch(0.7 0 0);
   --sidebar-ring: oklch(0.5 0.2 230); /* Blue */
+}
+
+.protanopia {
+  /* Otimizado para protanopia (deficiência de vermelho) */
+  --background: oklch(0.98 0 0);
+  --foreground: oklch(0.1 0 0);
+  --card: oklch(0.98 0 0);
+  --card-foreground: oklch(0.1 0 0);
+  --popover: oklch(0.98 0 0);
+  --popover-foreground: oklch(0.1 0 0);
+  --primary: oklch(0.55 0.15 250); /* Azul-violeta */
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.9 0 0);
+  --secondary-foreground: oklch(0.1 0 0);
+  --muted: oklch(0.9 0 0);
+  --muted-foreground: oklch(0.4 0 0);
+  --accent: oklch(0.9 0 0);
+  --accent-foreground: oklch(0.1 0 0);
+  --destructive: oklch(0.65 0.15 200); /* Azul-ciano */
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.7 0 0);
+  --input: oklch(0.7 0 0);
+  --ring: oklch(0.55 0.15 250); /* Azul-violeta */
+  --chart-1: oklch(0.65 0.15 200); /* Azul-ciano */
+  --chart-2: oklch(0.55 0.15 250); /* Azul-violeta */
+  --chart-3: oklch(0.7 0.15 180); /* Ciano */
+  --chart-4: oklch(0.6 0.15 220); /* Azul */
+  --chart-5: oklch(0.5 0.15 270); /* Violeta */
+  --sidebar: oklch(0.85 0 0);
+  --sidebar-foreground: oklch(0.1 0 0);
+  --sidebar-primary: oklch(0.55 0.15 250); /* Azul-violeta */
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.9 0 0);
+  --sidebar-accent-foreground: oklch(0.1 0 0);
+  --sidebar-border: oklch(0.7 0 0);
+  --sidebar-ring: oklch(0.55 0.15 250); /* Azul-violeta */
+}
+
+.deuteranopia {
+  /* Otimizado para deuteranopia (deficiência de verde) */
+  --background: oklch(0.98 0 0);
+  --foreground: oklch(0.1 0 0);
+  --card: oklch(0.98 0 0);
+  --card-foreground: oklch(0.1 0 0);
+  --popover: oklch(0.98 0 0);
+  --popover-foreground: oklch(0.1 0 0);
+  --primary: oklch(0.5 0.15 260); /* Violeta */
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.9 0 0);
+  --secondary-foreground: oklch(0.1 0 0);
+  --muted: oklch(0.9 0 0);
+  --muted-foreground: oklch(0.4 0 0);
+  --accent: oklch(0.9 0 0);
+  --accent-foreground: oklch(0.1 0 0);
+  --destructive: oklch(0.6 0.15 60); /* Amarelo */
+  --destructive-foreground: oklch(0.1 0 0); /* Texto escuro para contraste */
+  --border: oklch(0.7 0 0);
+  --input: oklch(0.7 0 0);
+  --ring: oklch(0.5 0.15 260); /* Violeta */
+  --chart-1: oklch(0.6 0.15 60); /* Amarelo */
+  --chart-2: oklch(0.5 0.15 260); /* Violeta */
+  --chart-3: oklch(0.65 0.15 200); /* Azul-ciano */
+  --chart-4: oklch(0.55 0.15 290); /* Roxo */
+  --chart-5: oklch(0.7 0.15 40); /* Amarelo-laranja */
+  --sidebar: oklch(0.85 0 0);
+  --sidebar-foreground: oklch(0.1 0 0);
+  --sidebar-primary: oklch(0.5 0.15 260); /* Violeta */
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.9 0 0);
+  --sidebar-accent-foreground: oklch(0.1 0 0);
+  --sidebar-border: oklch(0.7 0 0);
+  --sidebar-ring: oklch(0.5 0.15 260); /* Violeta */
+}
+
+.tritanopia {
+  /* Otimizado para tritanopia (deficiência de azul) */
+  --background: oklch(0.98 0 0);
+  --foreground: oklch(0.1 0 0);
+  --card: oklch(0.98 0 0);
+  --card-foreground: oklch(0.1 0 0);
+  --popover: oklch(0.98 0 0);
+  --popover-foreground: oklch(0.1 0 0);
+  --primary: oklch(0.5 0.15 0); /* Vermelho */
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.9 0 0);
+  --secondary-foreground: oklch(0.1 0 0);
+  --muted: oklch(0.9 0 0);
+  --muted-foreground: oklch(0.4 0 0);
+  --accent: oklch(0.9 0 0);
+  --accent-foreground: oklch(0.1 0 0);
+  --destructive: oklch(0.6 0.15 120); /* Verde */
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.7 0 0);
+  --input: oklch(0.7 0 0);
+  --ring: oklch(0.5 0.15 0); /* Vermelho */
+  --chart-1: oklch(0.6 0.15 120); /* Verde */
+  --chart-2: oklch(0.5 0.15 0); /* Vermelho */
+  --chart-3: oklch(0.65 0.15 30); /* Laranja-vermelho */
+  --chart-4: oklch(0.55 0.15 90); /* Verde-amarelo */
+  --chart-5: oklch(0.7 0.15 60); /* Amarelo-laranja */
+  --sidebar: oklch(0.85 0 0);
+  --sidebar-foreground: oklch(0.1 0 0);
+  --sidebar-primary: oklch(0.5 0.15 0); /* Vermelho */
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.9 0 0);
+  --sidebar-accent-foreground: oklch(0.1 0 0);
+  --sidebar-border: oklch(0.7 0 0);
+  --sidebar-ring: oklch(0.5 0.15 0); /* Vermelho */
+}
+
+.high-contrast {
+  /* Alto contraste para máxima acessibilidade */
+  --background: oklch(0 0 0); /* Preto puro */
+  --foreground: oklch(1 0 0); /* Branco puro */
+  --card: oklch(0 0 0); /* Preto puro */
+  --card-foreground: oklch(1 0 0); /* Branco puro */
+  --popover: oklch(0 0 0); /* Preto puro */
+  --popover-foreground: oklch(1 0 0); /* Branco puro */
+  --primary: oklch(0.9 0.2 120); /* Verde brilhante */
+  --primary-foreground: oklch(0 0 0); /* Preto puro */
+  --secondary: oklch(0.2 0 0); /* Cinza escuro */
+  --secondary-foreground: oklch(1 0 0); /* Branco puro */
+  --muted: oklch(0.2 0 0); /* Cinza escuro */
+  --muted-foreground: oklch(0.9 0 0); /* Cinza claro */
+  --accent: oklch(0.2 0 0); /* Cinza escuro */
+  --accent-foreground: oklch(1 0 0); /* Branco puro */
+  --destructive: oklch(0.9 0.3 30); /* Vermelho brilhante */
+  --destructive-foreground: oklch(0 0 0); /* Preto puro */
+  --border: oklch(0.7 0 0); /* Cinza médio */
+  --input: oklch(0.7 0 0); /* Cinza médio */
+  --ring: oklch(0.9 0.2 120); /* Verde brilhante */
+  --chart-1: oklch(0.9 0.3 30); /* Vermelho brilhante */
+  --chart-2: oklch(0.9 0.2 120); /* Verde brilhante */
+  --chart-3: oklch(0.9 0.2 240); /* Azul brilhante */
+  --chart-4: oklch(0.9 0.2 60); /* Amarelo brilhante */
+  --chart-5: oklch(0.9 0.2 300); /* Magenta brilhante */
+  --sidebar: oklch(0.1 0 0); /* Quase preto */
+  --sidebar-foreground: oklch(1 0 0); /* Branco puro */
+  --sidebar-primary: oklch(0.9 0.2 120); /* Verde brilhante */
+  --sidebar-primary-foreground: oklch(0 0 0); /* Preto puro */
+  --sidebar-accent: oklch(0.2 0 0); /* Cinza escuro */
+  --sidebar-accent-foreground: oklch(1 0 0); /* Branco puro */
+  --sidebar-border: oklch(0.7 0 0); /* Cinza médio */
+  --sidebar-ring: oklch(0.9 0.2 120); /* Verde brilhante */
 }
 
 @layer base {

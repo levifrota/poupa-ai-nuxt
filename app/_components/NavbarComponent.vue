@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { useThemeStore } from '~/app/_composables/useThemeStore';
+// import { Select, SelectItem, SelectTrigger, SelectContent } from '~/app/_components/ui/select';
+import { Icon } from '#components';
 
 const themeStore = useThemeStore();
 const route = useRoute();
@@ -48,8 +50,23 @@ const linkClasses = (href: string) => {
       </div>
     </div>
     <div class="hidden md:block">
-      <!-- Replace with your auth component -->
-      <div class="text-primary">User Menu</div>
+      <div class="text-primary">
+        <Select>
+          <SelectTrigger class="w-full">
+            <Icon name="lucide:user" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="profile">
+              <Icon name="lucide:user" class="mr-2" />
+              Perfil
+            </SelectItem>
+            <SelectItem value="logout">
+              <Icon name="lucide:log-out" class="mr-2" />
+              Sair
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   </nav>
 </template>

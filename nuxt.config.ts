@@ -4,7 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
-  css: ["~/app/assets/css/tailwind.css"],
+  css: ["~/app/assets/css/tailwind.css", "~/app/assets/css/fonts.css"],
   runtimeConfig: {
     public: {
       firebaseApiKey: process.env.NUXT_FIREBASE_API_KEY,

@@ -1,0 +1,76 @@
+/* Font Face Definitions */
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('/fonts/OpenDyslexic-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Font Family Styles */
+.font-default {
+  font-family: 'Mulish', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.font-open-dyslexic {
+  font-family: 'OpenDyslexic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.font-arial {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Font Size Styles */
+.text-small {
+  font-size: 0.875rem; /* 14px */
+}
+
+.text-medium {
+  font-size: 1rem; /* 16px */
+}
+
+.text-large {
+  font-size: 1.125rem; /* 18px */
+}
+
+/* Apply font size to specific elements for better readability */
+.text-small h1 {
+  font-size: 1.5rem;
+}
+
+.text-medium h1 {
+  font-size: 1.75rem;
+}
+
+.text-large h1 {
+  font-size: 2rem;
+}
+
+.text-small h2 {
+  font-size: 1.25rem;
+}
+
+.text-medium h2 {
+  font-size: 1.5rem;
+}
+
+.text-large h2 {
+  font-size: 1.75rem;
+}
+
+.text-small p, .text-small span, .text-small div {
+  font-size: 0.875rem;
+}
+
+.text-medium p, .text-medium span, .text-medium div {
+  font-size: 1rem;
+}
+
+.text-large p, .text-large span, .text-large div {
+  font-size: 1.125rem;
+}
+
+/* Ensure buttons and inputs scale appropriately */
+.text-large button, .text-large input, .text-large select, .text-large textarea {
+  font-size: 1.125rem;
+}
