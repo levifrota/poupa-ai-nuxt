@@ -1,11 +1,11 @@
 <template>
   <Menubar
-    class="sticky bottom-0 flex h-16 w-full justify-around md:hidden"
+    :class="['sticky bottom-0 flex w-full justify-around md:hidden p-3', background]"
   >
     <MenubarMenu>
       <MenubarTrigger>
         <NuxtLink to="/" :class="linkClasses('/')">
-          <Icon name="lucide:layout-dashboard" />
+          <Icon name="lucide:layout-dashboard" class="h-16" />
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
@@ -44,6 +44,7 @@
 // import { LayoutDashboard, ArrowLeftRight, CalendarSync, Settings } from 'lucide-vue-next';
 import UserButton from '~/app/_components/UserButton.vue';
 import { useThemeStore } from '../_composables/useThemeStore';
+import { computed } from 'vue';
 
 const themeStore = useThemeStore();
 const route = useRoute();
@@ -54,11 +55,11 @@ const linkClasses = (to: string) => {
     : 'text-muted-foreground';
 };
 
-// const background = () => {
-//   return themeStore.theme === 'dark'
-//    ? 'bg-primary'
-//     : 'bg-primary-foreground';
-// }
+const background = computed(() => {
+  return themeStore.theme === 'light'
+  ? 'bg-white border-t border-gray-200'
+  : 'bg-black border-t border-gray-800';
+});
 </script>
 
 <style></style>
