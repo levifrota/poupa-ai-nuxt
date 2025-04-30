@@ -30,25 +30,24 @@ export const getDashboard = async (month: string) => {
   // const user = auth.currentUser;
   // console.log('user', user);
   
-  const userId = "BNiGb55yRRdoSOGsCVS7B6WRu032";
+  const userId = "user_2rSVhqngUjGL0zVLiBXfXixKAG3";
 
   if (!userId) {
     throw new Error("Unauthorized");
   }
 
-  const year = 2025;
+  // const year = 2025;
   const m = parseInt(month);
-  const nextMonth = m === 12 ? 1 : m + 1;
-  const nextYear = m === 12 ? year + 1 : year;
+  console.log(m);
+  // const nextMonth = m === 12 ? 1 : m + 1;
+  // const nextYear = m === 12 ? year + 1 : year;
 
-  const startDate = Timestamp.fromDate(new Date(year, m - 1, 1));
-  const endDate = Timestamp.fromDate(new Date(nextYear, nextMonth - 1, 1));
+  // const startDate = Timestamp.fromDate(new Date(year, m - 1, 1));
+  // const endDate = Timestamp.fromDate(new Date(nextYear, nextMonth - 1, 1));
 
   try {
     const transactionsQuery = query(
       collection(db, "users", userId, "transactions"),
-      where("date", ">=", startDate),
-      where("date", "<", endDate),
     );
 
     const querySnapshot = await getDocs(transactionsQuery);
@@ -123,6 +122,8 @@ export const getDashboard = async (month: string) => {
       .sort((a, b) => b.date.getTime() - a.date.getTime())
       .slice(0, 10);
 
+    const totalTransactions = transactions;
+
     return {
       depositsTotal,
       investmentsTotal,
@@ -131,6 +132,7 @@ export const getDashboard = async (month: string) => {
       typesPercentage,
       totalExpensePerCategory,
       lastTransactions,
+      totalTransactions
     };
   } catch (error) {
     console.error("Erro ao buscar transações:", error);

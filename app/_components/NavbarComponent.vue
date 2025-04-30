@@ -1,41 +1,42 @@
 <script setup lang="ts">
-import { useThemeStore } from '~/app/_composables/useThemeStore';
+import { useThemeStore } from "~/app/_composables/useThemeStore";
 // import { Select, SelectItem, SelectTrigger, SelectContent } from '~/app/_components/ui/select';
-import { Icon } from '#components';
+import { Icon } from "#components";
 
 const themeStore = useThemeStore();
 const route = useRoute();
 
 const linkClasses = (href: string) => {
-  return route.path === href
-    ? 'font-bold text-primary'
-    : 'text-muted-foreground';
+  return route.path === href ? "font-bold text-primary" : "text-muted-foreground";
 };
 </script>
 
 <template>
   <nav class="flex justify-between border-b border-solid px-8 py-4">
-    <div
-      class="flex w-[100%] flex-row justify-center gap-10 md:w-auto md:items-center"
-    >
-      <div v-if="themeStore.theme === 'dark'">
-        <img
-          class="self-center md:self-auto"
-          src="../../public/logo.svg"
-          width="173"
-          height="39"
-          alt="Poupa Aí"
-        >
-      </div>
-      <div v-else>
-        <img
-          class="self-center md:self-auto"
-          src="../../public/logo-light.svg"
-          width="173"
-          height="39"
-          alt="Poupa Aí"
-        >
-      </div>
+    <div class="flex w-[100%] flex-row justify-center gap-10 md:w-auto md:items-center">
+      <NuxtImg
+        v-if="themeStore.theme === 'dark' || themeStore.theme === 'high-contrast'"
+        class="self-center md:self-auto"
+        src="./logo.svg"
+        width="173"
+        height="39"
+        alt="Poupa Aí"
+      />
+      <NuxtImg
+        v-else-if="themeStore.theme === 'deuteranopia'"
+        src="./logo-deuteranopia.svg"
+        width="173"
+        height="39"
+        alt="Poupa Aí"
+      />
+      <NuxtImg
+        v-else
+        class="self-center md:self-auto"
+        src="./logo-light.svg"
+        width="173"
+        height="39"
+        alt="Poupa Aí"
+      />
       <div class="hidden gap-6 md:flex">
         <NuxtLink to="/" :class="linkClasses('/')"> Painel </NuxtLink>
         <NuxtLink to="/transactions" :class="linkClasses('/transactions')">
