@@ -12,7 +12,7 @@
       class="grid grid-cols-[2fr,-1fr] gap-6 sm:overflow-hidden lg:grid-cols-[2fr,1fr]"
     >
       <div class="flex flex-col gap-6 sm:overflow-hidden">
-        <!-- Inserir SummaryCards -->
+        <SummaryCards />
 
         <div
           class="grid grid-cols-1 gap-y-6 sm:h-auto sm:grid-rows-1 sm:gap-y-6 md:grid-cols-3 md:gap-6"
@@ -21,14 +21,15 @@
         </div>
       </div>
 
-      <!-- Inserir LastTransactions -->
+      <last-transactions />
     </div>
   </ScrollArea>
 </template>
 
 <script setup lang="ts">
 import AiReportButton from "~~/app/_components/AiReportButton.vue";
-
+import LastTransactions from "~/app/_components/LastTransactions.vue";
+import SummaryCards from "~/app/_components/SummaryCards.vue";
 // const month = 3; // Março
 // const loading = ref(false);
 // const dashboard = ref<unknown>(null);
