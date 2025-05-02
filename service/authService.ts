@@ -1,4 +1,5 @@
 import { auth } from "~/lib/firebase";
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,

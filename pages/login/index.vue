@@ -1,16 +1,114 @@
 <template>
-  <div class=""/>
+  <div>
+    <form class="loginOptions" @submit.prevent="login">
+      <div class="inputDiv">
+        <input v-model="email" type="email" class="bg-white input-placeholder text-black" placeholder="Email" />
+        <input v-model="password" type="password" class="bg-white input-placeholder text-black" placeholder="Senha" />
+      </div>
+      <button type="submit" class="buttonOptions">Entrar</button>
+    </form>
+    
+    <div class="loginOptions">
+      <button class="buttonGoogle" @click="googleAuth">Entrar com Google</button>
+      <button class="buttonOptions" @click="cadastrar">Cadastre-se</button>
+    </div>
+  </div>
 </template>
 
-<script>
-import { useImage } from '#imports';
-import { Button } from '~/app/_components/ui/button';
-import { NuxtLink } from '#components';
-import { auth } from '~/lib/firebase';
+<script setup>
+  import { ref } from 'vue';
+  import { useRouter } from 'vue-router';
+  import { useFirebaseApp } from 'vuefire';
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword } from 'firebase/auth';
 
+  const email = ref('');
+  const password = ref('');
+  const router = useRouter();
+
+  const googleAuth = async () => {
+    try {
+      const app = useFirebaseApp();
+      const auth = getAuth(app);
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      alert(`Bem-vindo, ${user.displayName}!`);
+      router.push('/');
+    } catch (error) {
+      console.error('Erro no login com Google:', error);
+      alert('Erro ao fazer login com Google');
+    }
+  };
+
+  const cadastrar = () => {
+    router.push('/register');
+  };
+
+
+  const login = async () => {
+    try {
+      if (!email.value || !password.value) {
+        alert('Por favor, preencha o email e a senha corretamente.');
+        return;
+      }
+      const app = useFirebaseApp();
+      const auth = getAuth(app);
+
+      const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value);
+      const user = userCredential.user;
+
+      alert(`Bem-vindo(a), ${user.displayName || 'usuário'}!`);
+      router.push('/');
+    } catch (error) {
+      console.error('Erro no login:', error);
+      if (error.code === 'auth/wrong-password') {
+        alert('Senha incorreta.');
+      } else if (error.code === 'auth/user-not-found') {
+        alert('Usuário não encontrado.');
+      } else {
+        alert('Erro ao fazer login: ' + error.message);
+      }
+    }
+  };
 
 </script>
 
 <style>
-
+.input-placeholder::placeholder {
+  color: gray;
+  opacity: 0.7;
+}
+button {
+  cursor: pointer;
+  width: 200px;
+}
+input {
+  padding: 5px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.loginOptions {
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+  align-items: center;
+}
+.inputDiv {
+  display: flex;
+  max-width: 30%;
+  flex-direction: column;
+}
+.buttonGoogle {
+  padding: 5px;
+  background-color: orange;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.buttonOptions {
+  padding: 5px;
+  background-color: aqua;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
 </style>

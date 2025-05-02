@@ -45,17 +45,23 @@
     
     <ScreenWrapper />-->
 
-    <button
+    <!-- <button
       class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
       @click="loadDashboard"
     >
       Carregar Dashboard
-    </button>
+    </button> -->
+    <!-- <button @click="loadDate">
+      Teste firebase
+    </button> -->
+    <div v-if="dateValue">
+      <p>{{ dateValue }}</p>
+    </div>
 
     <div v-if="loading">Carregando...</div>
     <div v-if="error" class="text-red-500">{{ error }}</div>
 
-    <pre v-if="dashboard" class="bg-gray-100 p-4 rounded overflow-auto text-sm">
+    <pre v-if="dashboard" class="bg-gray-100 p-4 rounded overflow-auto text-sm text-black">
       {{ dashboard }}
     </pre>
   </div>
@@ -63,26 +69,50 @@
 
 <script setup lang='ts'>
 import { ref } from "#imports";
-import { getDashboard } from "~/data/get-dashboard";
+// import { doc, setDoc } from "firebase/firestore";
+// import { getDashboard } from "~/data/get-dashboard";
 
-const month = 3; // Março
+const month = 3;
 const loading = ref(false);
 const dashboard = ref<unknown>(null);
 const error = ref("");
+const dateValue = ref('')
 
-const loadDashboard = async () => {
-  loading.value = true;
-  error.value = "";
-  try {
-    const result = await getDashboard(month.toString());
-    dashboard.value = result;
-  } catch (err: unknown) {
-    error.value = "Erro ao buscar dashboard";
-    console.error(err);
-  } finally {
-    loading.value = false;
-  }
-};
+// const loadDate = async () => {
+//   loading.value = true;
+//   error.value = "";
+//   try {
+//     const today = new Date();
+//     const formattedDate = today.toISOString().split('T')[0];
+
+//     const docRef = doc(db, "transactions", formattedDate);
+
+//     await setDoc(docRef, {
+//       date: formattedDate,
+//     });
+
+//     dateValue.value = formattedDate;
+//   } catch (err: unknown) {
+//     error.value = "Erro ao enviar data para o Firestore";
+//     console.error(err);
+//   } finally {
+//     loading.value = false;
+//   }
+// };
+
+// const loadDashboard = async () => {
+//   loading.value = true;
+//   error.value = "";
+//   try {
+//     const result = await getDashboard(month.toString());
+//     dashboard.value = result;
+//   } catch (err: unknown) {
+//     error.value = "Erro ao buscar dashboard";
+//     console.error(err);
+//   } finally {
+//     loading.value = false;
+//   }
+// };
 // import { useUser } from '@clerk/vue'
 // import { ScrollArea } from '#components';
 // import { getDashboard } from "~/data/get-dashboard/index";
@@ -114,3 +144,4 @@ const loadDashboard = async () => {
 //   }
 // });
 </script>
+

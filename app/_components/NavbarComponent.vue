@@ -12,7 +12,7 @@ const linkClasses = (href: string) => {
 </script>
 
 <template>
-  <nav class="flex justify-between border-b border-solid px-8 py-4">
+  <nav class="flex justify-between border-b border-solid px-8 py-4 items-center">
     <div
       class="flex w-[100%] flex-row justify-center gap-10 md:w-auto md:items-center"
     >
