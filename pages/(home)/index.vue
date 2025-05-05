@@ -17,6 +17,8 @@
         <div
           class="grid grid-cols-1 gap-y-6 sm:h-auto sm:grid-rows-1 sm:gap-y-6 md:grid-cols-3 md:gap-6"
         >
+          <transaction-pie-chart />
+          <!-- Inserir TransactionsPieChart e ExpensesPerCategory -->
           <!-- Inserir TransactionsPieChart e ExpensesPerCategory -->
         </div>
       </div>
@@ -30,6 +32,7 @@
 import AiReportButton from "~~/app/_components/AiReportButton.vue";
 import LastTransactions from "~/app/_components/LastTransactions.vue";
 import SummaryCards from "~/app/_components/SummaryCards.vue";
+import TransactionPieChart from "~/app/_components/TransactionPieChart.vue";
 // const month = 3; // Março
 // const loading = ref(false);
 // const dashboard = ref<unknown>(null);
