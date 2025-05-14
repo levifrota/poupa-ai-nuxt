@@ -1,32 +1,28 @@
 <script setup lang="ts">
-import mockup from "@/mockupData.json";
-import type { Transaction, TransactionPaymentMethod } from "~/constants/transactions";
+// import type { Transaction } from "~/constants/transactions";
 import {
   TransactionType,
   TRANSACTION_PAYMENT_METHOD_ICONS,
 } from "~/constants/transactions";
+import { useTransactionsStore } from "@/stores/transactions";
+// import { computed } from "vue";
 
-const lastTransactions = mockup.lastTransactions;
+// Store para obter os dados das transações
+const transactionsStore = useTransactionsStore();
 
-const transactions: Transaction[] = lastTransactions.map((tx) => ({
-  ...tx,
-  date: new Date(tx.date),
-  createdAt: new Date(tx.createdAt),
-  updatedAt: new Date(tx.updatedAt),
-  type: tx.type as TransactionType,
-  paymentMethod: tx.paymentMethod as TransactionPaymentMethod,
-}));
+// Obter as últimas transações da store
+const transactions = computed(() => transactionsStore.lastTransactions);
 
-const stringToDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("pt-Br", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-};
+// const stringToDate = (dateString) => {
+//   const date = new Date(dateString);
+//   return date.toLocaleDateString("pt-Br", {
+//     month: "short",
+//     day: "numeric",
+//     year: "numeric",
+//   });
+// };
 
-const getAmountColor = (transaction: Transaction) => {
+const getAmountColor = (transaction) => {
   if (transaction.type === TransactionType.EXPENSE) {
     return "text-red-500";
   }
@@ -36,7 +32,7 @@ const getAmountColor = (transaction: Transaction) => {
   return "text-white";
 };
 
-const getAmountPrefix = (transaction: Transaction) => {
+const getAmountPrefix = (transaction) => {
   if (transaction.type === TransactionType.EXPENSE) {
     return "-";
   }
@@ -46,7 +42,7 @@ const getAmountPrefix = (transaction: Transaction) => {
   return "";
 };
 
-const formatCurrency = (amount: number) => {
+const formatCurrency = (amount) => {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",

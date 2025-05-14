@@ -1,18 +1,44 @@
-<script setup lang="ts">
-import mockup from "@/mockupData.json";
+<script setup>
 import SummaryCard from "~/app/_components/SummaryCard.vue";
+import { useTransactionsStore } from "@/stores/transactions";
+import { computed } from "vue";
 
-const balanceObj = {
-  title: "Saldo",
-  value: mockup.balance,
-  icon: "lucide:wallet",
+// Usar a store de transações para obter os valores calculados
+const transactionsStore = useTransactionsStore();
+
+// Formatar valores monetários
+const formatCurrency = (value) => {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(value);
 };
 
-const summaryList = [
-  { title: "Receita", value: mockup.depositsTotal, icon: "lucide:piggy-bank" },
-  { title: "Investido", value: mockup.investmentsTotal, icon: "lucide:trending-up" },
-  { title: "Despesas", value: mockup.expensesTotal, icon: "lucide:trending-down" },
-];
+// Objeto para o card de saldo
+const balanceObj = computed(() => ({
+  title: "Saldo",
+  value: formatCurrency(transactionsStore.balance),
+  icon: "lucide:wallet",
+}));
+
+// Lista de cards de resumo
+const summaryList = computed(() => [
+  {
+    title: "Receita",
+    value: formatCurrency(transactionsStore.depositsTotal),
+    icon: "lucide:piggy-bank",
+  },
+  {
+    title: "Investido",
+    value: formatCurrency(transactionsStore.investmentsTotal),
+    icon: "lucide:trending-up",
+  },
+  {
+    title: "Despesas",
+    value: formatCurrency(transactionsStore.expensesTotal),
+    icon: "lucide:trending-down",
+  },
+]);
 </script>
 
 <template>

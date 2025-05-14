@@ -1,25 +1,25 @@
 <template>
   <ScrollArea class="m-0 mt-0 flex flex-col sm:m-0 sm:overflow-hidden sm:p-6">
-    <div class="m-3 flex flex-col sm:m-0 sm:overflow-hidden sm:p-6">
+    <div class="m-3 flex flex-col justify-between sm:flex-row">
       <h1 class="self-center py-2 text-2xl font-bold sm:self-auto md:py-0">Painel</h1>
 
-      <div class="flex flex-row items-center justify-between gap-3 sm:justify-normal">
+      <div
+        class="flex flex-wrap flex-row items-center justify-center gap-3 sm:justify-normal"
+      >
+        <time-select />
         <AiReportButton />
       </div>
     </div>
 
-    <div
-      class="grid grid-cols-[2fr,-1fr] gap-6 sm:overflow-hidden lg:grid-cols-[2fr,1fr]"
-    >
+    <div class="grid grid-cols-[1fr] gap-6 sm:overflow-hidden sm:grid-cols-[2fr_1fr]">
       <div class="flex flex-col gap-6 sm:overflow-hidden">
-        <SummaryCards />
+        <summary-cards />
 
         <div
           class="grid grid-cols-1 gap-y-6 sm:h-auto sm:grid-rows-1 sm:gap-y-6 md:grid-cols-3 md:gap-6"
         >
           <transaction-pie-chart />
-          <!-- Inserir TransactionsPieChart e ExpensesPerCategory -->
-          <!-- Inserir TransactionsPieChart e ExpensesPerCategory -->
+          <expenses-per-category />
         </div>
       </div>
 
@@ -29,10 +29,12 @@
 </template>
 
 <script setup lang="ts">
-import AiReportButton from "~~/app/_components/AiReportButton.vue";
+import AiReportButton from "~/app/_components/AiReportButton.vue";
 import LastTransactions from "~/app/_components/LastTransactions.vue";
 import SummaryCards from "~/app/_components/SummaryCards.vue";
 import TransactionPieChart from "~/app/_components/TransactionPieChart.vue";
+import TimeSelect from "~/app/_components/TimeSelect.vue";
+import ExpensesPerCategory from "~/app/_components/ExpensesPerCategory.vue";
 // const month = 3; // Março
 // const loading = ref(false);
 // const dashboard = ref<unknown>(null);

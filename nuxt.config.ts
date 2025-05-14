@@ -2,14 +2,33 @@
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
+  app: {
+    head: {
+      title: "Poupa.ai",
+      htmlAttrs: {
+        lang: "pt-br",
+      },
+      meta: [{ name: "description", content: "Nuxt 3 App" }],
+      link: [{ rel: "icon", type: "image/x-icon", href: "/icon.png" }],
+      charset: 'utf-16',
+      viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
+    },
+  },
+  components: [
+    {
+      path: "~/app/_components",
+      pathPrefix: false,
+      global: true,
+    },
+  ],
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
   css: ["~/app/assets/css/tailwind.css", "~/app/assets/css/fonts.css"],
-  runtimeConfig: {
-    public: {
-      firebaseApiKey: process.env.NUXT_FIREBASE_API_KEY,
-    },
-  },
+  // runtimeConfig: {
+  //   public: {
+  //     firebaseApiKey: process.env.NUXT_FIREBASE_API_KEY,
+  //   },
+  // },
 
   modules: [
     "@nuxt/content",

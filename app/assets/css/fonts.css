@@ -58,19 +58,18 @@
   font-size: 1.75rem;
 }
 
-.text-small p, .text-small span, .text-small div {
+.text-small p:not([class*="text-"]), .text-small span:not([class*="text-"]), .text-small div:not([class*="text-"]) {
   font-size: 0.875rem;
 }
 
-.text-medium p, .text-medium span, .text-medium div {
+.text-medium p:not([class*="text-"]), .text-medium span:not([class*="text-"]), .text-medium div:not([class*="text-"]) {
   font-size: 1rem;
 }
 
-.text-large p, .text-large span, .text-large div {
+.text-large p:not([class*="text-"]), .text-large span:not([class*="text-"]), .text-large div:not([class*="text-"]) {
   font-size: 1.125rem;
 }
 
-/* Ensure buttons and inputs scale appropriately */
 .text-large button, .text-large input, .text-large select, .text-large textarea {
   font-size: 1.125rem;
 }

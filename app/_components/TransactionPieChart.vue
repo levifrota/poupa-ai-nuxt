@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { DonutChart } from "@/app/_components/ui/chart-donut";
+import DonutChart from "@/app/_components/ui/chart-donut/DonutChart.vue";
 import CustomLegend from "@/app/_components/ui/chart-donut/CustomLegend.vue";
-import mockup from "@/mockupData.json";
-import { Card, CardContent } from "@/app/_components/ui/card";
-import { ref, computed } from "vue";
+import { useTransactionsStore } from "@/stores/transactions";
+
+// Store para obter os dados das transações
+const transactionsStore = useTransactionsStore();
 
 // Mapeamento dos tipos em inglês para português
 const typeMapping = {
@@ -13,21 +14,22 @@ const typeMapping = {
 };
 
 // Transformar os dados para usar as legendas em português
-const chartData = Object.entries(mockup.typesPercentage).map(([type, value]) => ({
-  type: typeMapping[type] || type,
-  value,
-}));
+const chartData = computed(() => {
+  return Object.entries(transactionsStore.typesPercentage).map(([type, value]) => ({
+    type: typeMapping[type] || type,
+    value,
+  }));
+});
 
-console.log("chartData", chartData);
-
-const formatValue = (value: number) => `${value}%`;
+const formatValue = (value) => `${value}%`;
 
 // Cores para cada tipo de transação
 const colors = ["#4CAF50", "#2196F3", "#F44336"];
 
 // Criar itens de legenda personalizados
+console.log("chartData: ", chartData);
 const legendItems = computed(() =>
-  chartData.map((item, i) => ({
+  chartData.value.map((item, i) => ({
     name: item.type,
     color: colors[i],
     value: formatValue(item.value),
