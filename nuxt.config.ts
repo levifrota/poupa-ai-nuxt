@@ -16,7 +16,7 @@ export default defineNuxtConfig({
   },
   components: [
     {
-      path: "~/app/_components",
+      path: "~/components",
       pathPrefix: false,
       global: true,
     },
@@ -44,6 +44,32 @@ export default defineNuxtConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: [
+        "isomorphic-dompurify"
+      ],
+    },
+    ssr: {
+      noExternal: [
+        "isomorphic-dompurify"
+      ],
+    },
+    resolve: {
+      alias: {
+        'isomorphic-dompurify': 'isomorphic-dompurify'
+      }
+    }
+  },
+
+  typescript: {
+    strict: true,
+    tsConfig: {
+      compilerOptions: {
+        moduleResolution: 'nodenext',
+        esModuleInterop: true,
+        skipLibCheck: true
+      }
+    }
   },
 
   shadcn: {
@@ -53,9 +79,9 @@ export default defineNuxtConfig({
     prefix: "",
     /**
      * Directory that the component lives in.
-     * @default "./app/_components/ui"
+     * @default "./components/ui"
      */
-    componentDir: "./app/_components/ui",
+    componentDir: "./components/ui",
   },
 
   pwa: {},

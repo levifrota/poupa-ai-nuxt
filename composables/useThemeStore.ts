@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref, watch, onMounted, useCookie } from '#imports';
+// import { ref, watch, onMounted, useCookie } from '#imports';
 
 export type Theme = 'dark' | 'light' | 'colorblind' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'high-contrast';
 

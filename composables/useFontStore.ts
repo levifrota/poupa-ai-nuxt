@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref, watch, onMounted, useCookie } from '#imports';
+// import { ref, watch, onMounted, useCookie } from '#imports';
 
 export type FontFamily = 'default' | 'open-dyslexic' | 'arial';
 export type FontSize = 'small' | 'medium' | 'large';

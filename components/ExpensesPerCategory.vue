@@ -52,11 +52,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, computed, watch } from "vue";
 import mockupData from "@/mockupData.json";
-import { useThemeStore } from "~/app/_composables/useThemeStore";
 import { storeToRefs } from "pinia";
-import ScrollArea from "./ui/scroll-area/ScrollArea.vue";
-import CardHeader from "./ui/card/CardHeader.vue";
-import CardTitle from "./ui/card/CardTitle.vue";
 
 // Interface para os dados de despesas por categoria
 interface Expense {
@@ -215,9 +211,9 @@ const loadExpensesData = () => {
 
 // Inicialização do componente
 onMounted(() => {
-  // Carregar os dados com um pequeno delay para simular carregamento
-  setTimeout(() => {
-    loadExpensesData();
-  }, 1000);
+  //   // Carregar os dados com um pequeno delay para simular carregamento
+  //   setTimeout(() => {
+  loadExpensesData();
+  //   }, 1000);
 });
 </script>

@@ -53,8 +53,9 @@
             </Select>
           </div>
           <p class="text-xs text-muted-foreground mt-2">
-            Temas otimizados para diferentes tipos de daltonismo: protanopia (deficiência de vermelho), 
-            deuteranopia (deficiência de verde) e tritanopia (deficiência de azul).
+            Temas otimizados para diferentes tipos de daltonismo: protanopia (deficiência
+            de vermelho), deuteranopia (deficiência de verde) e tritanopia (deficiência de
+            azul).
           </p>
         </div>
       </div>
@@ -67,7 +68,10 @@
         <div>
           <h3 class="text-sm font-medium mb-3">Fonte</h3>
           <div class="w-full max-w-xs">
-            <Select v-model="fontStore.fontFamily" @update:model-value="fontStore.setFontFamily">
+            <Select
+              v-model="fontStore.fontFamily"
+              @update:model-value="fontStore.setFontFamily"
+            >
               <SelectTrigger class="w-full">
                 <SelectValue placeholder="Selecione um tipo de fonte" />
               </SelectTrigger>
@@ -80,7 +84,7 @@
                   <Icon name="lucide:book-open" class="mr-2" />
                   OpenDyslexic
                 </SelectItem>
-                <SelectItem value='arial'>
+                <SelectItem value="arial">
                   <Icon name="lucide:type" class="mr-2" />
                   Arial
                 </SelectItem>
@@ -92,7 +96,10 @@
         <div>
           <h3 class="text-sm font-medium mb-3">Tamanho da Fonte</h3>
           <div class="w-full max-w-xs">
-            <Select v-model="fontStore.fontSize" @update:model-value="fontStore.setFontSize">
+            <Select
+              v-model="fontStore.fontSize"
+              @update:model-value="fontStore.setFontSize"
+            >
               <SelectTrigger class="w-full">
                 <SelectValue placeholder="Selecione um tamanho de fonte" />
               </SelectTrigger>
@@ -119,19 +126,17 @@
 </template>
 
 <script setup lang="ts">
-import { Button } from "@/app/_components/ui/button";
-import { 
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue
-} from "@/app/_components/ui/select";
-import { useThemeStore } from "@/app/_composables/useThemeStore";
-import { useFontStore } from "@/app/_composables/useFontStore";
+// import { Button } from "@/components/ui/button";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectGroup,
+//   SelectItem,
+//   SelectLabel,
+//   SelectSeparator,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
 
 const themeStore = useThemeStore();
 const fontStore = useFontStore();

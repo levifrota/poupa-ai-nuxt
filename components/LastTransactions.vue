@@ -4,7 +4,7 @@ import {
   TransactionType,
   TRANSACTION_PAYMENT_METHOD_ICONS,
 } from "~/constants/transactions";
-import { useTransactionsStore } from "@/stores/transactions";
+// import { useTransactionsStore } from "@/stores/transactions";
 // import { computed } from "vue";
 
 // Store para obter os dados das transações

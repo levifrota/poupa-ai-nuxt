@@ -1,5 +1,5 @@
 <script setup>
-import SummaryCard from "~/app/_components/SummaryCard.vue";
+import SummaryCard from "~/components/SummaryCard.vue";
 import { useTransactionsStore } from "@/stores/transactions";
 import { computed } from "vue";
 

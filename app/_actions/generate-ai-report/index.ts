@@ -1,6 +1,6 @@
 "use server";
 
-// import { db } from "@/app/_lib/prisma";
+// import { db } from "@/lib/prisma";
 // import { auth, clerkClient } from "@clerk/nextjs/server";
 import type { GenerateAiReportSchema} from "./schema";
 import { generateAiReportSchema } from "./schema";

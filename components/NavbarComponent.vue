@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useThemeStore } from "~/app/_composables/useThemeStore";
-// import { Select, SelectItem, SelectTrigger, SelectContent } from '~/app/_components/ui/select';
 import { Icon } from "#components";
 
 const themeStore = useThemeStore();

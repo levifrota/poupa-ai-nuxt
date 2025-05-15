@@ -1,22 +1,6 @@
 <script setup lang="ts">
 import { cn } from '@/lib/utils'
 
-import { Button, buttonVariants } from '@/app/_components/ui/button'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/app/_components/ui/popover'
-
-import {
-  RangeCalendarCell,
-  RangeCalendarCellTrigger,
-  RangeCalendarGrid,
-  RangeCalendarGridBody,
-  RangeCalendarGridHead,
-  RangeCalendarGridRow,
-  RangeCalendarHeadCell,
-} from '@/app/_components/ui/range-calendar'
 import {
   CalendarDate,
   type DateValue,
@@ -29,13 +13,18 @@ import {
 } from 'lucide-vue-next'
 import { type DateRange, RangeCalendarRoot, useDateFormatter } from 'reka-ui'
 import { createMonth, type Grid, toDate } from 'reka-ui/date'
-import { type Ref, ref, watch, onMounted, computed } from 'vue'
+// import { type Ref, ref, watch, onMounted, computed } from 'vue'
 import { collection, getDocs, query, where, orderBy } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 // import { useUserStore } from '@/stores/user'
 import type { Transaction } from '@/constants/transactions'
 import { useTransactionsStore } from '@/stores/transactions'
-import { useRoute, useRouter } from 'vue-router'
+// import { useRoute, useRouter } from 'vue-router'
+
+// Importar componentes UI necessários
+import { Button, buttonVariants } from '@/components/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { RangeCalendarCell, RangeCalendarCellTrigger, RangeCalendarGrid, RangeCalendarGridBody, RangeCalendarGridHead, RangeCalendarGridRow, RangeCalendarHeadCell } from '@/components/ui/range-calendar'
 
 // Definir props e emits para o componente
 const props = defineProps<{
@@ -132,7 +121,7 @@ function updateMonth(reference: 'first' | 'second', months: number) {
 }
 
 // Garantir que o locale seja aplicado em todos os componentes do calendário
-watch(locale, (newLocale) => {
+watch(locale, (newLocale: any) => {
   // Atualizar o formatter não é necessário aqui, pois ele já está vinculado ao locale
   firstMonth.value = createMonth({
     dateObj: placeholder.value,
@@ -148,7 +137,7 @@ watch(locale, (newLocale) => {
   })
 })
 
-watch(placeholder, (_placeholder) => {
+watch(placeholder, (_placeholder: any) => {
   firstMonth.value = createMonth({
     dateObj: _placeholder,
     weekStartsOn: 0,
@@ -162,7 +151,7 @@ watch(placeholder, (_placeholder) => {
   }
 })
 
-watch(secondMonthPlaceholder, (_secondMonthPlaceholder) => {
+watch(secondMonthPlaceholder, (_secondMonthPlaceholder: any) => {
   secondMonth.value = createMonth({
     dateObj: _secondMonthPlaceholder,
     weekStartsOn: 0,
@@ -205,7 +194,7 @@ async function fetchTransactions() {
     const querySnapshot = await getDocs(transactionsQuery)
 
     // Mapear os documentos para objetos Transaction
-    const fetchedTransactions = querySnapshot.docs.map(doc => {
+    const fetchedTransactions = querySnapshot.docs.map((doc: { data: () => any; id: any }) => {
       const data = doc.data()
       return {
         id: doc.id,
@@ -245,7 +234,7 @@ const updateUrlParams = (dateRange: DateRange) => {
 }
 
 // Observar mudanças no intervalo de datas
-watch(() => value.value, (newValue) => {
+watch(() => value.value, (newValue: { start: any; end: any }) => {
   if (newValue.start && newValue.end) {
     // Emitir evento de atualização do intervalo de datas
     emit('update:dateRange', newValue)

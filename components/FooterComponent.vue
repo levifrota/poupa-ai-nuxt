@@ -42,23 +42,20 @@
 <script setup lang="ts">
 // import { Menubar, MenubarMenu, MenubarTrigger } from '@headlessui/vue';
 // import { LayoutDashboard, ArrowLeftRight, CalendarSync, Settings } from 'lucide-vue-next';
-import UserButton from '~/app/_components/UserButton.vue';
-import { useThemeStore } from '../_composables/useThemeStore';
-import { computed } from 'vue';
+// import UserButton from "~/components/UserButton.vue";
+import { computed } from "vue";
 
 const themeStore = useThemeStore();
 const route = useRoute();
 
 const linkClasses = (to: string) => {
-  return route.path === to
-    ? 'font-bold text-primary'
-    : 'text-muted-foreground';
+  return route.path === to ? "font-bold text-primary" : "text-muted-foreground";
 };
 
 const background = computed(() => {
-  return themeStore.theme === 'light'
-  ? 'bg-white border-t border-gray-200'
-  : 'bg-black border-t border-gray-800';
+  return themeStore.theme === "light"
+    ? "bg-white border-t border-gray-200"
+    : "bg-black border-t border-gray-800";
 });
 </script>
 

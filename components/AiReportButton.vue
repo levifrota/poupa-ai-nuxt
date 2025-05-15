@@ -1,18 +1,9 @@
 <script setup lang="ts">
-import { ref } from "vue";
+// import { ref } from "vue";
 import DOMPurify from "isomorphic-dompurify";
-import { Button } from "@/app/_components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { marked } from "marked";
 import generateAiReport from "@/app/_actions/generate-ai-report";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/app/_components/ui/dialog";
 
 const loading = ref(false);
 const report = ref<string | null>(null);
@@ -46,7 +37,7 @@ async function handleGenerateReportClick() {
         <DialogTitle>Relatório IA</DialogTitle>
         <DialogDescription>
           Use inteligência artificial para gerar um relatório com informações sobre suas
-          finanças. <br >
+          finanças. <br />
           <span className="text-red-500">
             Atenção: A ferramenta pode não ser precisa e pode gerar erros. Use as
             informações com cuidado.

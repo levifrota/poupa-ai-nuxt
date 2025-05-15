@@ -6,35 +6,31 @@
       <div
         class="flex flex-wrap flex-row items-center justify-center gap-3 sm:justify-normal"
       >
-        <time-select />
+        <TimeSelect />
         <AiReportButton />
       </div>
     </div>
 
     <div class="grid grid-cols-[1fr] gap-6 sm:overflow-hidden sm:grid-cols-[2fr_1fr]">
       <div class="flex flex-col gap-6 sm:overflow-hidden">
-        <summary-cards />
+        <SummaryCards />
 
         <div
           class="grid grid-cols-1 gap-y-6 sm:h-auto sm:grid-rows-1 sm:gap-y-6 md:grid-cols-3 md:gap-6"
         >
-          <transaction-pie-chart />
-          <expenses-per-category />
+          <TransactionPieChart />
+          <ExpensesPerCategory />
         </div>
       </div>
 
-      <last-transactions />
+      <LastTransactions />
     </div>
   </ScrollArea>
 </template>
 
 <script setup lang="ts">
-import AiReportButton from "~/app/_components/AiReportButton.vue";
-import LastTransactions from "~/app/_components/LastTransactions.vue";
-import SummaryCards from "~/app/_components/SummaryCards.vue";
-import TransactionPieChart from "~/app/_components/TransactionPieChart.vue";
-import TimeSelect from "~/app/_components/TimeSelect.vue";
-import ExpensesPerCategory from "~/app/_components/ExpensesPerCategory.vue";
+import TimeSelect from "@/components/TimeSelect.vue";
+
 // const month = 3; // Março
 // const loading = ref(false);
 // const dashboard = ref<unknown>(null);

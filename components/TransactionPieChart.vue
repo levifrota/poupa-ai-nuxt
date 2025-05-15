@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import DonutChart from "@/app/_components/ui/chart-donut/DonutChart.vue";
-import CustomLegend from "@/app/_components/ui/chart-donut/CustomLegend.vue";
+// import DonutChart from "@/components/ui/chart-donut/DonutChart.vue";
+// import CustomLegend from "@/components/ui/chart-donut/CustomLegend.vue";
 import { useTransactionsStore } from "@/stores/transactions";
 
 // Store para obter os dados das transações

@@ -9,10 +9,7 @@
 </template>
 
 <script setup>
-import NavbarComponent from '~/app/_components/NavbarComponent.vue';
-import FooterComponent from '~/app/_components/FooterComponent.vue';
+import NavbarComponent from "@/components/NavbarComponent.vue";
 </script>
 
-<style>
-
-</style>
+<style></style>
