@@ -1,4 +1,5 @@
-import { auth } from "~/lib/firebase";
+import { getAuth } from "~/lib/firebase";
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -7,6 +8,7 @@ import {
 
 export const signUp = async (email: string, password: string) => {
   try {
+    const auth = getAuth();
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
@@ -21,6 +23,7 @@ export const signUp = async (email: string, password: string) => {
 
 export const signIn = async (email: string, password: string) => {
   try {
+    const auth = getAuth();
     const userCredential = await signInWithEmailAndPassword(
       auth,
       email,
@@ -35,6 +38,7 @@ export const signIn = async (email: string, password: string) => {
 
 export const logOut = async () => {
   try {
+    const auth = getAuth();
     await signOut(auth);
   } catch (error) {
     console.error("Erro ao sair: ", error);

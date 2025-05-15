@@ -1,17 +1,35 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from 'firebase/auth';
+import { getAuth as firebaseGetAuth } from 'firebase/auth';
 import { getFirestore } from "firebase/firestore";
+import { useFirebaseApp } from "vuefire";
 
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-};
+/**
+ * Returns a Firebase Auth instance using the app initialized by nuxt-vuefire
+ */
+export function getAuth() {
+  const app = useFirebaseApp();
+  return firebaseGetAuth(app);
+}
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+/**
+ * Returns a Firestore instance using the app initialized by nuxt-vuefire
+ */
+export function getDb() {
+  const app = useFirebaseApp();
+  return getFirestore(app);
+}
 
-export const db = getFirestore(app);
-export const auth = getAuth(app);
+// Lazy-loaded Firestore instance
+let _db: ReturnType<typeof getFirestore> | null = null;
+export function db() {
+  if (!_db) {
+    _db = getDb();
+  }
+  return _db;
+}
+
+// You can add other Firebase service helpers here as needed
+// For example:
+// export function getStorage() {
+//   const app = useFirebaseApp();
+//   return getStorage(app);
+// }

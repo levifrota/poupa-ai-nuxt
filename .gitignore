@@ -24,3 +24,4 @@ logs
 !.env.example
 serviceAccountKey.json
 mockupData.json
+sa.json
