@@ -183,9 +183,8 @@ async function fetchTransactions() {
     // Adicionar um dia ao endDate para incluir o último dia na busca
     endDate.setDate(endDate.getDate() + 1)
 
-    // Criar a query para buscar transações no intervalo
     const transactionsQuery = query(
-      collection(db, 'users', userId, 'transactions'),
+      collection(db(), 'users', userId, 'transactions'),
       where('date', '>=', startDate),
       where('date', '<', endDate),
       orderBy('date', 'desc')
@@ -202,6 +201,9 @@ async function fetchTransactions() {
         date: data.date?.toDate() || new Date(),
       } as Transaction
     })
+
+    console.log('fetchedTransactions', fetchedTransactions);
+
 
     // Atualizar a store com as transações filtradas
     transactionsStore.setTransactions(fetchedTransactions)
