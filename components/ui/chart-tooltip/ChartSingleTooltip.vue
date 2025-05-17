@@ -22,23 +22,7 @@ function template(d: object, i: number, elements: (HTMLElement | SVGElement)[]) 
       return wm.get(d)
     }
     else {
-      console.log('data: ', d);
-      console.log('props', d[props.index]);
-
       const componentDiv = document.createElement('div')
-      // const omittedData = Object.entries(omit(d, [props.index])).map(([key, value]) => {
-      //   const legendReference = props.items?.find(i => i.name === key)
-      //   return { ...legendReference, value: valueFormatter(value) }
-      // })
-      // console.log('title: ', d[props.index] )
-
-      // // Se não houver dados omitidos mas tivermos items, use-os diretamente
-      // if (omittedData.length === 0 && props.items?.length) {
-      //   const TooltipComponent = props.customTooltip ?? ChartTooltip
-      //   return createApp(TooltipComponent, { title: d[props.index].toString(), data: function() {
-      //     return props.items;
-      //     } }).mount(componentDiv).innerHTML
-      // }
       const TooltipComponent = props.customTooltip ?? ChartTooltip
       createApp(TooltipComponent, { title: (d as any).data?.type, data: function() {
         return d.data.value;

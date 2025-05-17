@@ -12,7 +12,6 @@ async function handleGenerateReportClick() {
   loading.value = true;
   try {
     const aiReport = await generateAiReport({ month: "2" });
-    console.log("aiReport", aiReport);
 
     report.value = DOMPurify.sanitize(marked.parse(aiReport));
   } catch (error) {
@@ -37,7 +36,7 @@ async function handleGenerateReportClick() {
         <DialogTitle>Relatório IA</DialogTitle>
         <DialogDescription>
           Use inteligência artificial para gerar um relatório com informações sobre suas
-          finanças. <br />
+          finanças. <br >
           <span className="text-red-500">
             Atenção: A ferramenta pode não ser precisa e pode gerar erros. Use as
             informações com cuidado.

@@ -1,5 +1,5 @@
 <template>
-  <ScrollArea class="col-span-2 h-full rounded-md border pb-6">
+  <ScrollArea class="col-span-2 h-full rounded-md border p-6">
     <CardHeader>
       <CardTitle>Gastos por Categoria</CardTitle>
     </CardHeader>
@@ -16,7 +16,7 @@
       <p>Nenhuma despesa registrada</p>
     </div>
 
-    <div v-else class="space-y-4 px-4">
+    <div v-else class="space-y-4">
       <div v-for="expense in expenses" :key="expense.category" class="space-y-2">
         <div class="flex justify-between items-center">
           <div class="flex items-center gap-2">

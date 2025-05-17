@@ -21,18 +21,16 @@ const chartData = computed(() => {
   }));
 });
 
-const formatValue = (value) => `${value}%`;
+const formatValue = (value: number): string => `${value}%`;
 
 // Cores para cada tipo de transação
 const colors = ["#4CAF50", "#2196F3", "#F44336"];
 
-// Criar itens de legenda personalizados
-console.log("chartData: ", chartData);
 const legendItems = computed(() =>
   chartData.value.map((item, i) => ({
     name: item.type,
     color: colors[i],
-    value: formatValue(item.value),
+    value: formatValue(Number(item.value)),
     inactive: false,
   }))
 );
