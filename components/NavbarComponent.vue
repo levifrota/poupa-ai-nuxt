@@ -56,8 +56,9 @@ const linkClasses = (href: string) => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="profile">
-              <Icon name="lucide:user" class="mr-2" />
-              Perfil
+              <!-- <Icon name="lucide:user" class="mr-2" />
+              Perfil -->
+              <UserButton />
             </SelectItem>
             <SelectItem value="logout">
               <Icon name="lucide:log-out" class="mr-2" />
