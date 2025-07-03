@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from "@tailwindcss/vite";
+import { resolve } from 'path'; // Added import for path.resolve
 
 export default defineNuxtConfig({
   app: {
@@ -54,15 +55,15 @@ export default defineNuxtConfig({
     locales: [
       {
         code: "pt-BR",
-        file: "pt-BR.json",
+        file: resolve(__dirname, './locales/pt-BR.json'), // Use absolute path
       },
       {
         code: "en-US",
-        file: "en-US.json",
+        file: resolve(__dirname, './locales/en-US.json'), // Use absolute path
       },
     ],
-    lazy: false, // Changed to false for testing locale loading
-    langDir: "locales",
+    lazy: false, // Keeping false for now to ensure files are found by vite-node
+    // langDir: "locales", // Commented out as absolute paths are provided for files
     defaultLocale: "pt-BR",
   },
 
