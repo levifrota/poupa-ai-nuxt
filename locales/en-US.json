@@ -135,7 +135,7 @@
   "login_title": "Login to Your Account",
   "login_form_aria_label": "Login form",
   "email_label": "Email Address",
-  "email_placeholder": "your@email.com",
+  "email_placeholder": "your'@'email.com",
   "password_label": "Password",
   "password_placeholder": "Password",
   "login_button": "Login",

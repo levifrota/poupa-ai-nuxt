@@ -135,7 +135,7 @@
   "login_title": "Entrar na sua Conta",
   "login_form_aria_label": "Formulário de login",
   "email_label": "Endereço de Email",
-  "email_placeholder": "seu@email.com",
+  "email_placeholder": "seu'@'email.com",
   "password_label": "Senha",
   "password_placeholder": "Senha",
   "login_button": "Entrar",
