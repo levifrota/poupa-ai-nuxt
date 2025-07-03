@@ -41,7 +41,9 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from '#imports'; // Added this line
 
+const { t } = useI18n(); // Added this line
 const themeStore = useThemeStore();
 const route = useRoute();
 
