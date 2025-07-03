@@ -2,39 +2,47 @@
 import SummaryCard from "~/components/SummaryCard.vue";
 import { useTransactionsStore } from "@/stores/transactions";
 import { computed } from "vue";
+import { useI18n } from '#imports'; // Added
 
-// Usar a store de transações para obter os valores calculados
+const { t, locale } = useI18n(); // Added
+
 const transactionsStore = useTransactionsStore();
 
 // Formatar valores monetários
 const formatCurrency = (value) => {
-  return new Intl.NumberFormat("pt-BR", {
+  // Determine currency code based on locale, or use a default if not specified.
+  // This is a simplified approach. Real multi-currency would be more complex.
+  let currencyCode = 'BRL'; // Default
+  if (locale.value.startsWith('en')) {
+    currencyCode = 'USD';
+  }
+  // Add more currency codes as needed for other locales
+
+  return new Intl.NumberFormat(locale.value, { // Use reactive locale
     style: "currency",
-    currency: "BRL",
+    currency: currencyCode, // Use dynamic currency code
   }).format(value);
 };
 
-// Objeto para o card de saldo
 const balanceObj = computed(() => ({
-  title: "Saldo",
+  title: t('balance_title'), // Internationalized
   value: formatCurrency(transactionsStore.balance),
   icon: "lucide:wallet",
 }));
 
-// Lista de cards de resumo
 const summaryList = computed(() => [
   {
-    title: "Receita",
+    title: t('revenue_title'), // Internationalized
     value: formatCurrency(transactionsStore.depositsTotal),
     icon: "lucide:piggy-bank",
   },
   {
-    title: "Investido",
+    title: t('invested_title'), // Internationalized
     value: formatCurrency(transactionsStore.investmentsTotal),
     icon: "lucide:trending-up",
   },
   {
-    title: "Despesas",
+    title: t('expenses_title'), // Internationalized
     value: formatCurrency(transactionsStore.expensesTotal),
     icon: "lucide:trending-down",
   },
@@ -47,6 +55,8 @@ const summaryList = computed(() => [
       :title="balanceObj.title"
       :value="balanceObj.value"
       :icon="balanceObj.icon"
+      role="region"
+      :aria-label="balanceObj.title"
     />
   </div>
 
@@ -57,6 +67,8 @@ const summaryList = computed(() => [
       :title="item.title"
       :value="item.value"
       :icon="item.icon"
+      role="region"
+      :aria-label="item.title"
     />
   </div>
 </template>

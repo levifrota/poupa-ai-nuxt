@@ -1,7 +1,7 @@
 <template>
   <ScrollArea class="m-0 mt-0 flex flex-col sm:m-0 sm:overflow-hidden sm:p-6">
     <div class="m-3 flex flex-col justify-between sm:flex-row">
-      <h1 class="self-center py-2 text-2xl font-bold sm:self-auto md:py-0">Painel</h1>
+      <h1 class="self-center py-2 text-2xl font-bold sm:self-auto md:py-0">{{ t('dashboard') }}</h1>
 
       <div
         class="flex flex-wrap flex-row items-center justify-center gap-3 sm:justify-normal"
@@ -30,6 +30,9 @@
 
 <script setup lang="ts">
 import TimeSelect from "@/components/TimeSelect.vue";
+import { useI18n } from '#imports'
+
+const { t } = useI18n()
 
 // const month = 3; // Março
 // const loading = ref(false);

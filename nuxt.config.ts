@@ -46,8 +46,25 @@ export default defineNuxtConfig({
     "shadcn-nuxt",
     "@vite-pwa/nuxt",
     "@pinia/nuxt",
-    "nuxt-vuefire"
+    "nuxt-vuefire",
+    "@nuxtjs/i18n",
   ],
+
+  i18n: {
+    locales: [
+      {
+        code: "pt-BR",
+        file: "pt-BR.json",
+      },
+      {
+        code: "en-US",
+        file: "en-US.json",
+      },
+    ],
+    lazy: true,
+    langDir: "locales",
+    defaultLocale: "pt-BR",
+  },
 
   vite: {
     plugins: [tailwindcss()],

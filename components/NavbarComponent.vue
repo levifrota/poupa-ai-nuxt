@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Icon } from "#components";
+import { useI18n } from '#imports'
 
+const { t } = useI18n()
 const themeStore = useThemeStore();
 const route = useRoute();
 
@@ -15,43 +17,43 @@ const linkClasses = (href: string) => {
       <NuxtImg
         v-if="themeStore.theme === 'dark' || themeStore.theme === 'high-contrast'"
         class="self-center md:self-auto"
-        src="./logo.svg"
+        src="/logo.svg"
         width="173"
         height="39"
-        alt="Poupa Aí"
+        :alt="t('welcome')"
       />
       <NuxtImg
         v-else-if="themeStore.theme === 'deuteranopia'"
-        src="./logo-deuteranopia.svg"
+        src="/logo-deuteranopia.svg"
         width="173"
         height="39"
-        alt="Poupa Aí"
+        :alt="t('welcome')"
       />
       <NuxtImg
         v-else
         class="self-center md:self-auto"
-        src="./logo-light.svg"
+        src="/logo-light.svg"
         width="173"
         height="39"
-        alt="Poupa Aí"
+        :alt="t('welcome')"
       />
       <div class="hidden gap-6 md:flex">
-        <NuxtLink to="/" :class="linkClasses('/')"> Painel </NuxtLink>
+        <NuxtLink to="/" :class="linkClasses('/')"> {{ t('dashboard') }} </NuxtLink>
         <NuxtLink to="/transactions" :class="linkClasses('/transactions')">
-          Transações
+          {{ t('transactions') }}
         </NuxtLink>
         <NuxtLink to="/subscription" :class="linkClasses('/subscription')">
-          Assinatura
+          {{ t('subscription') }}
         </NuxtLink>
         <NuxtLink to="/settings" :class="linkClasses('/settings')">
-          Configurações
+          {{ t('settings') }}
         </NuxtLink>
       </div>
     </div>
     <div class="hidden md:block">
       <div class="text-primary">
         <Select>
-          <SelectTrigger class="w-full">
+          <SelectTrigger class="w-full" :aria-label="t('user_menu')">
             <Icon name="lucide:user" />
           </SelectTrigger>
           <SelectContent>
@@ -62,7 +64,7 @@ const linkClasses = (href: string) => {
             </SelectItem>
             <SelectItem value="logout">
               <Icon name="lucide:log-out" class="mr-2" />
-              Sair
+              {{ t('logout') }}
             </SelectItem>
           </SelectContent>
         </Select>

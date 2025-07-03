@@ -7,6 +7,9 @@ import {
   getFilteredRowModel, // Importar para funcionalidade de filtro/busca
   useVueTable,
 } from "@tanstack/vue-table";
+import { useI18n } from '#imports'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   columns: ColumnDef<TData, TValue>[];
@@ -59,7 +62,8 @@ const table = useVueTable({
     <div class="flex items-center py-4">
       <Input
         class="max-w-sm"
-        placeholder="Buscar transações..."
+        :placeholder="t('search_transactions')"
+        :aria-label="t('search_transactions')"
         :model-value="globalFilter"
         @update:model-value="table.setGlobalFilter($event)"
       />
@@ -69,7 +73,7 @@ const table = useVueTable({
       <Table>
         <TableHeader>
           <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-            <TableHead v-for="header in headerGroup.headers" :key="header.id">
+            <TableHead v-for="header in headerGroup.headers" :key="header.id" scope="col">
               <FlexRender
                 v-if="!header.isPlaceholder"
                 :render="header.column.columnDef.header"
@@ -96,7 +100,7 @@ const table = useVueTable({
           <template v-else>
             <TableRow>
               <TableCell :colspan="columns.length" class="h-24 text-center">
-                Nenhum resultado encontrado.
+                {{ t('no_results_found') }}
               </TableCell>
             </TableRow>
           </template>

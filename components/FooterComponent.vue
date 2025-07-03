@@ -4,34 +4,34 @@
   >
     <MenubarMenu>
       <MenubarTrigger class="flex justify-center align-center">
-        <NuxtLink to="/" :class="linkClasses('/')">
+        <NuxtLink to="/" :class="linkClasses('/')" :aria-label="t('dashboard')">
           <Icon name="lucide:layout-dashboard" :class="['h-16', iconClasses]" />
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
     <MenubarMenu>
       <MenubarTrigger>
-        <NuxtLink to="/transactions" :class="linkClasses('/transactions')">
+        <NuxtLink to="/transactions" :class="linkClasses('/transactions')" :aria-label="t('transactions')">
           <Icon name="lucide:arrow-left-right" :class="iconClasses" />
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
     <MenubarMenu>
       <MenubarTrigger>
-        <NuxtLink to="/subscription" :class="linkClasses('/subscription')">
+        <NuxtLink to="/subscription" :class="linkClasses('/subscription')" :aria-label="t('subscription')">
           <Icon name="lucide:calendar-sync" :class="iconClasses" />
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
     <MenubarMenu>
       <MenubarTrigger>
-        <NuxtLink to="/settings" :class="linkClasses('/settings')">
+        <NuxtLink to="/settings" :class="linkClasses('/settings')" :aria-label="t('settings')">
           <Icon name="lucide:settings" :class="iconClasses" />
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
     <MenubarMenu>
-      <MenubarTrigger>
+      <MenubarTrigger :aria-label="t('logout')">
         <!-- <UserButton /> -->
         <Icon name="lucide:user" :class="iconClasses" />
       </MenubarTrigger>

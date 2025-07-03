@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto p-4">
-    <h1 class="mb-4 text-2xl font-bold">Transações</h1>
+    <h1 class="mb-4 text-2xl font-bold">{{ t('transactions_page_title') }}</h1>
     <DataTable :columns="columns" :data="formattedTransactions" />
   </div>
 </template>
@@ -10,15 +10,18 @@ import { computed } from 'vue';
 import DataTable from '@/components/transactions/DataTable.vue';
 import { columns, type Transaction } from '@/components/transactions/columns';
 import mockupData from '~/mockupData.json';
-import { TRANSACTION_CATEGORY_LABELS, type TransactionCategory } from '@/constants/transactions';
+// import { TRANSACTION_CATEGORY_LABELS, type TransactionCategory } from '@/constants/transactions'; // No longer needed if using t()
+import { useI18n } from '#imports';
 
-// Interface para os dados brutos do mockupData.json
+const { t } = useI18n();
+
+// Interface for the raw data from mockupData.json
 interface MockupTransaction {
   id: string;
-  name: string; // Mapeado para description
+  name: string; // Mapped to description
   type: 'DEPOSIT' | 'EXPENSE' | 'INVESTMENT';
   amount: number;
-  category: string;
+  category: string; // This is the key, e.g., "HOUSING", "FOOD"
   paymentMethod: string;
   date: Date; // ISO string date
   createdAt: string;
@@ -32,10 +35,10 @@ const formattedTransactions = computed<Transaction[]>(() => {
   }
   return (mockupData.totalTransactions as MockupTransaction[]).map((item: MockupTransaction) => ({
     id: item.id,
-    date: item.date, // Passar a string ISO da data diretamente para columns.ts formatar
+    date: item.date,
     description: item.name,
-    category: TRANSACTION_CATEGORY_LABELS[item.category as TransactionCategory] || item.category,
-    // Ajusta o valor para negativo se for uma despesa, conforme a lógica anterior e a esperada por columns.ts
+    // Use t() for category translation, falling back to item.category if key not found
+    category: t(`category_${item.category.toUpperCase()}`, item.category),
     amount: item.type === 'EXPENSE' ? -Math.abs(item.amount) : Math.abs(item.amount),
   }));
 });
