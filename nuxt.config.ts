@@ -61,7 +61,7 @@ export default defineNuxtConfig({
         file: "en-US.json",
       },
     ],
-    lazy: true,
+    lazy: false, // Changed to false for testing locale loading
     langDir: "locales",
     defaultLocale: "pt-BR",
   },
