@@ -56,115 +56,135 @@ const stringToCalendarDate = (dateString: string | null): CalendarDate | null =>
   }
 }
 
-const startFromUrl = stringToCalendarDate(route.query.start as string | null)
-const endFromUrl = stringToCalendarDate(route.query.end as string | null)
-
-const initialStartDate = startFromUrl || new CalendarDate(currentYear, currentMonth + 1, 1);
-const initialEndDate = endFromUrl || new CalendarDate(currentYear, currentMonth + 1, new Date(currentYear, currentMonth + 1, 0).getDate());
+const initialStartDate = stringToCalendarDate(route.query.start as string | null) || new CalendarDate(currentYear, currentMonth + 1, 1);
+const initialEndDate = stringToCalendarDate(route.query.end as string | null) || new CalendarDate(currentYear, currentMonth + 1, new Date(currentYear, currentMonth + 1, 0).getDate());
 
 const value = ref<DateRange>({
   start: initialStartDate,
   end: initialEndDate,
 })
 
-const getFormatter = (options: Intl.DateTimeFormatOptions): Ref<DateFormatter | null> => {
+const getSafeFormatter = (options: Intl.DateTimeFormatOptions): Ref<DateFormatter | null> => {
   return computed(() => {
     if (typeof locale.value === 'string' && locale.value) {
       try {
         return useDateFormatter(locale.value, options);
       } catch (e) {
-        console.error(`Error creating DateFormatter with locale '${locale.value}':`, e);
+        console.error(`Error creating DateFormatter with locale '${locale.value}' for options ${JSON.stringify(options)}:`, e);
         return ref(null);
       }
     }
+    // console.warn('Locale is not ready for DateFormatter, options:', JSON.stringify(options));
     return ref(null);
   });
 };
 
-const monthYearFormatterRef = getFormatter({ month: 'long', year: 'numeric' });
-const dateRangeDisplayFormatterRef = getFormatter({ day: '2-digit', month: '2-digit', year: 'numeric' });
+const monthYearFormatterRef = getSafeFormatter({ month: 'long', year: 'numeric' });
+const dateRangeDisplayFormatterRef = getSafeFormatter({ day: '2-digit', month: '2-digit', year: 'numeric' });
 
 const calendarId = `calendar-${Math.random().toString(36).substring(2, 9)}`
 const labelId = `calendar-label-${Math.random().toString(36).substring(2, 9)}`
 const descriptionId = `calendar-description-${Math.random().toString(36).substring(2, 9)}`
 
-const placeholder = ref<DateValue>(initialStartDate) // Initialize with a valid CalendarDate
-const secondMonthPlaceholder = ref<DateValue>(initialEndDate.add({ months: initialStartDate.month === initialEndDate.month ? 1 : 0 })) // Ensure second month is different if start/end are same month
-
-const firstMonth = ref<Grid<DateValue>>(
-  createMonth({
-    dateObj: placeholder.value,
-    locale: locale.value || 'en-US', // Provide a fallback locale during initial creation
-    fixedWeeks: true,
-    weekStartsOn: 0,
-  }),
-)
-const secondMonth = ref<Grid<DateValue>>(
-  createMonth({
-    dateObj: secondMonthPlaceholder.value,
-    locale: locale.value || 'en-US', // Provide a fallback locale
-    fixedWeeks: true,
-    weekStartsOn: 0,
-  }),
-)
-
-function updateMonth(reference: 'first' | 'second', months: number) {
-  if (reference === 'first') {
-    placeholder.value = placeholder.value.add({ months })
-  }
-  else {
-    secondMonthPlaceholder.value = secondMonthPlaceholder.value.add({
-      months,
-    })
-  }
+const placeholder = ref<DateValue>(initialStartDate);
+let P = initialStartDate;
+if (initialStartDate.month === initialEndDate.month && initialStartDate.year === initialEndDate.year) {
+ P = initialEndDate.add({ months: 1 });
+} else {
+ P = initialEndDate;
 }
+const secondMonthPlaceholder = ref<DateValue>(P);
+
+
+const firstMonth = ref<Grid<DateValue> | null>(null);
+const secondMonth = ref<Grid<DateValue> | null>(null);
+
+const updateCalendarMonths = (currentLocale: string) => {
+  if (!placeholder.value || !secondMonthPlaceholder.value || !currentLocale) {
+    // console.warn('updateCalendarMonths: Not enough data to create months. Locale:', currentLocale, 'Placeholder1:', placeholder.value, 'Placeholder2:', secondMonthPlaceholder.value);
+    firstMonth.value = null;
+    secondMonth.value = null;
+    return;
+  }
+  try {
+    // console.log('updateCalendarMonths: Creating first month with locale:', currentLocale, 'dateObj:', placeholder.value.toString());
+    firstMonth.value = createMonth({
+      dateObj: placeholder.value,
+      locale: currentLocale,
+      fixedWeeks: true,
+      weekStartsOn: 0,
+    });
+
+    // Ensure secondMonthPlaceholder is different from placeholder for display
+    let sMonthPlaceholder = secondMonthPlaceholder.value;
+    if (isEqualMonth(placeholder.value, sMonthPlaceholder)) {
+        sMonthPlaceholder = sMonthPlaceholder.add({ months: 1 });
+        // No need to update secondMonthPlaceholder ref here as it's for calculation
+    }
+    // console.log('updateCalendarMonths: Creating second month with locale:', currentLocale, 'dateObj:', sMonthPlaceholder.toString());
+    secondMonth.value = createMonth({
+      dateObj: sMonthPlaceholder,
+      locale: currentLocale,
+      fixedWeeks: true,
+      weekStartsOn: 0,
+    });
+  } catch (e) {
+    console.error('Error in updateCalendarMonths during createMonth:', e);
+    firstMonth.value = null;
+    secondMonth.value = null;
+  }
+};
 
 watch(locale, (newLocale) => {
   if (typeof newLocale === 'string' && newLocale) {
-    // Ensure placeholders are valid before creating months
-    if (placeholder.value && secondMonthPlaceholder.value) {
-      firstMonth.value = createMonth({
-        dateObj: placeholder.value,
-        locale: newLocale,
-        fixedWeeks: true,
-        weekStartsOn: 0,
-      })
-      secondMonth.value = createMonth({
-        dateObj: secondMonthPlaceholder.value,
-        locale: newLocale,
-        fixedWeeks: true,
-        weekStartsOn: 0,
-      })
-    }
+    updateCalendarMonths(newLocale);
+  } else {
+    firstMonth.value = null;
+    secondMonth.value = null;
   }
-}, { immediate: true }) // immediate might help if locale is ready from parent
+}, { immediate: true });
 
-watch(placeholder, (_placeholder) => {
-  if (_placeholder && typeof locale.value === 'string' && locale.value) {
+watch(placeholder, (newPlaceholder) => {
+  if (newPlaceholder && typeof locale.value === 'string' && locale.value) {
+    // console.log('Placeholder watcher: Updating first month. New placeholder:', newPlaceholder.toString());
     firstMonth.value = createMonth({
-      dateObj: _placeholder,
+      dateObj: newPlaceholder,
       weekStartsOn: 0,
-      fixedWeeks: false,
+      fixedWeeks: true, // Keep true for consistency or false if intended for this specific watch
       locale: locale.value,
-    })
-    if (secondMonthPlaceholder.value && isEqualMonth(secondMonthPlaceholder.value, _placeholder)) {
-      secondMonthPlaceholder.value = secondMonthPlaceholder.value.add({ months: 1 })
+    });
+    // Adjust second month if it becomes same as first
+    if (secondMonthPlaceholder.value && isEqualMonth(secondMonthPlaceholder.value, newPlaceholder)) {
+      // console.log('Placeholder watcher: Adjusting second month placeholder.');
+      secondMonthPlaceholder.value = secondMonthPlaceholder.value.add({ months: 1 });
+      // updateCalendarMonths(locale.value) will be triggered by secondMonthPlaceholder watch
     }
   }
-})
+});
 
-watch(secondMonthPlaceholder, (_secondMonthPlaceholder) => {
- if (_secondMonthPlaceholder && typeof locale.value === 'string' && locale.value) {
+watch(secondMonthPlaceholder, (newSecondPlaceholder) => {
+ if (newSecondPlaceholder && typeof locale.value === 'string' && locale.value) {
+    // console.log('Second placeholder watcher: Updating second month. New placeholder:', newSecondPlaceholder.toString());
+    // Ensure secondMonthPlaceholder is different from placeholder for display
+    let sMonthPlaceholder = newSecondPlaceholder;
+    if (placeholder.value && isEqualMonth(placeholder.value, sMonthPlaceholder)) {
+        sMonthPlaceholder = sMonthPlaceholder.add({ months: 1 });
+    }
     secondMonth.value = createMonth({
-      dateObj: _secondMonthPlaceholder,
+      dateObj: sMonthPlaceholder,
       weekStartsOn: 0,
-      fixedWeeks: false,
+      fixedWeeks: true, // Keep true for consistency
       locale: locale.value,
-    })
-    if (placeholder.value && isEqualMonth(_secondMonthPlaceholder, placeholder.value))
-      placeholder.value = placeholder.value.subtract({ months: 1 })
+    });
+    // Adjust first month if it became same as second (less common scenario here)
+    if (placeholder.value && isEqualMonth(newSecondPlaceholder, placeholder.value)) {
+      // console.log('Second placeholder watcher: Adjusting first month placeholder.');
+      placeholder.value = placeholder.value.subtract({ months: 1 });
+       // updateCalendarMonths(locale.value) will be triggered by placeholder watch
+    }
   }
-})
+});
+
 
 async function fetchTransactions() {
   if (!value.value.start || !value.value.end) return
@@ -209,42 +229,51 @@ const updateUrlParams = (dateRange: DateRange) => {
   })
 }
 
-watch(() => value.value, (newValue) => {
+watch(() => value.value, (newValue, oldValue) => {
   if (newValue.start && newValue.end) {
-    // Update placeholders when value changes, ensuring they are valid CalendarDate objects
-    placeholder.value = newValue.start;
-    // Ensure secondMonthPlaceholder is at least one month after placeholder if they are the same month
-    if (isEqualMonth(newValue.start, newValue.end)) {
-        secondMonthPlaceholder.value = newValue.end.add({ months: 1 });
-    } else {
-        secondMonthPlaceholder.value = newValue.end;
+    // Update placeholders only if the actual value has changed to prevent infinite loops with other watchers
+    if (!oldValue || !newValue.start.equals(oldValue.start) || !newValue.end.equals(oldValue.end)) {
+        placeholder.value = newValue.start;
+        let sMonthPlaceholderValue = newValue.end;
+        if (isEqualMonth(newValue.start, newValue.end)) {
+            sMonthPlaceholderValue = newValue.end.add({ months: 1 });
+        }
+        secondMonthPlaceholder.value = sMonthPlaceholderValue;
     }
-    emit('update:dateRange', newValue)
-    updateUrlParams(newValue)
-    fetchTransactions()
+
+    emit('update:dateRange', newValue);
+    updateUrlParams(newValue);
+    fetchTransactions();
   }
-}, { deep: true })
+}, { deep: true });
+
 
 onMounted(() => {
   if (route.query.start && route.query.end) {
-    const startDate = stringToCalendarDate(route.query.start as string)
-    const endDate = stringToCalendarDate(route.query.end as string)
+    const startDate = stringToCalendarDate(route.query.start as string);
+    const endDate = stringToCalendarDate(route.query.end as string);
     if (startDate && endDate) {
-      value.value = { start: startDate, end: endDate }
-       // Also update placeholders here
-      placeholder.value = startDate;
-      if (isEqualMonth(startDate, endDate)) {
-        secondMonthPlaceholder.value = endDate.add({ months: 1 });
-      } else {
-        secondMonthPlaceholder.value = endDate;
-      }
+      value.value = { start: startDate, end: endDate };
+      // Trigger value watcher by explicitly setting, or call updateCalendarMonths if not relying on value watcher for this
+      // placeholder.value = startDate;
+      // secondMonthPlaceholder.value = isEqualMonth(startDate, endDate) ? endDate.add({ months: 1 }) : endDate;
     }
+  } else {
+     // Ensure placeholders are set based on initial value if no URL params
+     placeholder.value = value.value.start;
+     secondMonthPlaceholder.value = isEqualMonth(value.value.start, value.value.end) ? value.value.end.add({ months: 1 }) : value.value.end;
   }
-  // Initial fetch is triggered by watch on value.value if it's valid
+  // Initial fetch is now handled by the value watcher if value is valid
+  // Or by direct call if needed after mount based on initial value.
   if (value.value.start && value.value.end) {
-    fetchTransactions()
+    fetchTransactions(); // Ensure fetch if initial value is already set
   }
-})
+  // Call updateCalendarMonths explicitly after mount to ensure calendars are ready
+  // This relies on locale already being available from i18n plugin.
+  if (typeof locale.value === 'string' && locale.value) {
+    updateCalendarMonths(locale.value);
+  }
+});
 
 const formattedDateRange = computed(() => {
   if (!value.value.start) return t('select_date_placeholder');
@@ -264,10 +293,9 @@ const formattedDateRange = computed(() => {
   return `${startFormatted} - ${endFormatted}`;
 });
 
-const formatMonthYearForHeader = (dateObj: DateValue | undefined) => {
+const formatMonthYearForHeader = (dateObj: DateValue | undefined | null): string => {
   if (!dateObj) {
-    // console.warn("formatMonthYearForHeader called with undefined dateObj for a calendar header.");
-    return "..."; // Fallback for undefined dateObj
+    return t('loading_month'); // Return a loading or N/A string
   }
   const formatter = monthYearFormatterRef.value?.value;
   const currentLocale = typeof locale.value === 'string' && locale.value ? locale.value : 'en-US';
@@ -306,93 +334,95 @@ const formatMonthYearForHeader = (dateObj: DateValue | undefined) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent class="w-auto p-0" role="dialog" aria-modal="true" :aria-label="t('date_range_picker_label')">
-        <RangeCalendarRoot v-if="firstMonth.dateObj && secondMonth.dateObj" v-slot="{ weekDays }" v-model="value" v-model:placeholder="placeholder" class="p-3">
-          <div class="flex flex-col gap-y-4 mt-4 sm:flex-row sm:gap-x-4 sm:gap-y-0">
-            <div class="flex flex-col gap-4">
-              <div class="flex items-center justify-between">
-                <Button
-                  variant="outline"
-                  :class="cn('h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100')"
-                  :aria-label="t('previous_month')"
-                  @click="updateMonth('first', -1)"
-                >
-                  <ChevronLeft class="h-4 w-4" aria-hidden="true" />
-                </Button>
-                <div :class="cn('text-sm font-medium')" role="heading" aria-level="2">
-                  {{ formatMonthYearForHeader(firstMonth.dateObj) }}
+        <template v-if="firstMonth && firstMonth.dateObj && secondMonth && secondMonth.dateObj">
+          <RangeCalendarRoot v-slot="{ weekDays }" v-model="value" v-model:placeholder="placeholder" class="p-3">
+            <div class="flex flex-col gap-y-4 mt-4 sm:flex-row sm:gap-x-4 sm:gap-y-0">
+              <div class="flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                  <Button
+                    variant="outline"
+                    :class="cn('h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100')"
+                    :aria-label="t('previous_month')"
+                    @click="updateMonth('first', -1)"
+                  >
+                    <ChevronLeft class="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                  <div :class="cn('text-sm font-medium')" role="heading" aria-level="2">
+                    {{ formatMonthYearForHeader(firstMonth.dateObj) }}
+                  </div>
+                  <Button
+                    variant="outline"
+                    :class="cn('h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100')"
+                    :aria-label="t('next_month')"
+                    @click="updateMonth('first', 1)"
+                  >
+                    <ChevronRight class="h-4 w-4" aria-hidden="true" />
+                  </Button>
                 </div>
-                <Button
-                  variant="outline"
-                  :class="cn('h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100')"
-                  :aria-label="t('next_month')"
-                  @click="updateMonth('first', 1)"
-                >
-                  <ChevronRight class="h-4 w-4" aria-hidden="true" />
-                </Button>
+                <RangeCalendarGrid role="grid" :aria-labelledby="'calendar-grid-label-1-' + calendarId">
+                  <span :id="'calendar-grid-label-1-' + calendarId" class="sr-only">{{ t('calendar_start_date') }}</span>
+                  <RangeCalendarGridHead>
+                    <RangeCalendarGridRow role="row">
+                      <RangeCalendarHeadCell v-for="day in weekDays" :key="day" class="w-full" role="columnheader" scope="col">
+                        {{ day }}
+                      </RangeCalendarHeadCell>
+                    </RangeCalendarGridRow>
+                  </RangeCalendarGridHead>
+                  <RangeCalendarGridBody>
+                    <RangeCalendarGridRow v-for="(weekDates, index) in firstMonth.rows" :key="`weekDate-${index}`" class="mt-2 w-full" role="row">
+                      <RangeCalendarCell v-for="weekDate in weekDates" :key="weekDate.toString()" :date="weekDate" role="gridcell">
+                        <RangeCalendarCellTrigger :day="weekDate" :month="firstMonth.dateObj" :aria-label="t('select_date_aria_label', { date: weekDate.day })" />
+                      </RangeCalendarCell>
+                    </RangeCalendarGridRow>
+                  </RangeCalendarGridBody>
+                </RangeCalendarGrid>
               </div>
-              <RangeCalendarGrid role="grid" :aria-labelledby="'calendar-grid-label-1-' + calendarId">
-                <span :id="'calendar-grid-label-1-' + calendarId" class="sr-only">{{ t('calendar_start_date') }}</span>
-                <RangeCalendarGridHead>
-                  <RangeCalendarGridRow role="row">
-                    <RangeCalendarHeadCell v-for="day in weekDays" :key="day" class="w-full" role="columnheader" scope="col">
-                      {{ day }}
-                    </RangeCalendarHeadCell>
-                  </RangeCalendarGridRow>
-                </RangeCalendarGridHead>
-                <RangeCalendarGridBody>
-                  <RangeCalendarGridRow v-for="(weekDates, index) in firstMonth.rows" :key="`weekDate-${index}`" class="mt-2 w-full" role="row">
-                    <RangeCalendarCell v-for="weekDate in weekDates" :key="weekDate.toString()" :date="weekDate" role="gridcell">
-                      <RangeCalendarCellTrigger :day="weekDate" :month="firstMonth.dateObj" :aria-label="t('select_date_aria_label', { date: weekDate.day })" />
-                    </RangeCalendarCell>
-                  </RangeCalendarGridRow>
-                </RangeCalendarGridBody>
-              </RangeCalendarGrid>
-            </div>
-            <div class="flex flex-col gap-4">
-              <div class="flex items-center justify-between">
-                <Button
-                  variant="outline"
-                  :class="cn('h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100')"
-                  :aria-label="t('previous_month')"
-                  @click="updateMonth('second', -1)"
-                >
-                  <ChevronLeft class="h-4 w-4" aria-hidden="true" />
-                </Button>
-                <div :class="cn('text-sm font-medium')" role="heading" aria-level="2">
-                   {{ formatMonthYearForHeader(secondMonth.dateObj) }}
+              <div class="flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                  <Button
+                    variant="outline"
+                    :class="cn('h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100')"
+                    :aria-label="t('previous_month')"
+                    @click="updateMonth('second', -1)"
+                  >
+                    <ChevronLeft class="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                  <div :class="cn('text-sm font-medium')" role="heading" aria-level="2">
+                    {{ formatMonthYearForHeader(secondMonth.dateObj) }}
+                  </div>
+                  <Button
+                    variant="outline"
+                    :class="cn('h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100')"
+                    :aria-label="t('next_month')"
+                    @click="updateMonth('second', 1)"
+                  >
+                    <ChevronRight class="h-4 w-4" aria-hidden="true" />
+                  </Button>
                 </div>
-                <Button
-                  variant="outline"
-                  :class="cn('h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100')"
-                  :aria-label="t('next_month')"
-                  @click="updateMonth('second', 1)"
-                >
-                  <ChevronRight class="h-4 w-4" aria-hidden="true" />
-                </Button>
+                <RangeCalendarGrid role="grid" :aria-labelledby="'calendar-grid-label-2-' + calendarId">
+                  <span :id="'calendar-grid-label-2-' + calendarId" class="sr-only">{{ t('calendar_end_date') }}</span>
+                  <RangeCalendarGridHead>
+                    <RangeCalendarGridRow role="row">
+                      <RangeCalendarHeadCell v-for="day in weekDays" :key="day" class="w-full" role="columnheader" scope="col">
+                        {{ day }}
+                      </RangeCalendarHeadCell>
+                    </RangeCalendarGridRow>
+                  </RangeCalendarGridHead>
+                  <RangeCalendarGridBody>
+                    <RangeCalendarGridRow v-for="(weekDates, index) in secondMonth.rows" :key="`weekDate-${index}`" class="mt-2 w-full" role="row">
+                      <RangeCalendarCell v-for="weekDate in weekDates" :key="weekDate.toString()" :date="weekDate" role="gridcell">
+                        <RangeCalendarCellTrigger :day="weekDate" :month="secondMonth.dateObj" :aria-label="t('select_date_aria_label', { date: weekDate.day })" />
+                      </RangeCalendarCell>
+                    </RangeCalendarGridRow>
+                  </RangeCalendarGridBody>
+                </RangeCalendarGrid>
               </div>
-              <RangeCalendarGrid role="grid" :aria-labelledby="'calendar-grid-label-2-' + calendarId">
-                <span :id="'calendar-grid-label-2-' + calendarId" class="sr-only">{{ t('calendar_end_date') }}</span>
-                <RangeCalendarGridHead>
-                  <RangeCalendarGridRow role="row">
-                    <RangeCalendarHeadCell v-for="day in weekDays" :key="day" class="w-full" role="columnheader" scope="col">
-                      {{ day }}
-                    </RangeCalendarHeadCell>
-                  </RangeCalendarGridRow>
-                </RangeCalendarGridHead>
-                <RangeCalendarGridBody>
-                  <RangeCalendarGridRow v-for="(weekDates, index) in secondMonth.rows" :key="`weekDate-${index}`" class="mt-2 w-full" role="row">
-                    <RangeCalendarCell v-for="weekDate in weekDates" :key="weekDate.toString()" :date="weekDate" role="gridcell">
-                      <RangeCalendarCellTrigger :day="weekDate" :month="secondMonth.dateObj" :aria-label="t('select_date_aria_label', { date: weekDate.day })" />
-                    </RangeCalendarCell>
-                  </RangeCalendarGridRow>
-                </RangeCalendarGridBody>
-              </RangeCalendarGrid>
             </div>
-          </div>
-          <div aria-live="polite" class="sr-only">
-            {{ formattedDateRange }}
-          </div>
-        </RangeCalendarRoot>
+            <div aria-live="polite" class="sr-only">
+              {{ formattedDateRange }}
+            </div>
+          </RangeCalendarRoot>
+        </template>
         <div v-else class="p-4 text-center">{{ t('loading_calendar') }}</div> <!-- Fallback if month objects not ready -->
       </PopoverContent>
     </Popover>
