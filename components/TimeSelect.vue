@@ -10,7 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-vue-next'
-import { type DateRange, RangeCalendarRoot, useDateFormatter } from 'reka-ui'
+import { type DateRange, RangeCalendarRoot, useDateFormatter, type DateFormatter } from 'reka-ui'
 import { createMonth, type Grid, toDate } from 'reka-ui/date'
 import { collection, getDocs, query, where, orderBy } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
@@ -64,17 +64,25 @@ const value = ref<DateRange>({
   end: endFromUrl || new CalendarDate(currentYear, currentMonth + 1, new Date(currentYear, currentMonth + 1, 0).getDate()),
 })
 
-// These are the correct definitions in the setup scope
-const monthYearFormatter = useDateFormatter(locale, {
-  month: 'long',
-  year: 'numeric'
-})
+// --- Reactive Date Formatters ---
+const getFormatter = (options: Intl.DateTimeFormatOptions): Ref<DateFormatter | null> => {
+  return computed(() => {
+    if (typeof locale.value === 'string' && locale.value) {
+      try {
+        // useDateFormatter itself returns a Ref<DateFormatter>, so we return that ref.
+        return useDateFormatter(locale.value, options);
+      } catch (e) {
+        console.error(`Error creating DateFormatter with locale '${locale.value}':`, e);
+        return ref(null); // Return a ref containing null if creation fails
+      }
+    }
+    return ref(null); // Return a ref containing null if locale is not ready
+  });
+};
 
-const dateRangeDisplayFormatter = useDateFormatter(locale, {
-  day: "2-digit",
-  month: "2-digit",
-  year: "numeric",
-})
+const monthYearFormatterRef = getFormatter({ month: 'long', year: 'numeric' });
+const dateRangeDisplayFormatterRef = getFormatter({ day: '2-digit', month: '2-digit', year: 'numeric' });
+// --- End Reactive Date Formatters ---
 
 const calendarId = `calendar-${Math.random().toString(36).substring(2, 9)}`
 const labelId = `calendar-label-${Math.random().toString(36).substring(2, 9)}`
@@ -112,18 +120,20 @@ function updateMonth(reference: 'first' | 'second', months: number) {
 }
 
 watch(locale, (newLocale) => {
-  firstMonth.value = createMonth({
-    dateObj: placeholder.value,
-    locale: newLocale,
-    fixedWeeks: true,
-    weekStartsOn: 0,
-  })
-  secondMonth.value = createMonth({
-    dateObj: secondMonthPlaceholder.value,
-    locale: newLocale,
-    fixedWeeks: true,
-    weekStartsOn: 0,
-  })
+  if (typeof newLocale === 'string' && newLocale) {
+    firstMonth.value = createMonth({
+      dateObj: placeholder.value,
+      locale: newLocale,
+      fixedWeeks: true,
+      weekStartsOn: 0,
+    })
+    secondMonth.value = createMonth({
+      dateObj: secondMonthPlaceholder.value,
+      locale: newLocale,
+      fixedWeeks: true,
+      weekStartsOn: 0,
+    })
+  }
 })
 
 watch(placeholder, (_placeholder) => {
@@ -151,7 +161,6 @@ watch(secondMonthPlaceholder, (_secondMonthPlaceholder) => {
 
 async function fetchTransactions() {
   if (!value.value.start || !value.value.end) return
-
   try {
     transactionsStore.setLoading(true)
     transactionsStore.setError(null)
@@ -215,12 +224,17 @@ onMounted(() => {
 const formattedDateRange = computed(() => {
   if (!value.value.start) return t('select_date_placeholder');
 
-  // Correctly access .value on the ref returned by useDateFormatter
-  const formatter = dateRangeDisplayFormatter.value;
+  const formatter = dateRangeDisplayFormatterRef.value?.value; // Access .value of the computed ref, then .value of the formatter ref
 
   if (!formatter || typeof formatter.format !== 'function') {
-    console.error("dateRangeDisplayFormatter.value is not available or its format method is not a function");
-    return "Invalid Date";
+    // console.error("Computed dateRangeDisplayFormatter is not available or its format method is not a function. Locale:", locale.value);
+    // Fallback using browser's default for the current or specified locale
+    const fallbackLocale = typeof locale.value === 'string' && locale.value ? locale.value : 'en-US';
+    const fallbackOptions = { day: '2-digit', month: '2-digit', year: 'numeric' } as Intl.DateTimeFormatOptions;
+    const startFormattedFallback = toDate(value.value.start).toLocaleDateString(fallbackLocale, fallbackOptions);
+    if (!value.value.end) return startFormattedFallback;
+    const endFormattedFallback = toDate(value.value.end).toLocaleDateString(fallbackLocale, fallbackOptions);
+    return `${startFormattedFallback} - ${endFormattedFallback}`;
   }
 
   const startFormatted = formatter.format(toDate(value.value.start));
@@ -230,11 +244,12 @@ const formattedDateRange = computed(() => {
 });
 
 const formatMonthYearForHeader = (dateValue: DateValue) => {
-  // Correctly access .value on the ref returned by useDateFormatter
-  const formatter = monthYearFormatter.value;
+  const formatter = monthYearFormatterRef.value?.value; // Access .value of the computed ref, then .value of the formatter ref
   if (!formatter || typeof formatter.format !== 'function') {
-     console.error("monthYearFormatter.value is not available or its format method is not a function");
-    return "Invalid Month";
+    // console.error("Computed monthYearFormatter is not available or its format method is not a function. Locale:", locale.value);
+    const fallbackLocale = typeof locale.value === 'string' && locale.value ? locale.value : 'en-US';
+    const fallbackOptions = { month: 'long', year: 'numeric' } as Intl.DateTimeFormatOptions;
+    return toDate(dateValue).toLocaleDateString(fallbackLocale, fallbackOptions);
   }
   return formatter.format(toDate(dateValue));
 }
