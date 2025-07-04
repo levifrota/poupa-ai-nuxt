@@ -59,42 +59,42 @@ const stringToCalendarDate = (dateString: string | null): CalendarDate | null =>
 const startFromUrl = stringToCalendarDate(route.query.start as string | null)
 const endFromUrl = stringToCalendarDate(route.query.end as string | null)
 
+const initialStartDate = startFromUrl || new CalendarDate(currentYear, currentMonth + 1, 1);
+const initialEndDate = endFromUrl || new CalendarDate(currentYear, currentMonth + 1, new Date(currentYear, currentMonth + 1, 0).getDate());
+
 const value = ref<DateRange>({
-  start: startFromUrl || new CalendarDate(currentYear, currentMonth + 1, 1),
-  end: endFromUrl || new CalendarDate(currentYear, currentMonth + 1, new Date(currentYear, currentMonth + 1, 0).getDate()),
+  start: initialStartDate,
+  end: initialEndDate,
 })
 
-// --- Reactive Date Formatters ---
 const getFormatter = (options: Intl.DateTimeFormatOptions): Ref<DateFormatter | null> => {
   return computed(() => {
     if (typeof locale.value === 'string' && locale.value) {
       try {
-        // useDateFormatter itself returns a Ref<DateFormatter>, so we return that ref.
         return useDateFormatter(locale.value, options);
       } catch (e) {
         console.error(`Error creating DateFormatter with locale '${locale.value}':`, e);
-        return ref(null); // Return a ref containing null if creation fails
+        return ref(null);
       }
     }
-    return ref(null); // Return a ref containing null if locale is not ready
+    return ref(null);
   });
 };
 
 const monthYearFormatterRef = getFormatter({ month: 'long', year: 'numeric' });
 const dateRangeDisplayFormatterRef = getFormatter({ day: '2-digit', month: '2-digit', year: 'numeric' });
-// --- End Reactive Date Formatters ---
 
 const calendarId = `calendar-${Math.random().toString(36).substring(2, 9)}`
 const labelId = `calendar-label-${Math.random().toString(36).substring(2, 9)}`
 const descriptionId = `calendar-description-${Math.random().toString(36).substring(2, 9)}`
 
-const placeholder = ref<DateValue>(value.value.start)
-const secondMonthPlaceholder = ref<DateValue>(value.value.end)
+const placeholder = ref<DateValue>(initialStartDate) // Initialize with a valid CalendarDate
+const secondMonthPlaceholder = ref<DateValue>(initialEndDate.add({ months: initialStartDate.month === initialEndDate.month ? 1 : 0 })) // Ensure second month is different if start/end are same month
 
 const firstMonth = ref<Grid<DateValue>>(
   createMonth({
     dateObj: placeholder.value,
-    locale: locale.value,
+    locale: locale.value || 'en-US', // Provide a fallback locale during initial creation
     fixedWeeks: true,
     weekStartsOn: 0,
   }),
@@ -102,7 +102,7 @@ const firstMonth = ref<Grid<DateValue>>(
 const secondMonth = ref<Grid<DateValue>>(
   createMonth({
     dateObj: secondMonthPlaceholder.value,
-    locale: locale.value,
+    locale: locale.value || 'en-US', // Provide a fallback locale
     fixedWeeks: true,
     weekStartsOn: 0,
   }),
@@ -121,42 +121,49 @@ function updateMonth(reference: 'first' | 'second', months: number) {
 
 watch(locale, (newLocale) => {
   if (typeof newLocale === 'string' && newLocale) {
-    firstMonth.value = createMonth({
-      dateObj: placeholder.value,
-      locale: newLocale,
-      fixedWeeks: true,
-      weekStartsOn: 0,
-    })
-    secondMonth.value = createMonth({
-      dateObj: secondMonthPlaceholder.value,
-      locale: newLocale,
-      fixedWeeks: true,
-      weekStartsOn: 0,
-    })
+    // Ensure placeholders are valid before creating months
+    if (placeholder.value && secondMonthPlaceholder.value) {
+      firstMonth.value = createMonth({
+        dateObj: placeholder.value,
+        locale: newLocale,
+        fixedWeeks: true,
+        weekStartsOn: 0,
+      })
+      secondMonth.value = createMonth({
+        dateObj: secondMonthPlaceholder.value,
+        locale: newLocale,
+        fixedWeeks: true,
+        weekStartsOn: 0,
+      })
+    }
   }
-})
+}, { immediate: true }) // immediate might help if locale is ready from parent
 
 watch(placeholder, (_placeholder) => {
-  firstMonth.value = createMonth({
-    dateObj: _placeholder,
-    weekStartsOn: 0,
-    fixedWeeks: false,
-    locale: locale.value,
-  })
-  if (isEqualMonth(secondMonthPlaceholder.value, _placeholder)) {
-    secondMonthPlaceholder.value = secondMonthPlaceholder.value.add({ months: 1 })
+  if (_placeholder && typeof locale.value === 'string' && locale.value) {
+    firstMonth.value = createMonth({
+      dateObj: _placeholder,
+      weekStartsOn: 0,
+      fixedWeeks: false,
+      locale: locale.value,
+    })
+    if (secondMonthPlaceholder.value && isEqualMonth(secondMonthPlaceholder.value, _placeholder)) {
+      secondMonthPlaceholder.value = secondMonthPlaceholder.value.add({ months: 1 })
+    }
   }
 })
 
 watch(secondMonthPlaceholder, (_secondMonthPlaceholder) => {
-  secondMonth.value = createMonth({
-    dateObj: _secondMonthPlaceholder,
-    weekStartsOn: 0,
-    fixedWeeks: false,
-    locale: locale.value,
-  })
-  if (isEqualMonth(_secondMonthPlaceholder, placeholder.value))
-    placeholder.value = placeholder.value.subtract({ months: 1 })
+ if (_secondMonthPlaceholder && typeof locale.value === 'string' && locale.value) {
+    secondMonth.value = createMonth({
+      dateObj: _secondMonthPlaceholder,
+      weekStartsOn: 0,
+      fixedWeeks: false,
+      locale: locale.value,
+    })
+    if (placeholder.value && isEqualMonth(_secondMonthPlaceholder, placeholder.value))
+      placeholder.value = placeholder.value.subtract({ months: 1 })
+  }
 })
 
 async function fetchTransactions() {
@@ -204,6 +211,14 @@ const updateUrlParams = (dateRange: DateRange) => {
 
 watch(() => value.value, (newValue) => {
   if (newValue.start && newValue.end) {
+    // Update placeholders when value changes, ensuring they are valid CalendarDate objects
+    placeholder.value = newValue.start;
+    // Ensure secondMonthPlaceholder is at least one month after placeholder if they are the same month
+    if (isEqualMonth(newValue.start, newValue.end)) {
+        secondMonthPlaceholder.value = newValue.end.add({ months: 1 });
+    } else {
+        secondMonthPlaceholder.value = newValue.end;
+    }
     emit('update:dateRange', newValue)
     updateUrlParams(newValue)
     fetchTransactions()
@@ -216,42 +231,52 @@ onMounted(() => {
     const endDate = stringToCalendarDate(route.query.end as string)
     if (startDate && endDate) {
       value.value = { start: startDate, end: endDate }
+       // Also update placeholders here
+      placeholder.value = startDate;
+      if (isEqualMonth(startDate, endDate)) {
+        secondMonthPlaceholder.value = endDate.add({ months: 1 });
+      } else {
+        secondMonthPlaceholder.value = endDate;
+      }
     }
   }
-  fetchTransactions()
+  // Initial fetch is triggered by watch on value.value if it's valid
+  if (value.value.start && value.value.end) {
+    fetchTransactions()
+  }
 })
 
 const formattedDateRange = computed(() => {
   if (!value.value.start) return t('select_date_placeholder');
-
-  const formatter = dateRangeDisplayFormatterRef.value?.value; // Access .value of the computed ref, then .value of the formatter ref
+  const formatter = dateRangeDisplayFormatterRef.value?.value;
+  const currentLocale = typeof locale.value === 'string' && locale.value ? locale.value : 'en-US';
+  const fallbackOptions = { day: '2-digit', month: '2-digit', year: 'numeric' } as Intl.DateTimeFormatOptions;
 
   if (!formatter || typeof formatter.format !== 'function') {
-    // console.error("Computed dateRangeDisplayFormatter is not available or its format method is not a function. Locale:", locale.value);
-    // Fallback using browser's default for the current or specified locale
-    const fallbackLocale = typeof locale.value === 'string' && locale.value ? locale.value : 'en-US';
-    const fallbackOptions = { day: '2-digit', month: '2-digit', year: 'numeric' } as Intl.DateTimeFormatOptions;
-    const startFormattedFallback = toDate(value.value.start).toLocaleDateString(fallbackLocale, fallbackOptions);
+    const startFormattedFallback = toDate(value.value.start).toLocaleDateString(currentLocale, fallbackOptions);
     if (!value.value.end) return startFormattedFallback;
-    const endFormattedFallback = toDate(value.value.end).toLocaleDateString(fallbackLocale, fallbackOptions);
+    const endFormattedFallback = toDate(value.value.end).toLocaleDateString(currentLocale, fallbackOptions);
     return `${startFormattedFallback} - ${endFormattedFallback}`;
   }
-
   const startFormatted = formatter.format(toDate(value.value.start));
   if (!value.value.end) return startFormatted;
   const endFormatted = formatter.format(toDate(value.value.end));
   return `${startFormatted} - ${endFormatted}`;
 });
 
-const formatMonthYearForHeader = (dateValue: DateValue) => {
-  const formatter = monthYearFormatterRef.value?.value; // Access .value of the computed ref, then .value of the formatter ref
-  if (!formatter || typeof formatter.format !== 'function') {
-    // console.error("Computed monthYearFormatter is not available or its format method is not a function. Locale:", locale.value);
-    const fallbackLocale = typeof locale.value === 'string' && locale.value ? locale.value : 'en-US';
-    const fallbackOptions = { month: 'long', year: 'numeric' } as Intl.DateTimeFormatOptions;
-    return toDate(dateValue).toLocaleDateString(fallbackLocale, fallbackOptions);
+const formatMonthYearForHeader = (dateObj: DateValue | undefined) => {
+  if (!dateObj) {
+    // console.warn("formatMonthYearForHeader called with undefined dateObj for a calendar header.");
+    return "..."; // Fallback for undefined dateObj
   }
-  return formatter.format(toDate(dateValue));
+  const formatter = monthYearFormatterRef.value?.value;
+  const currentLocale = typeof locale.value === 'string' && locale.value ? locale.value : 'en-US';
+  const fallbackOptions = { month: 'long', year: 'numeric' } as Intl.DateTimeFormatOptions;
+
+  if (!formatter || typeof formatter.format !== 'function') {
+    return toDate(dateObj).toLocaleDateString(currentLocale, fallbackOptions);
+  }
+  return formatter.format(toDate(dateObj));
 }
 
 </script>
@@ -281,7 +306,7 @@ const formatMonthYearForHeader = (dateValue: DateValue) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent class="w-auto p-0" role="dialog" aria-modal="true" :aria-label="t('date_range_picker_label')">
-        <RangeCalendarRoot v-slot="{ weekDays }" v-model="value" v-model:placeholder="placeholder" class="p-3">
+        <RangeCalendarRoot v-if="firstMonth.dateObj && secondMonth.dateObj" v-slot="{ weekDays }" v-model="value" v-model:placeholder="placeholder" class="p-3">
           <div class="flex flex-col gap-y-4 mt-4 sm:flex-row sm:gap-x-4 sm:gap-y-0">
             <div class="flex flex-col gap-4">
               <div class="flex items-center justify-between">
@@ -368,6 +393,7 @@ const formatMonthYearForHeader = (dateValue: DateValue) => {
             {{ formattedDateRange }}
           </div>
         </RangeCalendarRoot>
+        <div v-else class="p-4 text-center">{{ t('loading_calendar') }}</div> <!-- Fallback if month objects not ready -->
       </PopoverContent>
     </Popover>
   </div>

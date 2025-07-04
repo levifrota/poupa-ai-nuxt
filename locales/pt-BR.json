@@ -190,5 +190,6 @@
   "font_size_small": "Pequeno",
   "font_size_medium": "Médio",
   "font_size_large": "Grande",
-  "transactions_page_title": "Transações"
+  "transactions_page_title": "Transações",
+  "loading_calendar": "Carregando calendário..."
 }
