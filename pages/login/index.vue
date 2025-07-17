@@ -1,16 +1,19 @@
 <template>
   <div>
-    <form class="loginOptions" @submit.prevent="login">
+    <form class="loginOptions" @submit.prevent="login" role="form" aria-labelledby="login-heading">
+      <h1 id="login-heading" class="sr-only">Formulário de Login</h1>
       <div class="inputDiv">
-        <input v-model="email" type="email" class="bg-white input-placeholder text-black" placeholder="Email" >
-        <input v-model="password" type="password" class="bg-white input-placeholder text-black" placeholder="Senha" >
+        <label for="email" class="sr-only">Email</label>
+        <input v-model="email" id="email" type="email" class="bg-white input-placeholder text-black" placeholder="Email" aria-required="true" aria-label="Endereço de email">
+        <label for="password" class="sr-only">Senha</label>
+        <input v-model="password" id="password" type="password" class="bg-white input-placeholder text-black" placeholder="Senha" aria-required="true" aria-label="Senha">
       </div>
-      <button type="submit" class="buttonOptions">Entrar</button>
+      <button type="submit" class="buttonOptions" aria-label="Entrar na sua conta">Entrar</button>
     </form>
     
     <div class="loginOptions">
-      <button class="buttonGoogle" @click="googleAuth">Entrar com Google</button>
-      <button class="buttonOptions" @click="cadastrar">Cadastre-se</button>
+      <button class="buttonGoogle" @click="googleAuth" aria-label="Entrar com sua conta do Google">Entrar com Google</button>
+      <button class="buttonOptions" @click="cadastrar" aria-label="Ir para a página de cadastro">Cadastre-se</button>
     </div>
   </div>
 </template>

@@ -25,7 +25,7 @@ async function handleGenerateReportClick() {
 <template>
   <Dialog>
     <DialogTrigger as-child>
-      <Button>
+      <Button aria-label="Abrir diálogo de relatório de IA">
         Relatório IA
         <Icon name="lucide:bot" class="mr-2" />
       </Button>
@@ -46,7 +46,7 @@ async function handleGenerateReportClick() {
 
       <ScrollArea class="prose max-h-[450px]">
         <pre
-          aria-label="Relatório"
+          aria-label="Relatório gerado por IA"
           aria-description="report"
           class="h-60 max-h-[50%] sm:h-auto sm:max-h-none"
           v-html="report"
@@ -61,6 +61,7 @@ async function handleGenerateReportClick() {
           :disabled="loading"
           class="mb-3 mt-3 sm:m-0"
           @click="handleGenerateReportClick"
+          aria-label="Gerar novo relatório de IA"
         >
           <Icon v-if="loading" name="lucide:loading" class="animate-spin" />
           Gerar Relatório

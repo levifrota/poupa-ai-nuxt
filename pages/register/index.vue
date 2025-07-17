@@ -1,17 +1,17 @@
 <template>
   <div class="main">
-      <form class="divInputs" @submit.prevent="register">
-        <h1>Cadastro</h1>
-        <label>Nome:</label>
-        <input type="name" v-model="name" placeholder="Insira seu nome">
-        <label>Email:</label>
-        <input type="email" v-model="email" placeholder="Insira seu email">
-        <label>Senha:</label>
-        <input type="password" v-model="password" placeholder="Insira sua senha">
+      <form class="divInputs" @submit.prevent="register" role="form" aria-labelledby="register-heading">
+        <h1 id="register-heading">Cadastro</h1>
+        <label for="name">Nome:</label>
+        <input id="name" type="name" v-model="name" placeholder="Insira seu nome" aria-required="true" aria-label="Nome completo">
+        <label for="email">Email:</label>
+        <input id="email" type="email" v-model="email" placeholder="Insira seu email" aria-required="true" aria-label="Endereço de email">
+        <label for="password">Senha:</label>
+        <input id="password" type="password" v-model="password" placeholder="Insira sua senha" aria-required="true" aria-label="Senha">
       </form>
       <div class="divButtonOptions">
-        <button @click="submit">Confirmar</button>
-        <button @click="onBackButton">Retornar para o login</button>
+        <button @click="register" aria-label="Confirmar cadastro">Confirmar</button>
+        <button @click="onBackButton" aria-label="Retornar para a página de login">Retornar para o login</button>
       </div>
     </div>
 </template>

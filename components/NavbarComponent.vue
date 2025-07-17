@@ -36,14 +36,14 @@ const linkClasses = (href: string) => {
         alt="Poupa Aí"
       />
       <div class="hidden gap-6 md:flex">
-        <NuxtLink to="/" :class="linkClasses('/')"> Painel </NuxtLink>
-        <NuxtLink to="/transactions" :class="linkClasses('/transactions')">
+        <NuxtLink to="/" :class="linkClasses('/')" aria-label="Navegar para o Painel"> Painel </NuxtLink>
+        <NuxtLink to="/transactions" :class="linkClasses('/transactions')" aria-label="Navegar para Transações">
           Transações
         </NuxtLink>
-        <NuxtLink to="/subscription" :class="linkClasses('/subscription')">
+        <NuxtLink to="/subscription" :class="linkClasses('/subscription')" aria-label="Navegar para Assinatura">
           Assinatura
         </NuxtLink>
-        <NuxtLink to="/settings" :class="linkClasses('/settings')">
+        <NuxtLink to="/settings" :class="linkClasses('/settings')" aria-label="Navegar para Configurações">
           Configurações
         </NuxtLink>
       </div>
@@ -51,7 +51,7 @@ const linkClasses = (href: string) => {
     <div class="hidden md:block">
       <div class="text-primary">
         <Select>
-          <SelectTrigger class="w-full">
+          <SelectTrigger class="w-full" aria-label="Menu do usuário">
             <Icon name="lucide:user" />
           </SelectTrigger>
           <SelectContent>

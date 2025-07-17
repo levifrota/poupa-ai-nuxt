@@ -61,7 +61,7 @@ const totalValue = computed(() => props.data.reduce((prev, curr) => {
 </script>
 
 <template>
-  <div :class="cn('w-full h-48 flex flex-col items-end', $attrs.class ?? '')">
+  <div :class="cn('w-full h-48 flex flex-col items-end', $attrs.class ?? '')" role="img" :aria-label="$attrs['aria-label']">
     <VisSingleContainer
       :style="{ height: isMounted ? '100%' : 'auto' }"
       :margin="{ left: 20, right: 20 }"
@@ -97,6 +97,7 @@ const totalValue = computed(() => props.data.reduce((prev, curr) => {
             },
           },
         }"
+        :aria-label="`Gráfico de pizza com ${data.length} seções`"
       />
 
       <slot />

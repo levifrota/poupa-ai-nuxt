@@ -285,6 +285,16 @@ const formattedDateRange = computed(() => {
 
   return `${startFormatted} - ${endFormatted}`
 })
+
+const getDayAriaLabel = (date: DateValue) => {
+  const jsDate = toDate(date);
+  const formattedDate = new Intl.DateTimeFormat('pt-BR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(jsDate);
+  return `Selecionar data ${formattedDate}`;
+};
 </script>
 
 <template>
@@ -400,7 +410,7 @@ const formattedDateRange = computed(() => {
                       <RangeCalendarCellTrigger
                         :day="weekDate"
                         :month="firstMonth.value"
-                        aria-label="Selecionar data"
+                        :aria-label="getDayAriaLabel(weekDate)"
                       />
                     </RangeCalendarCell>
                   </RangeCalendarGridRow>
@@ -471,7 +481,7 @@ const formattedDateRange = computed(() => {
                       <RangeCalendarCellTrigger
                         :day="weekDate"
                         :month="secondMonth.value"
-                        aria-label="Selecionar data"
+                        :aria-label="getDayAriaLabel(weekDate)"
                       />
                     </RangeCalendarCell>
                   </RangeCalendarGridRow>

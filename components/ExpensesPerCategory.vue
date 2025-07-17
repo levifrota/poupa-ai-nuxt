@@ -4,25 +4,34 @@
       <CardTitle>Gastos por Categoria</CardTitle>
     </CardHeader>
 
-    <div v-if="isLoading" class="flex justify-center items-center h-40">
+    <div v-if="isLoading" class="flex justify-center items-center h-40" role="status" aria-live="polite">
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      <span class="sr-only">Carregando...</span>
     </div>
 
     <div
       v-else-if="expenses.length === 0"
       class="flex flex-col items-center justify-center h-40 text-gray-500 dark:text-gray-400"
+      role="status"
     >
-      <Icon name="lucide:bar-chart-3" class="w-12 h-12 mb-2" />
+      <Icon name="lucide:bar-chart-3" class="w-12 h-12 mb-2" aria-hidden="true" />
       <p>Nenhuma despesa registrada</p>
     </div>
 
-    <div v-else class="space-y-4">
-      <div v-for="expense in expenses" :key="expense.category" class="space-y-2">
+    <div v-else class="space-y-4" role="list">
+      <div
+        v-for="expense in expenses"
+        :key="expense.category"
+        class="space-y-2"
+        role="listitem"
+        :aria-label="`${expense.category}: ${formatCurrency(expense.amount)} (${expense.percentage}%)`"
+      >
         <div class="flex justify-between items-center">
           <div class="flex items-center gap-2">
             <div
               class="w-3 h-3 rounded-full"
               :style="{ backgroundColor: expense.color }"
+              aria-hidden="true"
             />
             <span class="text-sm font-medium dark:text-white">{{
               expense.category
@@ -38,7 +47,14 @@
           </div>
         </div>
 
-        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+        <div
+          class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2"
+          role="progressbar"
+          :aria-valuenow="expense.percentage"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          :aria-label="`Progresso de gastos para ${expense.category}`"
+        >
           <div
             class="h-2 rounded-full"
             :style="{ width: `${expense.percentage}%`, backgroundColor: expense.color }"

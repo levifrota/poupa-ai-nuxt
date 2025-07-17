@@ -57,7 +57,9 @@ const table = useVueTable({
   <div>
     <!-- Input de Busca -->
     <div class="flex items-center py-4">
+      <label for="search-transactions" class="sr-only">Buscar transações</label>
       <Input
+        id="search-transactions"
         class="max-w-sm"
         placeholder="Buscar transações..."
         :model-value="globalFilter"
@@ -67,9 +69,10 @@ const table = useVueTable({
     <!-- Tabela -->
     <div class="border rounded-md">
       <Table>
+        <caption class="sr-only">Tabela de Transações</caption>
         <TableHeader>
           <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-            <TableHead v-for="header in headerGroup.headers" :key="header.id">
+            <TableHead v-for="header in headerGroup.headers" :key="header.id" scope="col">
               <FlexRender
                 v-if="!header.isPlaceholder"
                 :render="header.column.columnDef.header"
