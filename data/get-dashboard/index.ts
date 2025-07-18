@@ -45,7 +45,7 @@ export const getDashboard = async (month: string) => {
 
   try {
     const transactionsQuery = query(
-      collection(db, "transactions"),
+      collection(db(), "transactions"),
     );
 
     const querySnapshot = await getDocs(transactionsQuery);

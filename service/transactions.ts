@@ -12,7 +12,7 @@ export async function getAllTransactions(): Promise<Transaction[]> {
     return {
       id: doc.id,
       ...data,
-      date: data.date.toDate(),
+      date: data.date && data.date.toDate ? data.date.toDate() : new Date(data.date),
     } as Transaction;
   });
 
