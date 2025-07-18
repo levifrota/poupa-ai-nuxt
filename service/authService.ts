@@ -21,6 +21,18 @@ export const signUp = async (email: string, password: string) => {
   }
 };
 
+export const signInWithGoogle = async () => {
+  try {
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    return result.user;
+  } catch (error) {
+    console.error("Erro no login com Google: ", error);
+    throw error;
+  }
+};
+
 export const signIn = async (email: string, password: string) => {
   try {
     const auth = getAuth();

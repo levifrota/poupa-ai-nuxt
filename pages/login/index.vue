@@ -37,6 +37,25 @@
           </button>
         </form>
 
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <span class="w-full border-t" />
+          </div>
+          <div class="relative flex justify-center text-xs uppercase">
+            <span class="bg-background px-2 text-muted-foreground">
+              Ou continue com
+            </span>
+          </div>
+        </div>
+
+        <button
+          @click="googleAuth"
+          class="w-full rounded-md border border-input bg-background py-2 text-sm font-semibold hover:bg-accent"
+        >
+          <Icon name="logos:google-icon" class="mr-2" />
+          Google
+        </button>
+
         <p class="text-center text-sm">
           Não tem uma conta?
           <NuxtLink to="/register" class="font-semibold text-primary">
@@ -58,7 +77,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { signIn } from "~/service/authService";
+import { signIn, signInWithGoogle } from "~/service/authService";
 
 definePageMeta({
   layout: "auth",
@@ -88,6 +107,17 @@ const login = async () => {
     } else {
       alert("Erro ao fazer login: " + error.message);
     }
+  }
+};
+
+const googleAuth = async () => {
+  try {
+    const user = await signInWithGoogle();
+    alert(`Bem-vindo, ${user.displayName}!`);
+    router.push("/");
+  } catch (error) {
+    console.error("Erro no login com Google:", error);
+    alert("Erro ao fazer login com Google");
   }
 };
 </script>
