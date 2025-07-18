@@ -55,14 +55,16 @@ const formatCurrency = (amount) => {
     <CardHeader class="flex flex-row items-center justify-between">
       <CardTitle class="font-bold">Últimas Transações</CardTitle>
       <Button variant="outline" class="rounded-full" as-child>
-        <NuxtLink to="/transactions">Ver mais</NuxtLink>
+        <NuxtLink to="/transactions" aria-label="Ver todas as transações">Ver mais</NuxtLink>
       </Button>
     </CardHeader>
-    <CardContent class="space-y-6">
+    <CardContent class="space-y-6" role="list">
       <div
         v-for="transaction in transactions"
         :key="transaction.id"
         class="flex items-center justify-between"
+        role="listitem"
+        :aria-label="`${transaction.name}, ${new Date(transaction.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}, ${getAmountPrefix(transaction)}${formatCurrency(transaction.amount)}`"
       >
         <div class="flex items-center gap-3">
           <div class="rounded-lg bg-opacity-[3%] p-3">

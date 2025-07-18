@@ -1,37 +1,38 @@
 <template>
   <Menubar
     :class="['sticky bottom-0 flex w-full justify-around md:hidden p-3', background]"
+    aria-label="Navegação principal"
   >
     <MenubarMenu>
       <MenubarTrigger class="flex justify-center align-center">
-        <NuxtLink to="/" :class="linkClasses('/')">
+        <NuxtLink to="/" :class="linkClasses('/')" aria-label="Navegar para o Painel">
           <Icon name="lucide:layout-dashboard" :class="['h-16', iconClasses]" />
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
     <MenubarMenu>
       <MenubarTrigger>
-        <NuxtLink to="/transactions" :class="linkClasses('/transactions')">
+        <NuxtLink to="/transactions" :class="linkClasses('/transactions')" aria-label="Navegar para Transações">
           <Icon name="lucide:arrow-left-right" :class="iconClasses" />
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
     <MenubarMenu>
       <MenubarTrigger>
-        <NuxtLink to="/subscription" :class="linkClasses('/subscription')">
+        <NuxtLink to="/subscription" :class="linkClasses('/subscription')" aria-label="Navegar para Assinatura">
           <Icon name="lucide:calendar-sync" :class="iconClasses" />
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
     <MenubarMenu>
       <MenubarTrigger>
-        <NuxtLink to="/settings" :class="linkClasses('/settings')">
+        <NuxtLink to="/settings" :class="linkClasses('/settings')" aria-label="Navegar para Configurações">
           <Icon name="lucide:settings" :class="iconClasses" />
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
     <MenubarMenu>
-      <MenubarTrigger>
+      <MenubarTrigger aria-label="Menu do usuário">
         <!-- <UserButton /> -->
         <Icon name="lucide:user" :class="iconClasses" />
       </MenubarTrigger>

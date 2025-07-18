@@ -37,7 +37,7 @@ const legendItems = computed(() =>
 </script>
 
 <template>
-  <Card class="flex min-w-[210px] flex-col p-3">
+  <Card class="flex min-w-[210px] flex-col p-3" aria-label="Gráfico de pizza da distribuição de transações">
     <CardContent class="flex-1 overflow-hidden p-0 pb-0">
       <div class="flex flex-col items-center">
         <DonutChart
@@ -49,6 +49,7 @@ const legendItems = computed(() =>
           :show-legend="false"
           :colors="colors"
           type="donut"
+          aria-label="Gráfico de pizza mostrando a porcentagem de cada tipo de transação"
         />
         <div class="mt-4">
           <CustomLegend :items="legendItems" />
