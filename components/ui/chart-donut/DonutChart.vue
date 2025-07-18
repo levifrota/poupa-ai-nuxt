@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<Pick<BaseChartProps<T>, 'data' | 'colors'
   /**
    * Function to sort the segment
    */
-  sortFunction?: (a: any, b: any) => number | undefined
+  sortFunction?: (a: T, b: T) => number | undefined
   /**
    * Controls the formatting for the label.
    */
@@ -32,6 +32,8 @@ const props = withDefaults(defineProps<Pick<BaseChartProps<T>, 'data' | 'colors'
 }>(), {
   margin: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
   sortFunction: () => undefined,
+  valueFormatter: (tick: number) => `${tick}`,
+  customTooltip: undefined,
   type: 'donut',
   filterOpacity: 0.2,
   showTooltip: true,
@@ -61,7 +63,7 @@ const totalValue = computed(() => props.data.reduce((prev, curr) => {
 </script>
 
 <template>
-  <div :class="cn('w-full h-48 flex flex-col items-end', $attrs.class ?? '')">
+  <div :class="cn('w-full h-48 flex flex-col items-end', $attrs.class ?? '')" role="img" :aria-label="$attrs['aria-label']">
     <VisSingleContainer
       :style="{ height: isMounted ? '100%' : 'auto' }"
       :margin="{ left: 20, right: 20 }"
@@ -97,6 +99,7 @@ const totalValue = computed(() => props.data.reduce((prev, curr) => {
             },
           },
         }"
+        :aria-label="`Gráfico de pizza com ${data.length} seções`"
       />
 
       <slot />

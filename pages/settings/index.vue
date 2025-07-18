@@ -7,10 +7,10 @@
 
       <div class="space-y-4">
         <div>
-          <h3 class="text-sm font-medium mb-3">Temas Gerais</h3>
+          <h3 class="text-sm font-medium mb-3" id="theme-label">Temas Gerais</h3>
           <div class="w-full max-w-xs">
             <Select v-model="themeStore.theme" @update:model-value="themeStore.setTheme">
-              <SelectTrigger class="w-full">
+              <SelectTrigger class="w-full" aria-labelledby="theme-label">
                 <SelectValue placeholder="Selecione um tema" />
               </SelectTrigger>
               <SelectContent>
@@ -66,13 +66,13 @@
 
       <div class="space-y-6">
         <div>
-          <h3 class="text-sm font-medium mb-3">Fonte</h3>
+          <h3 class="text-sm font-medium mb-3" id="font-family-label">Fonte</h3>
           <div class="w-full max-w-xs">
             <Select
               v-model="fontStore.fontFamily"
               @update:model-value="fontStore.setFontFamily"
             >
-              <SelectTrigger class="w-full">
+              <SelectTrigger class="w-full" aria-labelledby="font-family-label">
                 <SelectValue placeholder="Selecione um tipo de fonte" />
               </SelectTrigger>
               <SelectContent>
@@ -94,13 +94,13 @@
         </div>
 
         <div>
-          <h3 class="text-sm font-medium mb-3">Tamanho da Fonte</h3>
+          <h3 class="text-sm font-medium mb-3" id="font-size-label">Tamanho da Fonte</h3>
           <div class="w-full max-w-xs">
             <Select
               v-model="fontStore.fontSize"
               @update:model-value="fontStore.setFontSize"
             >
-              <SelectTrigger class="w-full">
+              <SelectTrigger class="w-full" aria-labelledby="font-size-label">
                 <SelectValue placeholder="Selecione um tamanho de fonte" />
               </SelectTrigger>
               <SelectContent>

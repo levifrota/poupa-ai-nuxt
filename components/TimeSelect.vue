@@ -47,7 +47,6 @@ const route = useRoute()
 const router = useRouter()
 
 // Referência local para facilitar o acesso aos dados da store
-const transactions = computed(() => transactionsStore.transactions)
 const isLoading = computed(() => transactionsStore.isLoading)
 const error = computed(() => transactionsStore.error)
 
@@ -121,7 +120,7 @@ function updateMonth(reference: 'first' | 'second', months: number) {
 }
 
 // Garantir que o locale seja aplicado em todos os componentes do calendário
-watch(locale, (newLocale: any) => {
+watch(locale, (newLocale: string) => {
   // Atualizar o formatter não é necessário aqui, pois ele já está vinculado ao locale
   firstMonth.value = createMonth({
     dateObj: placeholder.value,
@@ -137,7 +136,7 @@ watch(locale, (newLocale: any) => {
   })
 })
 
-watch(placeholder, (_placeholder: any) => {
+watch(placeholder, (_placeholder: DateValue) => {
   firstMonth.value = createMonth({
     dateObj: _placeholder,
     weekStartsOn: 0,
@@ -151,7 +150,7 @@ watch(placeholder, (_placeholder: any) => {
   }
 })
 
-watch(secondMonthPlaceholder, (_secondMonthPlaceholder: any) => {
+watch(secondMonthPlaceholder, (_secondMonthPlaceholder: DateValue) => {
   secondMonth.value = createMonth({
     dateObj: _secondMonthPlaceholder,
     weekStartsOn: 0,
@@ -183,9 +182,8 @@ async function fetchTransactions() {
     // Adicionar um dia ao endDate para incluir o último dia na busca
     endDate.setDate(endDate.getDate() + 1)
 
-    // Criar a query para buscar transações no intervalo
     const transactionsQuery = query(
-      collection(db, 'users', userId, 'transactions'),
+      collection(db(), 'users', userId, 'transactions'),
       where('date', '>=', startDate),
       where('date', '<', endDate),
       orderBy('date', 'desc')
@@ -194,7 +192,7 @@ async function fetchTransactions() {
     const querySnapshot = await getDocs(transactionsQuery)
 
     // Mapear os documentos para objetos Transaction
-    const fetchedTransactions = querySnapshot.docs.map((doc: { data: () => any; id: any }) => {
+    const fetchedTransactions = querySnapshot.docs.map((doc) => {
       const data = doc.data()
       return {
         id: doc.id,
@@ -202,6 +200,9 @@ async function fetchTransactions() {
         date: data.date?.toDate() || new Date(),
       } as Transaction
     })
+
+    console.log('fetchedTransactions', fetchedTransactions);
+
 
     // Atualizar a store com as transações filtradas
     transactionsStore.setTransactions(fetchedTransactions)
@@ -234,7 +235,7 @@ const updateUrlParams = (dateRange: DateRange) => {
 }
 
 // Observar mudanças no intervalo de datas
-watch(() => value.value, (newValue: { start: any; end: any }) => {
+watch(() => value.value, (newValue) => {
   if (newValue.start && newValue.end) {
     // Emitir evento de atualização do intervalo de datas
     emit('update:dateRange', newValue)
@@ -283,6 +284,16 @@ const formattedDateRange = computed(() => {
 
   return `${startFormatted} - ${endFormatted}`
 })
+
+const getDayAriaLabel = (date: DateValue) => {
+  const jsDate = toDate(date);
+  const formattedDate = new Intl.DateTimeFormat('pt-BR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(jsDate);
+  return `Selecionar data ${formattedDate}`;
+};
 </script>
 
 <template>
@@ -398,7 +409,7 @@ const formattedDateRange = computed(() => {
                       <RangeCalendarCellTrigger
                         :day="weekDate"
                         :month="firstMonth.value"
-                        aria-label="Selecionar data"
+                        :aria-label="getDayAriaLabel(weekDate)"
                       />
                     </RangeCalendarCell>
                   </RangeCalendarGridRow>
@@ -469,7 +480,7 @@ const formattedDateRange = computed(() => {
                       <RangeCalendarCellTrigger
                         :day="weekDate"
                         :month="secondMonth.value"
-                        aria-label="Selecionar data"
+                        :aria-label="getDayAriaLabel(weekDate)"
                       />
                     </RangeCalendarCell>
                   </RangeCalendarGridRow>

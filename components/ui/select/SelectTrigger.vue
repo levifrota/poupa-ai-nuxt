@@ -7,7 +7,7 @@ import { SelectIcon, SelectTrigger, type SelectTriggerProps, useForwardProps } f
 
 const props = withDefaults(
   defineProps<SelectTriggerProps & { class?: HTMLAttributes['class'], size?: 'sm' | 'default' }>(),
-  { size: 'default' },
+  { size: 'default', class: '' },
 )
 
 const delegatedProps = reactiveOmit(props, 'class', 'size')
