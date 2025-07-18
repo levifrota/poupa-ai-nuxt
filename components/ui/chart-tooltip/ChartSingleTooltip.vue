@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { BulletLegendItemInterface } from '@unovis/ts'
-import { omit } from '@unovis/ts'
 import { VisTooltip } from '@unovis/vue'
 import { type Component, createApp } from 'vue'
 import { ChartTooltip } from '.'
@@ -24,8 +23,8 @@ function template(d: object, i: number, elements: (HTMLElement | SVGElement)[]) 
     else {
       const componentDiv = document.createElement('div')
       const TooltipComponent = props.customTooltip ?? ChartTooltip
-      createApp(TooltipComponent, { title: (d as any).data?.type, data: function() {
-        return d.data.value;
+      createApp(TooltipComponent, { title: (d as { data: { type: string } }).data?.type, data: function() {
+        return (d as { data: { value: number } }).data.value;
       } }).mount(componentDiv)
       wm.set(d, componentDiv.innerHTML)
       return componentDiv.innerHTML

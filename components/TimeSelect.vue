@@ -47,7 +47,6 @@ const route = useRoute()
 const router = useRouter()
 
 // Referência local para facilitar o acesso aos dados da store
-const transactions = computed(() => transactionsStore.transactions)
 const isLoading = computed(() => transactionsStore.isLoading)
 const error = computed(() => transactionsStore.error)
 
@@ -121,7 +120,7 @@ function updateMonth(reference: 'first' | 'second', months: number) {
 }
 
 // Garantir que o locale seja aplicado em todos os componentes do calendário
-watch(locale, (newLocale: any) => {
+watch(locale, (newLocale: string) => {
   // Atualizar o formatter não é necessário aqui, pois ele já está vinculado ao locale
   firstMonth.value = createMonth({
     dateObj: placeholder.value,
@@ -137,7 +136,7 @@ watch(locale, (newLocale: any) => {
   })
 })
 
-watch(placeholder, (_placeholder: any) => {
+watch(placeholder, (_placeholder: DateValue) => {
   firstMonth.value = createMonth({
     dateObj: _placeholder,
     weekStartsOn: 0,
@@ -151,7 +150,7 @@ watch(placeholder, (_placeholder: any) => {
   }
 })
 
-watch(secondMonthPlaceholder, (_secondMonthPlaceholder: any) => {
+watch(secondMonthPlaceholder, (_secondMonthPlaceholder: DateValue) => {
   secondMonth.value = createMonth({
     dateObj: _secondMonthPlaceholder,
     weekStartsOn: 0,
@@ -193,7 +192,7 @@ async function fetchTransactions() {
     const querySnapshot = await getDocs(transactionsQuery)
 
     // Mapear os documentos para objetos Transaction
-    const fetchedTransactions = querySnapshot.docs.map((doc: { data: () => any; id: any }) => {
+    const fetchedTransactions = querySnapshot.docs.map((doc) => {
       const data = doc.data()
       return {
         id: doc.id,
@@ -236,7 +235,7 @@ const updateUrlParams = (dateRange: DateRange) => {
 }
 
 // Observar mudanças no intervalo de datas
-watch(() => value.value, (newValue: { start: any; end: any }) => {
+watch(() => value.value, (newValue) => {
   if (newValue.start && newValue.end) {
     // Emitir evento de atualização do intervalo de datas
     emit('update:dateRange', newValue)

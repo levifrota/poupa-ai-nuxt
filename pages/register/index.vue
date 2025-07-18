@@ -3,11 +3,11 @@
       <form class="divInputs" @submit.prevent="register">
         <h1>Cadastro</h1>
         <label>Nome:</label>
-        <input type="name" v-model="name" placeholder="Insira seu nome">
+        <input v-model="name" type="name" placeholder="Insira seu nome">
         <label>Email:</label>
-        <input type="email" v-model="email" placeholder="Insira seu email">
+        <input v-model="email" type="email" placeholder="Insira seu email">
         <label>Senha:</label>
-        <input type="password" v-model="password" placeholder="Insira sua senha">
+        <input v-model="password" type="password" placeholder="Insira sua senha">
       </form>
       <div class="divButtonOptions">
         <button @click="submit">Confirmar</button>

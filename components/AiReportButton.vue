@@ -45,6 +45,7 @@ async function handleGenerateReportClick() {
       </DialogHeader>
 
       <ScrollArea class="prose max-h-[450px]">
+        <!-- eslint-disable-next-line vue/no-v-html -->
         <pre
           aria-label="Relatório"
           aria-description="report"

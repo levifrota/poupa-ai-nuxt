@@ -9,6 +9,7 @@ const props = withDefaults(defineProps<{
   colspan?: number
 }>(), {
   colspan: 1,
+  class: '',
 })
 
 const delegatedProps = computed(() => {

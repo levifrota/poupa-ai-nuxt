@@ -6,6 +6,7 @@ import { computed, type HTMLAttributes } from 'vue'
 
 const props = withDefaults(defineProps<RangeCalendarCellTriggerProps & { class?: HTMLAttributes['class'] }>(), {
   as: 'button',
+  class: '',
 })
 
 const delegatedProps = computed(() => {

@@ -1,10 +1,8 @@
 import { db } from "@/lib/firebase";
 import {
-  Timestamp,
   collection,
   getDocs,
   query,
-  where,
 } from "firebase/firestore";
 import type {
   TransactionCategory,
