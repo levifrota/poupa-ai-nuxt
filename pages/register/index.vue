@@ -47,16 +47,14 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useFirebaseApp } from "vuefire";
-import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { signUp } from "~/service/authService";
+import { updateProfile } from "firebase/auth";
 
 const name = ref("");
 const email = ref("");
 const password = ref("");
 
 const router = useRouter();
-const app = useFirebaseApp();
-const auth = getAuth(app);
 
 const register = async () => {
   if (!email.value || !password.value || !name.value) {
@@ -64,8 +62,7 @@ const register = async () => {
     return;
   }
   try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
+    const userCredential = await signUp(
       email.value,
       password.value
     );

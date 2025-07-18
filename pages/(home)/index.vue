@@ -29,6 +29,9 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: 'auth'
+})
 import TimeSelect from "@/components/TimeSelect.vue";
 
 // const month = 3; // Março

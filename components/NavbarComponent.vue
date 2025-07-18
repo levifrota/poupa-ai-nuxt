@@ -1,11 +1,24 @@
 <script setup lang="ts">
 import { Icon } from "#components";
+import { logOut } from '~/service/authService';
+import { useRouter } from 'vue-router';
 
 const themeStore = useThemeStore();
 const route = useRoute();
+const router = useRouter();
 
 const linkClasses = (href: string) => {
   return route.path === href ? "font-bold text-primary" : "text-muted-foreground";
+};
+
+const handleLogout = async () => {
+  try {
+    await logOut();
+    router.push('/login');
+  } catch (error) {
+    console.error('Erro ao sair:', error);
+    alert('Erro ao sair');
+  }
 };
 </script>
 
@@ -60,7 +73,7 @@ const linkClasses = (href: string) => {
               Perfil -->
               <UserButton />
             </SelectItem>
-            <SelectItem value="logout">
+            <SelectItem value="logout" @click="handleLogout">
               <Icon name="lucide:log-out" class="mr-2" />
               Sair
             </SelectItem>

@@ -6,6 +6,9 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: 'auth'
+})
 import { computed } from 'vue';
 import DataTable from '@/components/transactions/DataTable.vue';
 import { columns, type Transaction } from '@/components/transactions/columns';

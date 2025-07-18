@@ -126,6 +126,9 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: 'auth'
+})
 // import { Button } from "@/components/ui/button";
 // import {
 //   Select,
