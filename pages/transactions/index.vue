@@ -6,36 +6,27 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import DataTable from '@/components/transactions/DataTable.vue';
-import { columns, type Transaction } from '@/components/transactions/columns';
-import mockupData from '~/mockupData.json';
-import { TRANSACTION_CATEGORY_LABELS, type TransactionCategory } from '@/constants/transactions';
+import { columns } from '@/components/transactions/columns';
+import { getAllTransactions } from '@/service/transactions';
+import { TRANSACTION_CATEGORY_LABELS, type TransactionCategory, type Transaction } from '@/constants/transactions';
 
-// Interface para os dados brutos do mockupData.json
-interface MockupTransaction {
-  id: string;
-  name: string; // Mapeado para description
-  type: 'DEPOSIT' | 'EXPENSE' | 'INVESTMENT';
-  amount: number;
-  category: string;
-  paymentMethod: string;
-  date: Date; // ISO string date
-  createdAt: string;
-  updatedAt: string;
-  userId?: string;
-}
+const transactions = ref<Transaction[]>([]);
 
-const formattedTransactions = computed<Transaction[]>(() => {
-  if (!mockupData || !mockupData.totalTransactions) {
+onMounted(async () => {
+  transactions.value = await getAllTransactions();
+});
+
+const formattedTransactions = computed(() => {
+  if (!transactions.value) {
     return [];
   }
-  return (mockupData.totalTransactions as MockupTransaction[]).map((item: MockupTransaction) => ({
+  return transactions.value.map((item) => ({
     id: item.id,
-    date: item.date, // Passar a string ISO da data diretamente para columns.ts formatar
+    date: item.date,
     description: item.name,
     category: TRANSACTION_CATEGORY_LABELS[item.category as TransactionCategory] || item.category,
-    // Ajusta o valor para negativo se for uma despesa, conforme a lógica anterior e a esperada por columns.ts
     amount: item.type === 'EXPENSE' ? -Math.abs(item.amount) : Math.abs(item.amount),
   }));
 });
