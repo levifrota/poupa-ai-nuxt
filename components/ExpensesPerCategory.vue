@@ -4,7 +4,12 @@
       <CardTitle>Gastos por Categoria</CardTitle>
     </CardHeader>
 
-    <div v-if="isLoading" class="flex justify-center items-center h-40" role="status" aria-live="polite">
+    <div
+      v-if="isLoading"
+      class="flex justify-center items-center h-40"
+      role="status"
+      aria-live="polite"
+    >
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       <span class="sr-only">Carregando...</span>
     </div>
@@ -24,7 +29,9 @@
         :key="expense.category"
         class="space-y-2"
         role="listitem"
-        :aria-label="`${expense.category}: ${formatCurrency(expense.amount)} (${expense.percentage}%)`"
+        :aria-label="`${expense.category}: ${formatCurrency(expense.amount)} (${
+          expense.percentage
+        }%)`"
       >
         <div class="flex justify-between items-center">
           <div class="flex items-center gap-2">
@@ -67,7 +74,7 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, computed, watch } from "vue";
-import mockupData from "@/mockupData.json";
+import { getDashboard } from "@/data/get-dashboard";
 import { storeToRefs } from "pinia";
 
 // Interface para os dados de despesas por categoria
@@ -203,33 +210,39 @@ const formatCurrency = (value: number): string => {
   }).format(value);
 };
 
-// Função para carregar os dados do mockupData.json
-const loadExpensesData = () => {
-  // Usar os dados do mockupData.json
-  const expensesData = mockupData.totalExpensePerCategory;
+const month = ref("4"); // or get it from a store or prop
 
-  // Transformar os dados para o formato esperado pelo componente
-  const formattedExpenses: Expense[] = expensesData.map((item) => ({
-    category:
-      categoryTranslations[item.category as keyof typeof categoryTranslations] ||
-      item.category,
-    amount: item.totalAmount,
-    percentage: item.percentageOfTotal,
-    color:
-      currentColorPalette.value[
-        item.category as keyof typeof currentColorPalette.value
-      ] || "#C9CBCF",
-  }));
+// Função para carregar os dados
+const loadExpensesData = async () => {
+  isLoading.value = true;
+  try {
+    const data = await getDashboard(month.value);
+    const expensesData = data.totalExpensePerCategory;
 
-  expenses.value = formattedExpenses;
-  isLoading.value = false;
+    // Transformar os dados para o formato esperado pelo componente
+    const formattedExpenses: Expense[] = expensesData.map((item: any) => ({
+      category:
+        categoryTranslations[item.category as keyof typeof categoryTranslations] ||
+        item.category,
+      amount: item.totalAmount,
+      percentage: item.percentageOfTotal,
+      color:
+        currentColorPalette.value[
+          item.category as keyof typeof currentColorPalette.value
+        ] || "#C9CBCF",
+    }));
+
+    expenses.value = formattedExpenses;
+  } catch (error) {
+    console.error("Error loading expenses:", error);
+    expenses.value = [];
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 // Inicialização do componente
 onMounted(() => {
-  //   // Carregar os dados com um pequeno delay para simular carregamento
-  //   setTimeout(() => {
   loadExpensesData();
-  //   }, 1000);
 });
 </script>

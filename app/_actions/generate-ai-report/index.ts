@@ -1,12 +1,10 @@
 "use server";
 
-// import { db } from "@/lib/prisma";
-// import { auth, clerkClient } from "@clerk/nextjs/server";
 import type { GenerateAiReportSchema} from "./schema";
 import { generateAiReportSchema } from "./schema";
 import { generateText } from "ai";
 import { createOpenAI as createGroq } from "@ai-sdk/openai";
-import mockup from '@/mockupData.json';
+import { getDashboard } from '@/data/get-dashboard';
 
 const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
   const groq = createGroq({
@@ -32,7 +30,8 @@ const generateAiReport = async ({ month }: GenerateAiReportSchema) => {
   //   );
   // }
 
-  const transactions = mockup.totalTransactions;
+  const { totalTransactions: transactions } = await getDashboard(month);
+
 
   const content = `Estou gerenciando meu orçamento e quero que você gere um relatório com insights sobre as minhas finanças, com dicas e orientações de como melhorar minha vida financeira. As transações estão divididas por ponto e vírgula. A estrutura de cada uma é {DATA}-{VALOR}-{TIPO}-{CATEGORIA}. Traduza a categoria para português brasileiro. São elas:
   ${transactions
