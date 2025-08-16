@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Icon } from "#components";
-import { logOut } from '~/service/authService';
-import { useRouter } from 'vue-router';
+import { logOut } from "~/service/authService";
+import { useRouter } from "vue-router";
 
 const themeStore = useThemeStore();
 const route = useRoute();
@@ -14,10 +14,10 @@ const linkClasses = (href: string) => {
 const handleLogout = async () => {
   try {
     await logOut();
-    router.push('/login');
+    router.push("/login");
   } catch (error) {
-    console.error('Erro ao sair:', error);
-    alert('Erro ao sair');
+    console.error("Erro ao sair:", error);
+    alert("Erro ao sair");
   }
 };
 </script>
@@ -49,14 +49,24 @@ const handleLogout = async () => {
         alt="Poupa Aí"
       />
       <div class="hidden gap-6 md:flex">
-        <NuxtLink to="/" :class="linkClasses('/')" aria-label="Navegar para o Painel"> Painel </NuxtLink>
-        <NuxtLink to="/transactions" :class="linkClasses('/transactions')" aria-label="Navegar para Transações">
+        <NuxtLink to="/" :class="linkClasses('/')" aria-label="Navegar para o Painel">
+          Painel
+        </NuxtLink>
+        <NuxtLink
+          to="/transactions"
+          :class="linkClasses('/transactions')"
+          aria-label="Navegar para Transações"
+        >
           Transações
         </NuxtLink>
-        <NuxtLink to="/subscription" :class="linkClasses('/subscription')" aria-label="Navegar para Assinatura">
+        <!-- <NuxtLink to="/subscription" :class="linkClasses('/subscription')" aria-label="Navegar para Assinatura">
           Assinatura
-        </NuxtLink>
-        <NuxtLink to="/settings" :class="linkClasses('/settings')" aria-label="Navegar para Configurações">
+        </NuxtLink> -->
+        <NuxtLink
+          to="/settings"
+          :class="linkClasses('/settings')"
+          aria-label="Navegar para Configurações"
+        >
           Configurações
         </NuxtLink>
       </div>
