@@ -12,10 +12,10 @@ definePageMeta({
 import { computed } from 'vue';
 import DataTable from '@/components/transactions/DataTable.vue';
 import { columns, type Transaction } from '@/components/transactions/columns';
-import { useTransactionStore } from '~/stores/transactions';
+import { useTransactionsStore } from '~/stores/transactions';
 import { TRANSACTION_CATEGORY_LABELS, type TransactionCategory } from '@/constants/transactions';
 
-const transactionStore = useTransactionStore();
+const transactionStore = useTransactionsStore();
 
 const formattedTransactions = computed<Transaction[]>(() => {
   if (!transactionStore.transactions) {

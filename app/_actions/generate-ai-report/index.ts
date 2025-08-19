@@ -1,5 +1,3 @@
-"use server";
-
 import type { GenerateAiReportSchema} from "./schema";
 import { generateAiReportSchema } from "./schema";
 import { generateText } from "ai";

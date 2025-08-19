@@ -99,5 +99,10 @@ export default defineNuxtConfig({
       measurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID,
     },
   },
+  
+  nitro: {
+    prerender: false
+  },
+  ssr: false,
   pwa: {},
 });
