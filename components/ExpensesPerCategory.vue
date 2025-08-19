@@ -220,17 +220,19 @@ const loadExpensesData = async () => {
     const expensesData = data.totalExpensePerCategory;
 
     // Transformar os dados para o formato esperado pelo componente
-    const formattedExpenses: Expense[] = expensesData.map((item: any) => ({
-      category:
-        categoryTranslations[item.category as keyof typeof categoryTranslations] ||
-        item.category,
-      amount: item.totalAmount,
-      percentage: item.percentageOfTotal,
-      color:
-        currentColorPalette.value[
-          item.category as keyof typeof currentColorPalette.value
-        ] || "#C9CBCF",
-    }));
+    const formattedExpenses: Expense[] = expensesData.map(
+      (item: { category: string; totalAmount: number; percentageOfTotal: number }) => ({
+        category:
+          categoryTranslations[item.category as keyof typeof categoryTranslations] ||
+          item.category,
+        amount: item.totalAmount,
+        percentage: item.percentageOfTotal,
+        color:
+          currentColorPalette.value[
+            item.category as keyof typeof currentColorPalette.value
+          ] || "#C9CBCF",
+      })
+    );
 
     expenses.value = formattedExpenses;
   } catch (error) {
