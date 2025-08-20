@@ -61,8 +61,8 @@ async function handleGenerateReportClick() {
         <Button
           :disabled="loading"
           class="mb-3 mt-3 sm:m-0"
-          @click="handleGenerateReportClick"
           aria-label="Gerar novo relatório de IA"
+          @click="handleGenerateReportClick"
         >
           <Icon v-if="loading" name="lucide:loading" class="animate-spin" />
           Gerar Relatório

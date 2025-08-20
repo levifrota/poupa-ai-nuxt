@@ -7,7 +7,7 @@
 
       <div class="space-y-4">
         <div>
-          <h3 class="text-sm font-medium mb-3" id="theme-label">Temas Gerais</h3>
+          <h3 id="theme-label" class="text-sm font-medium mb-3">Temas Gerais</h3>
           <div class="w-full max-w-xs">
             <Select v-model="themeStore.theme" @update:model-value="themeStore.setTheme">
               <SelectTrigger class="w-full" aria-labelledby="theme-label">
@@ -66,7 +66,7 @@
 
       <div class="space-y-6">
         <div>
-          <h3 class="text-sm font-medium mb-3" id="font-family-label">Fonte</h3>
+          <h3 id="font-family-label" class="text-sm font-medium mb-3">Fonte</h3>
           <div class="w-full max-w-xs">
             <Select
               v-model="fontStore.fontFamily"
@@ -94,7 +94,7 @@
         </div>
 
         <div>
-          <h3 class="text-sm font-medium mb-3" id="font-size-label">Tamanho da Fonte</h3>
+          <h3 id="font-size-label" class="text-sm font-medium mb-3">Tamanho da Fonte</h3>
           <div class="w-full max-w-xs">
             <Select
               v-model="fontStore.fontSize"
@@ -126,6 +126,9 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: 'auth'
+})
 // import { Button } from "@/components/ui/button";
 // import {
 //   Select,

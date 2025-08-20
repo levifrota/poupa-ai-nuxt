@@ -4,6 +4,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 
 export const signUp = async (email: string, password: string) => {
@@ -17,6 +19,18 @@ export const signUp = async (email: string, password: string) => {
     return userCredential.user;
   } catch (error) {
     console.error("Erro no cadastro: ", error);
+    throw error;
+  }
+};
+
+export const signInWithGoogle = async () => {
+  try {
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    return result.user;
+  } catch (error) {
+    console.error("Erro no login com Google: ", error);
     throw error;
   }
 };

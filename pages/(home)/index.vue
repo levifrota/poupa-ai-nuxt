@@ -30,6 +30,9 @@
 
 <script setup lang="ts">
 import TimeSelect from "@/components/TimeSelect.vue";
+definePageMeta({
+  middleware: 'auth'
+})
 
 // const month = 3; // Março
 // const loading = ref(false);

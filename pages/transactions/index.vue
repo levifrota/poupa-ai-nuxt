@@ -9,33 +9,23 @@
 import { computed } from 'vue';
 import DataTable from '@/components/transactions/DataTable.vue';
 import { columns, type Transaction } from '@/components/transactions/columns';
-import mockupData from '~/mockupData.json';
+import { useTransactionsStore } from '~/stores/transactions';
 import { TRANSACTION_CATEGORY_LABELS, type TransactionCategory } from '@/constants/transactions';
+definePageMeta({
+  middleware: 'auth'
+})
 
-// Interface para os dados brutos do mockupData.json
-interface MockupTransaction {
-  id: string;
-  name: string; // Mapeado para description
-  type: 'DEPOSIT' | 'EXPENSE' | 'INVESTMENT';
-  amount: number;
-  category: string;
-  paymentMethod: string;
-  date: Date; // ISO string date
-  createdAt: string;
-  updatedAt: string;
-  userId?: string;
-}
+const transactionStore = useTransactionsStore();
 
 const formattedTransactions = computed<Transaction[]>(() => {
-  if (!mockupData || !mockupData.totalTransactions) {
+  if (!transactionStore.transactions) {
     return [];
   }
-  return (mockupData.totalTransactions as MockupTransaction[]).map((item: MockupTransaction) => ({
+  return transactionStore.transactions.map((item) => ({
     id: item.id,
-    date: item.date, // Passar a string ISO da data diretamente para columns.ts formatar
-    description: item.name,
+    date: item.date,
+    description: item.description,
     category: TRANSACTION_CATEGORY_LABELS[item.category as TransactionCategory] || item.category,
-    // Ajusta o valor para negativo se for uma despesa, conforme a lógica anterior e a esperada por columns.ts
     amount: item.type === 'EXPENSE' ? -Math.abs(item.amount) : Math.abs(item.amount),
   }));
 });
