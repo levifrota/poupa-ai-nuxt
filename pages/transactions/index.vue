@@ -1,36 +1,42 @@
-<template>
-  <div class="container mx-auto p-4">
-    <h1 class="mb-4 text-2xl font-bold">Transações</h1>
-    <DataTable :columns="columns" :data="formattedTransactions" />
-  </div>
-</template>
-
 <script setup lang="ts">
-import { computed } from 'vue';
-import DataTable from '@/components/transactions/DataTable.vue';
-import { columns, type Transaction } from '@/components/transactions/columns';
-import { useTransactionsStore } from '~/stores/transactions';
-import { TRANSACTION_CATEGORY_LABELS, type TransactionCategory } from '@/constants/transactions';
-definePageMeta({
-  middleware: 'auth'
-})
+import { ref } from 'vue'
+import { columns } from '~/components/transactions/columns'
+import UpsertTransactionDialog from '~/components/transactions/UpsertTransactionDialog.vue'
+import type { Transaction } from '~/types'
 
-const transactionStore = useTransactionsStore();
+const { transactions, getTransactions, deleteTransaction } = useTransactionsStore()
 
-const formattedTransactions = computed<Transaction[]>(() => {
-  if (!transactionStore.transactions) {
-    return [];
-  }
-  return transactionStore.transactions.map((item) => ({
-    id: item.id,
-    date: item.date,
-    description: item.description,
-    category: TRANSACTION_CATEGORY_LABELS[item.category as TransactionCategory] || item.category,
-    amount: item.type === 'EXPENSE' ? -Math.abs(item.amount) : Math.abs(item.amount),
-  }));
-});
+await getTransactions()
+
+const isDialogOpen = ref(false)
+const selectedTransaction = ref<Transaction | null>(null)
+
+function onDelete(id: string) {
+  deleteTransaction(id)
+}
+
+function onEdit(transaction: Transaction) {
+  selectedTransaction.value = transaction
+  isDialogOpen.value = true
+}
+
+function onAdd() {
+  selectedTransaction.value = null
+  isDialogOpen.value = true
+}
 </script>
 
-<style scoped>
-/* Estilos específicos para esta página podem ser adicionados aqui */
-</style>
+<template>
+  <div class="space-y-4">
+    <div class="flex justify-between">
+      <h1 class="text-2xl font-bold">
+        Transações
+      </h1>
+      <UButton @click="onAdd">
+        Adicionar transação
+      </UButton>
+    </div>
+    <TransactionsDataTable :columns="columns" :data="transactions" @delete="onDelete" @edit="onEdit" />
+    <UpsertTransactionDialog v-model="isDialogOpen" :transaction="selectedTransaction" />
+  </div>
+</template>

@@ -1,4 +1,5 @@
 <template>
+  <UpsertTransactionDialog v-model="isUpsertTransactionDialogOpen" :transaction="selectedTransaction" />
   <ScrollArea class="m-0 mt-0 flex flex-col sm:m-0 sm:overflow-hidden sm:p-6">
     <div class="m-3 flex flex-col justify-between sm:flex-row">
       <h1 class="self-center py-2 text-2xl font-bold sm:self-auto md:py-0">Painel</h1>
@@ -30,6 +31,11 @@
 
 <script setup lang="ts">
 import TimeSelect from "@/components/TimeSelect.vue";
+import UpsertTransactionDialog from '~/components/transactions/UpsertTransactionDialog.vue'
+import { useDialogs } from '~/composables/useDialogs'
+
+const { isUpsertTransactionDialogOpen, selectedTransaction } = useDialogs()
+
 definePageMeta({
   middleware: 'auth'
 })

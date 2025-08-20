@@ -1,7 +1,8 @@
 <script setup lang="ts">
 // import type { HTMLAttributes } from "vue";
 // import { Card, CardHeader, CardContent } from "@/components/ui/card";
-// import { Icon } from "#components";
+import { Icon } from "#components";
+import { useDialogs } from '~/composables/useDialogs'
 
 interface Props {
   title: string;
@@ -9,6 +10,8 @@ interface Props {
   icon: string;
 }
 const props = defineProps<Props>();
+
+const { openUpsertTransactionDialog } = useDialogs()
 </script>
 
 <template>
@@ -23,6 +26,9 @@ const props = defineProps<Props>();
         <p class="opacity-70">
           {{ props.title }}
         </p>
+        <UButton class="ml-auto" @click="openUpsertTransactionDialog()">
+          Adicionar
+        </UButton>
       </CardHeader>
       <CardContent class="flex-wrap p-6 sm:flex-row sm:pt-0">
         <p class="text-xl sm:text-4xl font-bold">
