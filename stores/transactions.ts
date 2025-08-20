@@ -74,6 +74,31 @@ export const useTransactionsStore = defineStore('transactions', () => {
       .slice(0, 10)
   })
 
+  // Adiciona uma nova transação
+  function addTransaction(transaction: Omit<Transaction, 'id' | 'createdAt' | 'updatedAt' | 'userId'>) {
+    const newTransaction: Transaction = {
+      ...transaction,
+      id: Math.random().toString(36).substring(7),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      userId: '1', // Mock user ID
+    }
+    transactions.value.push(newTransaction)
+  }
+
+  // Atualiza uma transação existente
+  function updateTransaction(updatedTransaction: Transaction) {
+    const index = transactions.value.findIndex(t => t.id === updatedTransaction.id)
+    if (index !== -1) {
+      transactions.value[index] = { ...updatedTransaction, updatedAt: new Date() }
+    }
+  }
+
+  // Remove uma transação
+  function deleteTransaction(transactionId: string) {
+    transactions.value = transactions.value.filter(t => t.id !== transactionId)
+  }
+
   return {
     transactions,
     isLoading,
@@ -86,6 +111,9 @@ export const useTransactionsStore = defineStore('transactions', () => {
     expensesTotal,
     investmentsTotal,
     typesPercentage,
-    lastTransactions
+    lastTransactions,
+    addTransaction,
+    updateTransaction,
+    deleteTransaction
   }
 })

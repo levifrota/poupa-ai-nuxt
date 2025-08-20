@@ -14,7 +14,7 @@ const props = defineProps<Props>();
 <template>
   <Card
     v-if="props.title === 'Saldo'"
-    class="flex w-[90%] flex-col self-center bg-white bg-opacity-5 sm:block sm:w-full"
+    class="relative flex w-[90%] flex-col self-center bg-white bg-opacity-5 sm:block sm:w-full"
     :aria-label="`${props.title}: ${props.value}`"
   >
     <div class="flex-1">
@@ -29,6 +29,9 @@ const props = defineProps<Props>();
           {{ props.value }}
         </p>
       </CardContent>
+    </div>
+    <div class="absolute inset-y-0 right-4 flex items-center">
+      <slot name="action" />
     </div>
   </Card>
   <Card v-else class="flex flex-col p-3" :aria-label="`${props.title}: ${props.value}`">
