@@ -9,6 +9,7 @@ import type {
   TransactionPaymentMethod,
   TransactionType,
 } from "@/constants/transactions";
+import auth from '~/middleware/auth.js';
 
 interface Transaction {
   id: string;
@@ -25,8 +26,8 @@ interface Transaction {
 }
 
 export const getDashboard = async (month: string) => {
-  // const user = auth.currentUser;
-  // console.log('user', user);
+  const user = auth.uid;
+  console.log('user', user);
   
   const userId = "user_2rSVhqngUjGL0zVLiBXfXixKAG3";
 

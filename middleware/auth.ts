@@ -7,6 +7,8 @@ const auth = getAuth();
 export default defineNuxtRouteMiddleware((to: RouteLocationNormalized, _from: RouteLocationNormalized) => {
   return new Promise((resolve) => {
     onAuthStateChanged(auth,(user) => {
+      console.log('user', user);
+
       if (!user && to.path !== '/login' && to.path !== '/register') {
         return navigateTo('/login');
       } else {
