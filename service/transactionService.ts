@@ -59,7 +59,7 @@ export const updateTransaction = async (
   transactionData: Partial<TransactionInput>
 ): Promise<void> => {
   try {
-    const updateData: any = {
+    const updateData: unknown = {
       ...transactionData,
       updatedAt: Timestamp.now(),
     };
