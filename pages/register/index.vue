@@ -90,6 +90,13 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { signUp, signInWithGoogle } from "~/service/authService";
 import { updateProfile } from "firebase/auth";
+import { useCurrentUser } from "vuefire";
+
+const router = useRouter();
+const user = useCurrentUser();
+if (user) {
+  router.push("/");
+}
 
 definePageMeta({
   layout: "auth",
@@ -98,8 +105,6 @@ definePageMeta({
 const name = ref("");
 const email = ref("");
 const password = ref("");
-
-const router = useRouter();
 
 const register = async () => {
   if (!email.value || !password.value || !name.value) {

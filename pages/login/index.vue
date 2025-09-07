@@ -77,21 +77,26 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useFirebaseAuth } from "vuefire";
+import { useFirebaseAuth, useCurrentUser } from "vuefire";
 import {
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
 
+const router = useRouter();
+const user = useCurrentUser();
+if (user) {
+  router.push("/");
+}
+
 definePageMeta({
   layout: "auth",
 });
 
+const auth = useFirebaseAuth();
 const email = ref("");
 const password = ref("");
-const router = useRouter();
-const auth = useFirebaseAuth(); // Get auth instance in component
 
 const login = async () => {
   try {
