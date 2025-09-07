@@ -1,4 +1,4 @@
-import { useFirebaseAuth, useCurrentUser } from 'vuefire'
+import { useFirebaseAuth } from 'vuefire'
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
