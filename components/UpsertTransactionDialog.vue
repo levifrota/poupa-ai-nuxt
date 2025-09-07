@@ -40,8 +40,11 @@ import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { watchEffect, ref } from "vue";
 import { useTransactionsStore } from "~/stores/transactions";
+import { addTransaction, updateTransaction } from "~/service/transactionService";
+import { useCurrentUser } from "vuefire";
 
 const transactionsStore = useTransactionsStore();
+const user = useCurrentUser();
 
 const props = defineProps<{
   isOpen: boolean;
@@ -107,35 +110,30 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     isSubmitting.value = true;
 
-    // TODO: Obter o userId do usuário autenticado
-    // Por enquanto, usando um ID fixo para testes
-    const userId = "user_2rSVhqngUjGL0zVLiBXfXixKAG3";
+    if (!user.value?.uid) {
+      console.error("Usuário não autenticado");
+      return;
+    }
+
+    const userId = user.value.uid;
 
     if (props.transactionId) {
-      // Atualizar transação existente
-      const updatedTransaction = {
-        ...values,
-        id: props.transactionId,
-        userId,
-        createdAt: new Date(), // Será mantido o valor original no Firebase
-        updatedAt: new Date(),
-      };
-
-      await transactionsStore.updateTransaction(updatedTransaction, userId);
+      // Update existing transaction
+      await updateTransaction(userId, props.transactionId, values);
+      console.log("Transação atualizada!");
     } else {
-      // Adicionar nova transação
-      await transactionsStore.addTransaction(values, userId);
+      // Add new transaction
+      const transactionId = await addTransaction(userId, values);
+      console.log("Transação adicionada com ID:", transactionId);
     }
 
     emits("submit", { ...values, id: props.transactionId });
     emits("update:isOpen", false);
     resetForm();
-
-    // Mostrar mensagem de sucesso (opcional)
-    console.log(props.transactionId ? "Transação atualizada!" : "Transação adicionada!");
   } catch (error) {
     console.error("Erro ao salvar transação:", error);
-    // Aqui você pode adicionar uma notificação de erro para o usuário
+    // You can add user notification here
+    alert("Erro ao salvar transação. Tente novamente.");
   } finally {
     isSubmitting.value = false;
   }

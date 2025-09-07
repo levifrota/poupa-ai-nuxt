@@ -9,7 +9,7 @@ import type {
   TransactionPaymentMethod,
   TransactionType,
 } from "@/constants/transactions";
-import auth from '~/middleware/auth.js';
+import { useCurrentUser } from 'vuefire';
 
 interface Transaction {
   id: string;
@@ -25,19 +25,16 @@ interface Transaction {
   [key: string]: string | number | Date | undefined;
 }
 
-export const getDashboard = async (month: string) => {
-  const user = auth.uid;
-  console.log('user', user);
-  
-  const userId = "user_2rSVhqngUjGL0zVLiBXfXixKAG3";
+export const getDashboard = async () => {
+  const user = useCurrentUser();
+
+  const userId = user.value?.uid;
 
   if (!userId) {
     throw new Error("Unauthorized");
   }
 
   // const year = 2025;
-  const m = parseInt(month);
-  console.log(m);
   // const nextMonth = m === 12 ? 1 : m + 1;
   // const nextYear = m === 12 ? year + 1 : year;
 
@@ -46,14 +43,15 @@ export const getDashboard = async (month: string) => {
 
   try {
     const transactionsQuery = query(
-      collection(db, "users", userId, "transactions"),
+      collection(db(), "users", userId, "transactions"),
     );
 
     const querySnapshot = await getDocs(transactionsQuery);
 
     const transactions: Transaction[] = querySnapshot.docs.map((doc) => {
       const data = doc.data();
-
+      console.log('Transaction data:', data);
+      
       return {
         id: doc.id,
         name: data.name,
@@ -67,6 +65,9 @@ export const getDashboard = async (month: string) => {
         userId: data.userId,
       };
     });
+
+    console.log("Fetched transactions:", transactions);
+    
 
     const depositsTotal = transactions
       .filter((t) => t.type === "DEPOSIT")
@@ -99,15 +100,23 @@ export const getDashboard = async (month: string) => {
     const expenseTransactions = transactions.filter(
       (t) => t.type === "EXPENSE",
     );
+
+    console.log("All transactions:", transactions);
+    console.log("Expense transactions:", expenseTransactions);
+    console.log("Expenses total:", expensesTotal);
+
     const categoryMap = new Map<string, number>();
 
     expenseTransactions.forEach((t) => {
       const category = t.category || "UNKNOWN";
+      console.log(`Processing expense: ${t.name}, category: ${category}, amount: ${t.amount}`);
       categoryMap.set(
         category,
         (categoryMap.get(category) || 0) + Number(t.amount || 0),
       );
     });
+
+    console.log("Category map:", Array.from(categoryMap.entries()));
 
     const totalExpensePerCategory = Array.from(categoryMap.entries()).map(
       ([category, totalAmount]) => ({
@@ -116,6 +125,8 @@ export const getDashboard = async (month: string) => {
         percentageOfTotal: calcPercentage(totalAmount, expensesTotal),
       }),
     );
+
+    console.log("Total expense per category:", totalExpensePerCategory);
 
     const lastTransactions = transactions
       .sort((a, b) => b.date.getTime() - a.date.getTime())

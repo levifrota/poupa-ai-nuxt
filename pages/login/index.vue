@@ -77,7 +77,12 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { signIn, signInWithGoogle } from "~/service/authService";
+import { useFirebaseAuth } from "vuefire";
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
 
 definePageMeta({
   layout: "auth",
@@ -86,6 +91,7 @@ definePageMeta({
 const email = ref("");
 const password = ref("");
 const router = useRouter();
+const auth = useFirebaseAuth(); // Get auth instance in component
 
 const login = async () => {
   try {
@@ -94,8 +100,17 @@ const login = async () => {
       return;
     }
 
-    const user = await signIn(email.value, password.value);
+    if (!auth) {
+      alert("Sistema de autenticação não está disponível. Tente novamente.");
+      return;
+    }
 
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email.value,
+      password.value
+    );
+    const user = userCredential.user;
     alert(`Bem-vindo(a), ${user.displayName || "usuário"}!`);
     router.push("/");
   } catch (error) {
@@ -112,12 +127,19 @@ const login = async () => {
 
 const googleAuth = async () => {
   try {
-    const user = await signInWithGoogle();
+    if (!auth) {
+      alert("Sistema de autenticação não está disponível. Tente novamente.");
+      return;
+    }
+
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
     alert(`Bem-vindo, ${user.displayName}!`);
     router.push("/");
   } catch (error) {
     console.error("Erro no login com Google:", error);
-    alert("Erro ao fazer login com Google");
+    alert("Erro ao fazer login com Google: " + error.message);
   }
 };
 </script>
