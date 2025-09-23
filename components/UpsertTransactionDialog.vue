@@ -145,7 +145,7 @@ const isUpdate = computed(() => !!props.transactionId);
 <template>
   <Dialog :open="props.isOpen" @update:open="(value) => emits('update:isOpen', value)">
     <slot />
-    <DialogContent class="h-5/6 w-[80%] pr-0 sm:w-full">
+    <DialogContent class="w-[80%] pr-0 sm:w-full">
       <ScrollArea class="m-0 h-full rounded-md pr-4">
         <DialogHeader>
           <DialogTitle> {{ isUpdate ? "Editar" : "Adicionar" }} Transação </DialogTitle>

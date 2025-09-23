@@ -34,13 +34,6 @@ export const getDashboard = async () => {
     throw new Error("Unauthorized");
   }
 
-  // const year = 2025;
-  // const nextMonth = m === 12 ? 1 : m + 1;
-  // const nextYear = m === 12 ? year + 1 : year;
-
-  // const startDate = Timestamp.fromDate(new Date(year, m - 1, 1));
-  // const endDate = Timestamp.fromDate(new Date(nextYear, nextMonth - 1, 1));
-
   try {
     const transactionsQuery = query(
       collection(db(), "users", userId, "transactions"),
@@ -50,7 +43,6 @@ export const getDashboard = async () => {
 
     const transactions: Transaction[] = querySnapshot.docs.map((doc) => {
       const data = doc.data();
-      console.log('Transaction data:', data);
       
       return {
         id: doc.id,
@@ -65,9 +57,6 @@ export const getDashboard = async () => {
         userId: data.userId,
       };
     });
-
-    console.log("Fetched transactions:", transactions);
-    
 
     const depositsTotal = transactions
       .filter((t) => t.type === "DEPOSIT")
@@ -101,22 +90,15 @@ export const getDashboard = async () => {
       (t) => t.type === "EXPENSE",
     );
 
-    console.log("All transactions:", transactions);
-    console.log("Expense transactions:", expenseTransactions);
-    console.log("Expenses total:", expensesTotal);
-
     const categoryMap = new Map<string, number>();
 
     expenseTransactions.forEach((t) => {
       const category = t.category || "UNKNOWN";
-      console.log(`Processing expense: ${t.name}, category: ${category}, amount: ${t.amount}`);
       categoryMap.set(
         category,
         (categoryMap.get(category) || 0) + Number(t.amount || 0),
       );
     });
-
-    console.log("Category map:", Array.from(categoryMap.entries()));
 
     const totalExpensePerCategory = Array.from(categoryMap.entries()).map(
       ([category, totalAmount]) => ({
@@ -125,8 +107,6 @@ export const getDashboard = async () => {
         percentageOfTotal: calcPercentage(totalAmount, expensesTotal),
       }),
     );
-
-    console.log("Total expense per category:", totalExpensePerCategory);
 
     const lastTransactions = transactions
       .sort((a, b) => b.date.getTime() - a.date.getTime())
