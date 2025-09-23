@@ -14,7 +14,14 @@
         </DialogTrigger>
       </UpsertTransactionDialog>
     </div>
-    <DataTable :columns="columns" :data="formattedTransactions" />
+    <div v-if="isLoading" class="flex justify-center items-center h-40">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      <span class="ml-2">Carregando transações...</span>
+    </div>
+    <div v-else-if="error" class="text-red-500 text-center p-4">
+      {{ error }}
+    </div>
+    <DataTable v-else :columns="columns" :data="formattedTransactions" />
   </div>
 </template>
 
@@ -22,16 +29,18 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue';
 import DataTable from '@/components/transactions/DataTable.vue';
 import UpsertTransactionDialog from '~/components/UpsertTransactionDialog.vue';
-import { Button } from '~/components/ui/button';
-import { DialogTrigger } from '~/components/ui/dialog';
-import { columns, type Transaction } from '@/components/transactions/columns';
-import { useTransactionsStore } from '~/stores/transactions';
-import { TRANSACTION_CATEGORY_LABELS, type TransactionCategory } from '@/constants/transactions';
-import { deleteTransaction } from '~/service/transactionService';
+import { Button } from '~/components/ui/button/index.js';
+import { DialogTrigger } from '~/components/ui/dialog/index.js';
+import { columns, type Transaction } from '~/components/transactions/columns.js';
+import { useTransactionsStore } from '~/stores/transactions.js';
+import { TRANSACTION_CATEGORY_LABELS, type TransactionCategory } from '~/constants/transactions.js';
+import { deleteTransaction, getTransactions } from '~/service/transactionService.js';
 import { useCurrentUser } from 'vuefire';
 
 const isUpsertTransactionDialogOpen = ref(false);
 const selectedTransaction = ref<Transaction | null>(null);
+const isLoading = ref(false);
+const error = ref<string | null>(null);
 
 definePageMeta({
   middleware: 'auth'
@@ -40,12 +49,33 @@ definePageMeta({
 const transactionStore = useTransactionsStore();
 const user = useCurrentUser();
 
+async function fetchTransactions() {
+  if (!user.value?.uid) {
+    error.value = "Usuário não autenticado";
+    return;
+  }
+
+
+  try {
+    isLoading.value = true;
+    error.value = null;
+    const transaction = await getTransactions(user.value.uid);
+    transactionStore.setTransactions(transaction);
+  } catch (err) {
+    console.error(err);
+    error.value = "Erro ao carregar transações";
+  } finally {
+    isLoading.value = false;
+  }
+}
+
 function handleSubmit(data) {
   if (data.id) {
     transactionStore.updateTransaction(data);
   } else {
     transactionStore.addTransaction(data);
   }
+  fetchTransactions();
 }
 
 function handleDialogClose(isOpen: boolean) {
@@ -87,6 +117,8 @@ async function handleDeleteTransaction(event: CustomEvent) {
 onMounted(() => {
   window.addEventListener('edit-transaction', handleEditTransaction);
   window.addEventListener('delete-transaction', handleDeleteTransaction);
+
+  fetchTransactions();
 });
 
 // Remover event listeners

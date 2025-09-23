@@ -7,25 +7,25 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from "~/components/ui/dialog";
-import { Button } from "~/components/ui/button";
-import { MoneyInput } from "~/components/ui/money-input";
-import { ScrollArea } from "~/components/ui/scroll-area";
+} from "~/components/ui/dialog/index.js";
+import { Button } from "~/components/ui/button/index.js";
+import { MoneyInput } from "~/components/ui/money-input/index.js";
+import { ScrollArea } from "~/components/ui/scroll-area/index.js";
 import {
   FormField,
   FormItem,
   FormLabel,
   FormControl,
   FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
+} from "~/components/ui/form/index.js";
+import { Input } from "~/components/ui/input/index.js";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "~/components/ui/select";
+} from "~/components/ui/select/index.js";
 import {
   TRANSACTION_CATEGORY_OPTIONS,
   TRANSACTION_PAYMENT_METHOD_OPTIONS,
@@ -33,14 +33,14 @@ import {
   TransactionCategory,
   TransactionPaymentMethod,
   TransactionType,
-} from "~/constants/transactions";
-import { DatePicker } from "~/components/ui/date-picker";
+} from "~/constants/transactions.js";
+import { DatePicker } from "~/components/ui/date-picker/index.js";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { watchEffect, ref } from "vue";
-import { useTransactionsStore } from "~/stores/transactions";
-import { addTransaction, updateTransaction } from "~/service/transactionService";
+import { useTransactionsStore } from "~/stores/transactions.js";
+import { addTransaction, updateTransaction } from "~/service/transactionService.js";
 import { useCurrentUser } from "vuefire";
 
 const transactionsStore = useTransactionsStore();
