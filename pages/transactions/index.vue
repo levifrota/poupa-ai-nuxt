@@ -24,7 +24,7 @@ import { Button } from '~/components/ui/button';
 import { DialogTrigger } from '~/components/ui/dialog';
 import { columns, type Transaction } from '@/components/transactions/columns';
 import { useTransactionsStore } from '~/stores/transactions';
-import { TRANSACTION_CATEGORY_LABELS, type TransactionCategory } from '@/constants/transactions';
+import { TRANSACTION_CATEGORY_LABELS, TRANSACTION_TYPE_OPTIONS, type TransactionType, type TransactionCategory } from '@/constants/transactions';
 
 const isUpsertTransactionDialogOpen = ref(false);
 definePageMeta({
@@ -45,11 +45,13 @@ const formattedTransactions = computed<Transaction[]>(() => {
   if (!transactionStore.transactions) {
     return [];
   }
+  console.log('Transactions:', transactionStore.transactions);
   return transactionStore.transactions.map((item) => ({
     id: item.id,
     date: item.date,
-    description: item.description,
+    description: item.name,
     category: TRANSACTION_CATEGORY_LABELS[item.category as TransactionCategory] || item.category,
+    type: TRANSACTION_TYPE_OPTIONS.find((o: { value: string; label: string }) => o.value === item.type)?.label || item.type,
     amount: item.type === 'EXPENSE' ? -Math.abs(item.amount) : Math.abs(item.amount),
   }));
 });

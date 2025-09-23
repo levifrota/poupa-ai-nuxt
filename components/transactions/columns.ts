@@ -40,6 +40,11 @@ export const columns: ColumnDef<Transaction>[] = [
     cell: ({ row }) => h('div', {}, row.getValue('description')),
   },
   {
+    accessorKey: 'type',
+    header: () => h('div', {}, 'Tipo'),
+    cell: ({ row }) => h('div', {}, row.getValue('type')),
+  },
+  {
     accessorKey: 'category',
     header: () => h('div', {}, 'Categoria'),
     cell: ({ row }) => h('div', {}, row.getValue('category')),
