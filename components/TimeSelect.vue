@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { cn } from '@/lib/utils'
-
+import { useCurrentUser } from 'vuefire'
 import {
   CalendarDate,
   type DateValue,
@@ -169,7 +169,9 @@ async function fetchTransactions() {
     transactionsStore.setLoading(true)
     transactionsStore.setError(null)
 
-    const userId = "user_2rSVhqngUjGL0zVLiBXfXixKAG3"
+    const user = useCurrentUser();
+
+    const userId = user.value?.uid;
     if (!userId) {
       transactionsStore.setError('Usuário não autenticado')
       return

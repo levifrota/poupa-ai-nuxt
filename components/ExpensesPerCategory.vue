@@ -210,15 +210,14 @@ const formatCurrency = (value: number): string => {
   }).format(value);
 };
 
-const month = ref("4"); // or get it from a store or prop
-
 // Função para carregar os dados
 const loadExpensesData = async () => {
   isLoading.value = true;
   try {
-    const data = await getDashboard(month.value);
+    const data = await getDashboard();
+    console.log("Dashboard data:", data);
     const expensesData = data.totalExpensePerCategory;
-
+    console.log("Expenses data:", expensesData);
     // Transformar os dados para o formato esperado pelo componente
     const formattedExpenses: Expense[] = expensesData.map(
       (item: { category: string; totalAmount: number; percentageOfTotal: number }) => ({

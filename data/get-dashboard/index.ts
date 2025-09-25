@@ -9,6 +9,7 @@ import type {
   TransactionPaymentMethod,
   TransactionType,
 } from "@/constants/transactions";
+import { useCurrentUser } from 'vuefire';
 
 interface Transaction {
   id: string;
@@ -24,35 +25,25 @@ interface Transaction {
   [key: string]: string | number | Date | undefined;
 }
 
-export const getDashboard = async (month: string) => {
-  // const user = auth.currentUser;
-  // console.log('user', user);
-  
-  const userId = "user_2rSVhqngUjGL0zVLiBXfXixKAG3";
+export const getDashboard = async () => {
+  const user = useCurrentUser();
+
+  const userId = user.value?.uid;
 
   if (!userId) {
     throw new Error("Unauthorized");
   }
 
-  // const year = 2025;
-  const m = parseInt(month);
-  console.log(m);
-  // const nextMonth = m === 12 ? 1 : m + 1;
-  // const nextYear = m === 12 ? year + 1 : year;
-
-  // const startDate = Timestamp.fromDate(new Date(year, m - 1, 1));
-  // const endDate = Timestamp.fromDate(new Date(nextYear, nextMonth - 1, 1));
-
   try {
     const transactionsQuery = query(
-      collection(db, "users", userId, "transactions"),
+      collection(db(), "users", userId, "transactions"),
     );
 
     const querySnapshot = await getDocs(transactionsQuery);
 
     const transactions: Transaction[] = querySnapshot.docs.map((doc) => {
       const data = doc.data();
-
+      
       return {
         id: doc.id,
         name: data.name,
@@ -98,6 +89,7 @@ export const getDashboard = async (month: string) => {
     const expenseTransactions = transactions.filter(
       (t) => t.type === "EXPENSE",
     );
+
     const categoryMap = new Map<string, number>();
 
     expenseTransactions.forEach((t) => {

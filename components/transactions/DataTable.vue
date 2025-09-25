@@ -69,7 +69,9 @@ const table = useVueTable({
     <!-- Tabela -->
     <div class="border rounded-md">
       <Table>
-        <caption class="sr-only">Tabela de Transações</caption>
+        <caption class="sr-only">
+          Tabela de Transações
+        </caption>
         <TableHeader>
           <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
             <TableHead v-for="header in headerGroup.headers" :key="header.id" scope="col">

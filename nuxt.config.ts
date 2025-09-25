@@ -101,7 +101,9 @@ export default defineNuxtConfig({
   },
   
   nitro: {
-    prerender: false
+    prerender: {
+      routes: []
+    }
   },
   ssr: false,
   pwa: {},

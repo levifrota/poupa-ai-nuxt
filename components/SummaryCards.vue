@@ -1,10 +1,23 @@
 <script setup>
 import SummaryCard from "~/components/SummaryCard.vue";
 import { useTransactionsStore } from "@/stores/transactions";
-import { computed } from "vue";
+import { ref, computed } from "vue";
+import UpsertTransactionDialog from "~/components/UpsertTransactionDialog.vue";
+import { Button } from "~/components/ui/button";
+import { DialogTrigger } from "~/components/ui/dialog";
 
 // Usar a store de transações para obter os valores calculados
 const transactionsStore = useTransactionsStore();
+
+const isUpsertTransactionDialogOpen = ref(false);
+
+function handleSubmit(data) {
+  if (data.id) {
+    transactionsStore.updateTransaction(data);
+  } else {
+    transactionsStore.addTransaction(data);
+  }
+}
 
 // Formatar valores monetários
 const formatCurrency = (value) => {
@@ -47,7 +60,21 @@ const summaryList = computed(() => [
       :title="balanceObj.title"
       :value="balanceObj.value"
       :icon="balanceObj.icon"
-    />
+    >
+      <template #action>
+        <UpsertTransactionDialog
+          :is-open="isUpsertTransactionDialogOpen"
+          @update:is-open="isUpsertTransactionDialogOpen = $event"
+          @submit="handleSubmit"
+        >
+          <DialogTrigger as-child>
+            <Button size="icon">
+              <Icon name="lucide:plus" class="h-4 w-4" />
+            </Button>
+          </DialogTrigger>
+        </UpsertTransactionDialog>
+      </template>
+    </SummaryCard>
   </div>
 
   <div class="grid max-w-[100%] grid-cols-[50%_50%] gap-3 sm:grid-cols-3 sm:gap-6">
