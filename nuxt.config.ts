@@ -110,6 +110,7 @@ export default defineNuxtConfig({
   },
   ssr: false,
   pwa: {
+    useCredentials: true,
     registerType: 'autoUpdate',
     includeAssets: ['icon.png', 'icons/*.png'],
     manifest: {
