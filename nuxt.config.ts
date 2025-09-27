@@ -106,5 +106,51 @@ export default defineNuxtConfig({
     }
   },
   ssr: false,
-  pwa: {},
+  pwa: {
+    manifest: {
+      name: "Poupa.ai",
+      short_name: "Poupa.ai",
+      description: "Seu assistente financeiro pessoal",
+      theme_color: "#ffffff",
+      background_color: "#ffffff",
+      display: "standalone",
+      scope: "/",
+      start_url: "/",
+      lang: "pt-BR",
+      icons: [
+        {
+          src: "icons/icon144.png",
+          sizes: "144x144",
+          type: "image/png",
+          purpose: "any"
+        },
+        {
+          src: "icons/icon192.png",
+          sizes: "192x192",
+          type: "image/png",
+          purpose: "maskable"
+        },
+        {
+          src: "icons/icon512_maskable.png",
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "maskable"
+        },
+        {
+          src: "icons/icon512_rounded.png",
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "any"
+        },
+      ],
+      orientation: "portrait-primary",
+    },
+    workbox: {
+      navigateFallback: '/',
+    },
+    devOptions: {
+      enabled: true,
+      type: 'module',
+    },
+  },
 });
