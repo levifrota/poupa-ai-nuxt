@@ -8,7 +8,7 @@
       <FooterComponent />
     </template>
     <template v-else>
-      <main>
+      <main class="flex-grow p-4">
         <NuxtPage />
       </main>
     </template>
