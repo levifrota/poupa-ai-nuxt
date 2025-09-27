@@ -8,7 +8,7 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: "pt-br",
       },
-      meta: [{ name: "description", content: "Nuxt 3 App" }],
+      meta: [{ name: "description", content: "Poupa.ai" }],
       link: [{ rel: "icon", type: "image/x-icon", href: "/icon.png" }],
       charset: 'utf-16',
       viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
@@ -101,10 +101,88 @@ export default defineNuxtConfig({
   },
   
   nitro: {
-    prerender: {
-      routes: []
-    }
+    publicAssets: [
+      {
+        baseUrl: '/',
+        dir: 'public'
+      }
+    ]
   },
   ssr: false,
-  pwa: {},
+  pwa: {
+    useCredentials: true,
+    registerType: 'autoUpdate',
+    includeAssets: ['icon.png', 'icons/*.png'],
+    manifest: {
+      name: "Poupa.ai",
+      short_name: "Poupa.ai",
+      description: "Seu assistente financeiro pessoal",
+      theme_color: "#ffffff",
+      background_color: "#ffffff",
+      display: "standalone",
+      scope: "/",
+      start_url: "/",
+      lang: "pt-BR",
+      orientation: "portrait-primary",
+      icons: [
+        {
+          src: "icons/icon144.png",
+          sizes: "144x144",
+          type: "image/png",
+          purpose: "any"
+        },
+        {
+          src: "icons/icon192.png",
+          sizes: "192x192",
+          type: "image/png",
+          purpose: "any"
+        },
+        {
+          src: "icons/icon192.png",
+          sizes: "192x192",
+          type: "image/png",
+          purpose: "maskable"
+        },
+        {
+          src: "icons/icon512_maskable.png",
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "maskable"
+        },
+        {
+          src: "icons/icon512_rounded.png",
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "any"
+        },
+      ],
+    },
+    workbox: {
+      navigateFallback: '/',
+      navigateFallbackDenylist: [/^\/api\//],
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/api\./i,
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'api-cache',
+            expiration: {
+              maxEntries: 10,
+              maxAgeSeconds: 60 * 60 * 24 // 1 day
+            }
+          }
+        }
+      ]
+    },
+    client: {
+      installPrompt: true,
+      periodicSyncForUpdates: 20,
+    },
+    devOptions: {
+      enabled: true,
+      type: 'module',
+      suppressWarnings: true
+    },
+  },
 });

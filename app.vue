@@ -4,5 +4,6 @@ useFontStore();
 </script>
 
 <template>
+  <NuxtPwaManifest />
   <NuxtLayout name="default" />
 </template>
