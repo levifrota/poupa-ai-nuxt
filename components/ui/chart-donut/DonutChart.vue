@@ -61,7 +61,7 @@ const category = computed(() => props.category as KeyOfT);
 // const index = computed(() => props.index as KeyOfT);
 
 const isMounted = useMounted();
-// const activeSegmentKey = ref<string>();
+const activeSegmentKey = ref<string>();
 const colors = computed(() =>
   props.colors?.length
     ? props.colors
@@ -94,9 +94,25 @@ const legendItems = computed(() =>
         :arc-width="type === 'donut' ? 20 : 0"
         :show-background="false"
         :central-label="''"
+        :events="{
+          [Donut.selectors.segment]: {
+            click: (d: Data, ev: PointerEvent, i: number, elements: HTMLElement[]) => {
+              if (d?.data?.[index] === activeSegmentKey) {
+                activeSegmentKey = undefined
+                elements.forEach(el => el.style.opacity = '1')
+              }
+              else {
+                activeSegmentKey = d?.data?.[index]
+                elements.forEach(el => el.style.opacity = `${filterOpacity}`)
+                elements[i].style.opacity = '1'
+              }
+            },
+          },
+        }"
+        :aria-label="`Gráfico de pizza com ${data.length} seções`"
       />
 
-      <!-- <slot /> -->
+      <slot />
     </VisSingleContainer>
   </div>
 </template>
