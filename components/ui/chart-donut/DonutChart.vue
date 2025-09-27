@@ -4,7 +4,7 @@ import type { BaseChartProps } from ".";
 import { Donut } from "@unovis/ts";
 import { VisDonut, VisSingleContainer } from "@unovis/vue";
 import { useMounted } from "@vueuse/core";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { cn } from "@/lib/utils";
 import { ChartSingleTooltip, defaultColors } from "../chart-tooltip";
 
@@ -32,7 +32,7 @@ const props = withDefaults(
       /**
        * Function to sort the segment
        */
-      sortFunction?: (a: any, b: any) => number | undefined;
+      sortFunction?: (a: unknown, b: unknown) => number | undefined;
       /**
        * Controls the formatting for the label.
        */
@@ -58,10 +58,10 @@ type Data = typeof props.data[number];
 
 const valueFormatter = props.valueFormatter ?? ((tick: number) => `${tick}`);
 const category = computed(() => props.category as KeyOfT);
-const index = computed(() => props.index as KeyOfT);
+// const index = computed(() => props.index as KeyOfT);
 
 const isMounted = useMounted();
-const activeSegmentKey = ref<string>();
+// const activeSegmentKey = ref<string>();
 const colors = computed(() =>
   props.colors?.length
     ? props.colors
