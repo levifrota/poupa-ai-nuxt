@@ -101,11 +101,6 @@ export default defineNuxtConfig({
   },
   
   nitro: {
-    prerender: {
-      routes: [
-        '/manifest.webmanifest',
-      ]
-    },
     publicAssets: [
       {
         baseUrl: '/',
@@ -115,6 +110,8 @@ export default defineNuxtConfig({
   },
   ssr: false,
   pwa: {
+    registerType: 'autoUpdate',
+    includeAssets: ['icon.png', 'icons/*.png'],
     manifest: {
       name: "Poupa.ai",
       short_name: "Poupa.ai",
@@ -125,10 +122,17 @@ export default defineNuxtConfig({
       scope: "/",
       start_url: "/",
       lang: "pt-BR",
+      orientation: "portrait-primary",
       icons: [
         {
           src: "icons/icon144.png",
           sizes: "144x144",
+          type: "image/png",
+          purpose: "any"
+        },
+        {
+          src: "icons/icon192.png",
+          sizes: "192x192",
           type: "image/png",
           purpose: "any"
         },
@@ -151,18 +155,33 @@ export default defineNuxtConfig({
           purpose: "any"
         },
       ],
-      orientation: "portrait-primary",
     },
     workbox: {
       navigateFallback: '/',
+      navigateFallbackDenylist: [/^\/api\//],
       globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/api\./i,
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'api-cache',
+            expiration: {
+              maxEntries: 10,
+              maxAgeSeconds: 60 * 60 * 24 // 1 day
+            }
+          }
+        }
+      ]
     },
     client: {
       installPrompt: true,
+      periodicSyncForUpdates: 20,
     },
     devOptions: {
       enabled: true,
       type: 'module',
+      suppressWarnings: true
     },
   },
 });
