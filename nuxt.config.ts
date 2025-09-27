@@ -102,8 +102,16 @@ export default defineNuxtConfig({
   
   nitro: {
     prerender: {
-      routes: []
-    }
+      routes: [
+        '/manifest.webmanifest',
+      ]
+    },
+    publicAssets: [
+      {
+        baseUrl: '/',
+        dir: 'public'
+      }
+    ]
   },
   ssr: false,
   pwa: {
@@ -147,6 +155,10 @@ export default defineNuxtConfig({
     },
     workbox: {
       navigateFallback: '/',
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+    },
+    client: {
+      installPrompt: true,
     },
     devOptions: {
       enabled: true,
