@@ -12,21 +12,29 @@
     </MenubarMenu>
     <MenubarMenu>
       <MenubarTrigger>
-        <NuxtLink to="/transactions" :class="linkClasses('/transactions')" aria-label="Navegar para Transações">
+        <NuxtLink
+          to="/transactions"
+          :class="linkClasses('/transactions')"
+          aria-label="Navegar para Transações"
+        >
           <Icon name="lucide:arrow-left-right" :class="iconClasses" />
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
-    <MenubarMenu>
+    <!-- <MenubarMenu>
       <MenubarTrigger>
         <NuxtLink to="/subscription" :class="linkClasses('/subscription')" aria-label="Navegar para Assinatura">
           <Icon name="lucide:calendar-sync" :class="iconClasses" />
         </NuxtLink>
       </MenubarTrigger>
-    </MenubarMenu>
+    </MenubarMenu> -->
     <MenubarMenu>
       <MenubarTrigger>
-        <NuxtLink to="/settings" :class="linkClasses('/settings')" aria-label="Navegar para Configurações">
+        <NuxtLink
+          to="/settings"
+          :class="linkClasses('/settings')"
+          aria-label="Navegar para Configurações"
+        >
           <Icon name="lucide:settings" :class="iconClasses" />
         </NuxtLink>
       </MenubarTrigger>

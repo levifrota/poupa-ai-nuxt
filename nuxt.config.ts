@@ -8,7 +8,7 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: "pt-br",
       },
-      meta: [{ name: "description", content: "Nuxt 3 App" }],
+      meta: [{ name: "description", content: "Poupa.ai" }],
       link: [{ rel: "icon", type: "image/x-icon", href: "/icon.png" }],
       charset: 'utf-16',
       viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
