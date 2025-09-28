@@ -203,9 +203,6 @@ async function fetchTransactions() {
       } as Transaction
     })
 
-    console.log('fetchedTransactions', fetchedTransactions);
-
-
     // Atualizar a store com as transações filtradas
     transactionsStore.setTransactions(fetchedTransactions)
 

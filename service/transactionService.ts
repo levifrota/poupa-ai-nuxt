@@ -42,7 +42,6 @@ export const addTransaction = async (
       transactionToSave
     );
 
-    console.log("Transação adicionada com ID: ", docRef.id);
     return docRef.id;
   } catch (error) {
     console.error("Erro ao adicionar transação:", error);
@@ -78,7 +77,6 @@ export const updateTransaction = async (
     );
     
     await updateDoc(transactionRef, updateData);
-    console.log("Transação atualizada com sucesso");
   } catch (error) {
     console.error("Erro ao atualizar transação:", error);
     throw new Error("Erro ao atualizar transação no Firebase");
@@ -102,7 +100,6 @@ export const deleteTransaction = async (
     );
     
     await deleteDoc(transactionRef);
-    console.log("Transação removida com sucesso");
   } catch (error) {
     console.error("Erro ao remover transação:", error);
     throw new Error("Erro ao remover transação do Firebase");
