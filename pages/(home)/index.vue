@@ -6,8 +6,8 @@
       <div
         class="flex flex-wrap flex-row items-center justify-center gap-3 sm:justify-normal"
       >
-        <TimeSelect />
-        <AiReportButton />
+        <TimeSelect @update:date-range="handleDateRangeUpdate" />
+        <AiReportButton :start-date="selectedStartDate" :end-date="selectedEndDate" />
       </div>
     </div>
 
@@ -30,55 +30,20 @@
 
 <script setup lang="ts">
 import TimeSelect from "@/components/TimeSelect.vue";
+import type { DateRange } from "reka-ui";
+import { toDate } from "reka-ui/date";
+
 definePageMeta({
-  middleware: 'auth'
-})
+  middleware: "auth",
+});
 
-// const month = 3; // Março
-// const loading = ref(false);
-// const dashboard = ref<unknown>(null);
-// const error = ref("");
+const selectedStartDate = ref(new Date());
+const selectedEndDate = ref(new Date());
 
-// const loadDashboard = async () => {
-//   loading.value = true;
-//   error.value = "";
-//   try {
-//     const result = await getDashboard(month.toString());
-//     dashboard.value = result;
-//   } catch (err: unknown) {
-//     error.value = "Erro ao buscar dashboard";
-//     console.error(err);
-//   } finally {
-//     loading.value = false;
-//   }
-// };
-// import { useUser } from '@clerk/vue'
-// import { ScrollArea } from '#components';
-// import { getDashboard } from "~/data/get-dashboard/index";
-
-// const route = useRoute();
-// const { user } = useUser();
-
-// const month = ref(route.query.month || new Date().getMonth() + 1);
-// const dashboard = ref(null);
-// const userCanAddTransaction = ref(false);
-
-// onMounted(async () => {
-//   if (!user.value) {
-//     return navigateTo('/login');
-//   }
-
-//   if (typeof window !== 'undefined') {
-//     localStorage.setItem('userId', user.value.id);
-//   }
-
-//   dashboard.value = await getDashboard(month.value);
-//   userCanAddTransaction.value = await canUserAddTransaction();
-// });
-
-// watch(() => route.query.month, async (newMonth) => {
-//   if (newMonth) {
-//     month.value = newMonth;
-//     dashboard.value = await getDashboard(month.value);
-//   script});
+const handleDateRangeUpdate = (dateRange: DateRange) => {
+  if (dateRange.start && dateRange.end) {
+    selectedStartDate.value = toDate(dateRange.start);
+    selectedEndDate.value = toDate(dateRange.end);
+  }
+};
 </script>

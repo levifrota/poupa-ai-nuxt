@@ -120,11 +120,10 @@ const onSubmit = handleSubmit(async (values) => {
     if (props.transactionId) {
       // Update existing transaction
       await updateTransaction(userId, props.transactionId, values);
-      console.log("Transação atualizada!");
     } else {
       // Add new transaction
       const transactionId = await addTransaction(userId, values);
-      console.log("Transação adicionada com ID:", transactionId);
+      return transactionId;
     }
 
     emits("submit", { ...values, id: props.transactionId });

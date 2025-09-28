@@ -105,7 +105,6 @@ async function handleDeleteTransaction(event: CustomEvent) {
 
       await deleteTransaction(user.value.uid, transaction.id);
       transactionStore.deleteTransaction(transaction.id);
-      console.log("Transação excluída com sucesso!");
     } catch (error) {
       console.error("Erro ao excluir transação:", error);
       alert("Erro ao excluir transação. Tente novamente.");
@@ -131,7 +130,6 @@ const formattedTransactions = computed<Transaction[]>(() => {
   if (!transactionStore.transactions) {
     return [];
   }
-  console.log('Transactions:', transactionStore.transactions);
   return transactionStore.transactions.map((item) => ({
     id: item.id,
     date: item.date,
