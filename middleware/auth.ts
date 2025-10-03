@@ -15,6 +15,7 @@ export default defineNuxtRouteMiddleware((to, _from) => {
       
       if (!currentUser && to.path !== '/login' && to.path !== '/register') {
         if (unsubscribe) unsubscribe()
+        if (_from.path === '/register') resolve(navigateTo('/register'))
         resolve(navigateTo('/login'))
       } else {
         if (unsubscribe) unsubscribe()

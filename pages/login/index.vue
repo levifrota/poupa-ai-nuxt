@@ -3,37 +3,47 @@
     <div class="flex flex-col items-center justify-center">
       <div class="w-full max-w-md space-y-4">
         <header class="flex flex-col items-center justify-center space-y-2">
-          <img src="/logo.svg" alt="Poupa grana" class="w-48" >
+          <img src="/logo.svg" alt="Poupa grana" class="w-48" />
           <h1 class="text-2xl font-bold">Acesse sua conta</h1>
         </header>
+
+        <!-- Error Alert -->
+        <div v-if="error" class="rounded-md bg-red-50 border border-red-200 p-3">
+          <p class="text-sm text-red-700">{{ error }}</p>
+        </div>
 
         <form class="space-y-4" @submit.prevent="login">
           <div class="space-y-2">
             <label for="email" class="text-sm font-medium"> Email </label>
             <input
               id="email"
-              v-model="email"
+              v-model="formData.email"
               type="email"
               placeholder="johndoe@example.com"
               class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-            >
+              :disabled="loading"
+              required
+            />
           </div>
 
           <div class="space-y-2">
             <label for="password" class="text-sm font-medium"> Senha </label>
             <input
               id="password"
-              v-model="password"
+              v-model="formData.password"
               type="password"
               class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-            >
+              :disabled="loading"
+              required
+            />
           </div>
 
           <button
             type="submit"
-            class="w-full rounded-md bg-primary py-2 text-sm font-semibold text-primary-foreground"
+            class="w-full rounded-md bg-primary py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+            :disabled="loading"
           >
-            Entrar
+            {{ loading ? "Entrando..." : "Entrar" }}
           </button>
         </form>
 
@@ -49,8 +59,9 @@
         </div>
 
         <button
-          class="w-full rounded-md border border-input bg-background py-2 text-sm font-semibold hover:bg-accent"
-          @click="googleAuth"
+          class="w-full rounded-md border border-input bg-background py-2 text-sm font-semibold hover:bg-accent disabled:opacity-50"
+          :disabled="loading"
+          @click="handleGoogleAuth"
         >
           <Icon name="logos:google-icon" class="mr-2" />
           Google
@@ -69,86 +80,49 @@
         src="/login.png"
         alt="Imagem de um celular com um gráfico de finanças"
         class="h-screen w-full object-cover"
-      >
+      />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-import { useFirebaseAuth, useCurrentUser } from "vuefire";
-import {
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-} from "firebase/auth";
+import { reactive, watch } from "vue";
+import { useCurrentUser } from "vuefire";
 
-const router = useRouter();
 const user = useCurrentUser();
-if (user) {
-  router.push("/");
-}
+const router = useRouter();
+
+// Redirect if already logged in
+watch(
+  user,
+  (newUser) => {
+    if (newUser) {
+      router.push("/");
+    }
+  },
+  { immediate: true }
+);
 
 definePageMeta({
   layout: "auth",
 });
 
-const auth = useFirebaseAuth();
-const email = ref("");
-const password = ref("");
+const { handleSignIn, handleGoogleAuth, loading, error, clearError } = useAuth();
+
+const formData = reactive({
+  email: "",
+  password: "",
+});
 
 const login = async () => {
-  try {
-    if (!email.value || !password.value) {
-      alert("Por favor, preencha o email e a senha corretamente.");
-      return;
-    }
-
-    if (!auth) {
-      alert("Sistema de autenticação não está disponível. Tente novamente.");
-      return;
-    }
-
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email.value,
-      password.value
-    );
-    const user = userCredential.user;
-
-    router.push("/");
-
-    return user;
-  } catch (error) {
-    console.error("Erro no login:", error);
-    if (error.code === "auth/wrong-password") {
-      alert("Senha incorreta.");
-    } else if (error.code === "auth/user-not-found") {
-      alert("Usuário não encontrado.");
-    } else {
-      alert("Erro ao fazer login: " + error.message);
-    }
-  }
+  clearError();
+  await handleSignIn(formData.email, formData.password);
 };
 
-const googleAuth = async () => {
-  try {
-    if (!auth) {
-      alert("Sistema de autenticação não está disponível. Tente novamente.");
-      return;
-    }
-
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-
-    router.push("/");
-
-    return user;
-  } catch (error) {
-    console.error("Erro no login com Google:", error);
-    alert("Erro ao fazer login com Google: " + error.message);
+// Clear error when user starts typing
+watch(formData, () => {
+  if (error.value) {
+    clearError();
   }
-};
+});
 </script>
