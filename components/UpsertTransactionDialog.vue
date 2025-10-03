@@ -54,37 +54,35 @@ const props = defineProps<{
 
 const emits = defineEmits(["update:isOpen", "submit"]);
 
-const formSchema = toTypedSchema(
-  z.object({
-    name: z.string().min(1, {
-      message: "O nome é obrigatório.",
+const validationSchema = z.object({
+  name: z.string().min(1, {
+    message: "O nome é obrigatório.",
+  }),
+  amount: z
+    .number({
+      required_error: "O valor é obrigatório.",
+    })
+    .positive({
+      message: "O valor deve ser positivo.",
     }),
-    amount: z
-      .number({
-        required_error: "O valor é obrigatório.",
-      })
-      .positive({
-        message: "O valor deve ser positivo.",
-      }),
-    type: z.nativeEnum(TransactionType, {
-      required_error: "O tipo é obrigatório.",
-    }),
-    category: z.nativeEnum(TransactionCategory, {
-      required_error: "A categoria é obrigatória.",
-    }),
-    paymentMethod: z.nativeEnum(TransactionPaymentMethod, {
-      required_error: "O método de pagamento é obrigatório.",
-    }),
-    date: z.date({
-      required_error: "A data é obrigatória.",
-    }),
-  })
-);
+  type: z.nativeEnum(TransactionType, {
+    required_error: "O tipo é obrigatório.",
+  }),
+  category: z.nativeEnum(TransactionCategory, {
+    required_error: "A categoria é obrigatória.",
+  }),
+  paymentMethod: z.nativeEnum(TransactionPaymentMethod, {
+    required_error: "O método de pagamento é obrigatório.",
+  }),
+  date: z.date({
+    required_error: "A data é obrigatória.",
+  }),
+});
 
-type FormSchema = z.infer<typeof formSchema>;
+type FormSchema = z.infer<typeof validationSchema>;
 
 const { handleSubmit, resetForm, setValues } = useForm({
-  validationSchema: formSchema,
+  validationSchema: toTypedSchema(validationSchema),
   initialValues: {
     amount: 0,
     date: new Date(),
@@ -122,8 +120,7 @@ const onSubmit = handleSubmit(async (values) => {
       await updateTransaction(userId, props.transactionId, values);
     } else {
       // Add new transaction
-      const transactionId = await addTransaction(userId, values);
-      return transactionId;
+      await addTransaction(userId, values);
     }
 
     emits("submit", { ...values, id: props.transactionId });

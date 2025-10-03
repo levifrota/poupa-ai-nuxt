@@ -1,6 +1,9 @@
 <template>
   <Menubar
-    :class="['sticky bottom-0 flex w-full justify-around md:hidden p-3', background]"
+    :class="[
+      'sticky bottom-0 flex w-[full] rounded-none justify-around md:hidden p-3',
+      background,
+    ]"
     aria-label="Navegação principal"
   >
     <MenubarMenu>
@@ -10,6 +13,7 @@
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
+
     <MenubarMenu>
       <MenubarTrigger>
         <NuxtLink
@@ -21,13 +25,7 @@
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
-    <!-- <MenubarMenu>
-      <MenubarTrigger>
-        <NuxtLink to="/subscription" :class="linkClasses('/subscription')" aria-label="Navegar para Assinatura">
-          <Icon name="lucide:calendar-sync" :class="iconClasses" />
-        </NuxtLink>
-      </MenubarTrigger>
-    </MenubarMenu> -->
+
     <MenubarMenu>
       <MenubarTrigger>
         <NuxtLink
@@ -39,13 +37,15 @@
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
+
     <MenubarMenu>
-      <MenubarTrigger aria-label="Menu do usuário">
-        <!-- <UserButton /> -->
+      <MenubarTrigger @click="isDialogOpen = true">
         <Icon name="lucide:user" :class="iconClasses" />
       </MenubarTrigger>
     </MenubarMenu>
   </Menubar>
+
+  <UserButton v-model:is-open="isDialogOpen" />
 </template>
 
 <script setup lang="ts">
@@ -53,6 +53,7 @@ import { computed } from "vue";
 
 const themeStore = useThemeStore();
 const route = useRoute();
+const isDialogOpen = ref(false);
 
 const linkClasses = (to: string) => {
   return route.path === to ? "font-bold text-primary" : "text-muted-foreground";
@@ -101,4 +102,4 @@ const iconClasses = computed(() => {
 });
 </script>
 
-<style></style>
+<style scoped></style>

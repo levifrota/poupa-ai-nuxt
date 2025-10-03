@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { Icon } from "#components";
 import { logOut } from "~/service/authService.js";
 import { useRouter } from "vue-router";
 
 const themeStore = useThemeStore();
 const route = useRoute();
 const router = useRouter();
+
+const isDialogOpen = ref(false);
 
 const linkClasses = (href: string) => {
   return route.path === href ? "font-bold text-primary" : "text-muted-foreground";
@@ -73,23 +74,27 @@ const handleLogout = async () => {
     </div>
     <div class="hidden md:block">
       <div class="text-primary">
-        <Select>
-          <SelectTrigger class="w-full" aria-label="Menu do usuário">
-            <Icon name="lucide:user" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="profile">
-              <!-- <Icon name="lucide:user" class="mr-2" />
-              Perfil -->
-              <UserButton />
-            </SelectItem>
-            <SelectItem value="logout" @click="handleLogout">
-              <Icon name="lucide:log-out" class="mr-2" />
-              Sair
-            </SelectItem>
-          </SelectContent>
-        </Select>
+        <Menubar>
+          <MenubarMenu>
+            <MenubarTrigger aria-label="Menu do usuário">
+              <Icon name="lucide:user" />
+            </MenubarTrigger>
+            <MenubarContent>
+              <MenubarItem @click="isDialogOpen = true">
+                <Icon name="lucide:user" class="mr-2" />
+                Gerenciar Perfil
+              </MenubarItem>
+              <MenubarSeparator />
+              <MenubarItem @click="handleLogout">
+                <Icon name="lucide:log-out" class="mr-2" />
+                Sair
+              </MenubarItem>
+            </MenubarContent>
+          </MenubarMenu>
+        </Menubar>
       </div>
     </div>
   </nav>
+
+  <UserButton v-model:is-open="isDialogOpen" />
 </template>
