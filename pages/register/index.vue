@@ -3,7 +3,7 @@
     <div class="flex flex-col items-center justify-center">
       <div class="w-full max-w-md space-y-4">
         <header class="flex flex-col items-center justify-center space-y-2">
-          <img src="/logo.svg" alt="Poupa grana" class="w-48" />
+          <img src="/logo.svg" alt="Poupa grana" class="w-48" >
           <h1 class="text-2xl font-bold">Crie sua conta</h1>
         </header>
 
@@ -19,11 +19,11 @@
               id="name"
               v-model="formData.name"
               type="text"
-              placeholder="John Doe"
+              placeholder="José da Silva"
               class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               :disabled="loading"
               required
-            />
+            >
           </div>
 
           <div class="space-y-2">
@@ -32,11 +32,11 @@
               id="email"
               v-model="formData.email"
               type="email"
-              placeholder="johndoe@example.com"
+              placeholder="josedasilva@exemplo.com"
               class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               :disabled="loading"
               required
-            />
+            >
           </div>
 
           <div class="space-y-2">
@@ -49,7 +49,7 @@
               :disabled="loading"
               required
               minlength="6"
-            />
+            >
           </div>
 
           <button
@@ -94,7 +94,7 @@
         src="/login.png"
         alt="Imagem de um celular com um gráfico de finanças"
         class="h-screen w-full object-cover"
-      />
+      >
     </div>
   </div>
 </template>
