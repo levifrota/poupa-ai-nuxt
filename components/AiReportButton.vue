@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import DOMPurify from "isomorphic-dompurify";
 import { marked } from "marked";
-import generateAiReport from "@/app/_actions/generate-ai-report";
+import generateAiReport from "@/app/_actions/generate-ai-report/index.js";
 import jsPDF from "jspdf";
 
 interface Props {
@@ -202,7 +202,7 @@ async function handleDownloadPdf() {
         <DialogTitle>Relatório IA</DialogTitle>
         <DialogDescription>
           Use inteligência artificial para gerar um relatório com informações sobre suas
-          finanças. <br />
+          finanças. <br >
           <span className="text-red-500">
             Atenção: A ferramenta pode não ser precisa e pode gerar erros. Use as
             informações com cuidado.

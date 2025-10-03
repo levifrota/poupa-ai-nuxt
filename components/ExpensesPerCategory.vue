@@ -73,20 +73,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, computed, watch } from "vue";
-import { getDashboard } from "@/data/get-dashboard";
+import { computed } from "vue";
+import { useTransactionsStore } from "@/stores/transactions.js";
 import { storeToRefs } from "pinia";
 
-// Interface para os dados de despesas por categoria
-interface Expense {
-  category: string;
-  amount: number;
-  percentage: number;
-  color: string;
-}
-
-const isLoading = ref(true);
-const expenses = ref<Expense[]>([]);
+const transactionsStore = useTransactionsStore();
 const themeStore = useThemeStore();
 const { theme } = storeToRefs(themeStore);
 
@@ -177,71 +168,30 @@ const currentColorPalette = computed(() => {
   }
 });
 
-// Função para atualizar as cores quando o tema mudar
-const updateColorsOnThemeChange = () => {
-  if (expenses.value.length > 0) {
-    expenses.value = expenses.value.map((expense) => ({
-      ...expense,
+const expenses = computed(() => {
+  const expensesData = transactionsStore.totalExpensePerCategory || [];
+
+  return expensesData.map(
+    (item: { category: string; totalAmount: number; percentageOfTotal: number }) => ({
+      category:
+        categoryTranslations[item.category as keyof typeof categoryTranslations] ||
+        item.category,
+      amount: item.totalAmount,
+      percentage: item.percentageOfTotal,
       color:
         currentColorPalette.value[
-          Object.keys(categoryTranslations).find(
-            (key) =>
-              categoryTranslations[key as keyof typeof categoryTranslations] ===
-              expense.category
-          ) as keyof typeof currentColorPalette.value
+          item.category as keyof typeof currentColorPalette.value
         ] || "#C9CBCF",
-    }));
-  }
-};
+    })
+  );
+});
 
-// Observar mudanças no tema
-watch(
-  () => theme.value,
-  () => {
-    updateColorsOnThemeChange();
-  }
-);
+const isLoading = computed(() => transactionsStore.isLoading);
 
-// Função para formatar valores monetários
 const formatCurrency = (value: number): string => {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
   }).format(value);
 };
-
-// Função para carregar os dados
-const loadExpensesData = async () => {
-  isLoading.value = true;
-  try {
-    const data = await getDashboard();
-    const expensesData = data.totalExpensePerCategory;
-    // Transformar os dados para o formato esperado pelo componente
-    const formattedExpenses: Expense[] = expensesData.map(
-      (item: { category: string; totalAmount: number; percentageOfTotal: number }) => ({
-        category:
-          categoryTranslations[item.category as keyof typeof categoryTranslations] ||
-          item.category,
-        amount: item.totalAmount,
-        percentage: item.percentageOfTotal,
-        color:
-          currentColorPalette.value[
-            item.category as keyof typeof currentColorPalette.value
-          ] || "#C9CBCF",
-      })
-    );
-
-    expenses.value = formattedExpenses;
-  } catch (error) {
-    console.error("Error loading expenses:", error);
-    expenses.value = [];
-  } finally {
-    isLoading.value = false;
-  }
-};
-
-// Inicialização do componente
-onMounted(() => {
-  loadExpensesData();
-});
 </script>

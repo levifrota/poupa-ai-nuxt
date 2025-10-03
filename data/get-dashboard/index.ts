@@ -1,4 +1,4 @@
-import { db } from "@/lib/firebase";
+import { db } from "@/lib/firebase.js";
 import {
   collection,
   getDocs,
@@ -8,7 +8,7 @@ import type {
   TransactionCategory,
   TransactionPaymentMethod,
   TransactionType,
-} from "@/constants/transactions";
+} from "@/constants/transactions.js";
 import { useCurrentUser } from 'vuefire';
 
 interface Transaction {

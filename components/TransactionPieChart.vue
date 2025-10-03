@@ -18,7 +18,7 @@ const typeMapping = {
 // Transformar os dados para usar as legendas em português
 const chartData = computed(() => {
   return Object.entries(transactionsStore.typesPercentage).map(([type, value]) => ({
-    type: typeMapping[type] || type,
+    type: typeMapping[type as keyof typeof typeMapping] || type,
     value,
     originalType: type,
   }));

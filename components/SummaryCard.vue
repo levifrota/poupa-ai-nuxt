@@ -1,8 +1,4 @@
 <script setup lang="ts">
-// import type { HTMLAttributes } from "vue";
-// import { Card, CardHeader, CardContent } from "@/components/ui/card";
-// import { Icon } from "#components";
-
 interface Props {
   title: string;
   value: number | string;

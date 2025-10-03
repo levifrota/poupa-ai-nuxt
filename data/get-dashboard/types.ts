@@ -1,7 +1,7 @@
 import type {
   TransactionCategory,
   TransactionType,
-} from "@/constants/transactions";
+} from "@/constants/transactions.js";
 
 export type TransactionPercentagePerType = {
   [key in TransactionType]: number;

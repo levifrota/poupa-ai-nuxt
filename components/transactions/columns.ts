@@ -1,9 +1,8 @@
 import { h } from 'vue'
 import type { ColumnDef } from '@tanstack/vue-table'
 import { storeToRefs } from "pinia";
-import { Button } from '@/components/ui/button'
-import { TRANSACTION_TYPE_OPTIONS, TRANSACTION_PAYMENT_METHOD_LABELS } from '@/constants/transactions'
-import type { TransactionType, TransactionPaymentMethod } from '@/constants/transactions'
+import Button from '@/components/ui/button/Button.vue'
+import { TRANSACTION_TYPE_OPTIONS, TRANSACTION_PAYMENT_METHOD_LABELS, type TransactionType, type TransactionPaymentMethod } from '@/constants/transactions.js'
 
 export interface Transaction {
   id: string;
