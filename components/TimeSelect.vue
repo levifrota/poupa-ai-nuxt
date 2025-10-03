@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils.js'
 import { useCurrentUser } from 'vuefire'
 import {
   CalendarDate,
@@ -13,18 +13,16 @@ import {
 } from 'lucide-vue-next'
 import { type DateRange, RangeCalendarRoot, useDateFormatter } from 'reka-ui'
 import { createMonth, type Grid, toDate } from 'reka-ui/date'
-// import { type Ref, ref, watch, onMounted, computed } from 'vue'
 import { collection, getDocs, query, where, orderBy } from 'firebase/firestore'
-import { db } from '@/lib/firebase'
-// import { useUserStore } from '@/stores/user'
-import type { Transaction } from '@/constants/transactions'
-import { useTransactionsStore } from '@/stores/transactions'
+import { db } from '@/lib/firebase.js'
+import type { Transaction } from '@/constants/transactions.js'
+import { useTransactionsStore } from '@/stores/transactions.js'
 // import { useRoute, useRouter } from 'vue-router'
 
 // Importar componentes UI necessários
-import { Button, buttonVariants } from '@/components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { RangeCalendarCell, RangeCalendarCellTrigger, RangeCalendarGrid, RangeCalendarGridBody, RangeCalendarGridHead, RangeCalendarGridRow, RangeCalendarHeadCell } from '@/components/ui/range-calendar'
+import { Button, buttonVariants } from '@/components/ui/button/index.js'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover/index.js'
+import { RangeCalendarCell, RangeCalendarCellTrigger, RangeCalendarGrid, RangeCalendarGridBody, RangeCalendarGridHead, RangeCalendarGridRow, RangeCalendarHeadCell } from '@/components/ui/range-calendar/index.js'
 
 // Definir props e emits para o componente
 const props = defineProps<{

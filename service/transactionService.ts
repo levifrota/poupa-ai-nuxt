@@ -1,4 +1,4 @@
-import { db } from "~/lib/firebase";
+import { db } from "~/lib/firebase.js";
 import {
   collection,
   addDoc,
@@ -11,7 +11,7 @@ import {
   orderBy,
   Timestamp,
 } from "firebase/firestore";
-import type { Transaction } from "~/constants/transactions";
+import type { Transaction } from "~/constants/transactions.js";
 
 export interface TransactionInput {
   name: string;
@@ -58,7 +58,7 @@ export const updateTransaction = async (
   transactionData: Partial<TransactionInput>
 ): Promise<void> => {
   try {
-    const updateData: unknown = {
+    const updateData: { [key: string]: string | number | Date | Timestamp } = {
       ...transactionData,
       updatedAt: Timestamp.now(),
     };

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from "#components";
-import { logOut } from "~/service/authService";
+import { logOut } from "~/service/authService.js";
 import { useRouter } from "vue-router";
 
 const themeStore = useThemeStore();

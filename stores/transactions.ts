@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { Transaction } from '@/constants/transactions'
-import { TransactionType } from '@/constants/transactions'
+import { TransactionType, type Transaction } from '@/constants/transactions.js'
 
 export const useTransactionsStore = defineStore('transactions', () => {
   // Armazena as transações filtradas pelo TimeSelect
@@ -54,6 +53,25 @@ export const useTransactionsStore = defineStore('transactions', () => {
       .filter(t => t.type === TransactionType.INVESTMENT)
       .reduce((total, t) => total + t.amount, 0)
   })
+
+  const totalExpensePerCategory = computed(() => {
+    const categoryMap = transactions.value
+      .filter(t => t.type === TransactionType.EXPENSE)
+      .reduce((acc, t) => {
+        const currentTotal = acc.get(t.category!) || 0
+        acc.set(t.category!, currentTotal + t.amount)
+        return acc
+      }, new Map<string, number>())
+    
+    // Converter Map para array de objetos com porcentagens
+    const total = expensesTotal.value
+    return Array.from(categoryMap.entries()).map(([category, totalAmount]) => ({
+      category,
+      totalAmount,
+      percentageOfTotal: total > 0 ? Math.round((totalAmount / total) * 100) : 0
+    }))
+  })
+    
 
   // Cálculo das porcentagens por tipo
   const typesPercentage = computed(() => {
@@ -110,6 +128,7 @@ export const useTransactionsStore = defineStore('transactions', () => {
     depositsTotal,
     expensesTotal,
     investmentsTotal,
+    totalExpensePerCategory,
     typesPercentage,
     lastTransactions,
     addTransaction,

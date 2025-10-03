@@ -1,9 +1,9 @@
 <script setup lang="ts">
-// import type { Transaction } from "~/constants/transactions";
 import {
   TransactionType,
   TRANSACTION_PAYMENT_METHOD_ICONS,
-} from "~/constants/transactions";
+  type Transaction
+} from "~/constants/transactions.js";
 // import { useTransactionsStore } from "@/stores/transactions";
 // import { computed } from "vue";
 
@@ -22,7 +22,7 @@ const transactions = computed(() => transactionsStore.lastTransactions);
 //   });
 // };
 
-const getAmountColor = (transaction) => {
+const getAmountColor = (transaction: Transaction) => {
   if (transaction.type === TransactionType.EXPENSE) {
     return "text-red-500";
   }
@@ -32,7 +32,7 @@ const getAmountColor = (transaction) => {
   return "text-white";
 };
 
-const getAmountPrefix = (transaction) => {
+const getAmountPrefix = (transaction: Transaction) => {
   if (transaction.type === TransactionType.EXPENSE) {
     return "-";
   }
@@ -42,7 +42,7 @@ const getAmountPrefix = (transaction) => {
   return "";
 };
 
-const formatCurrency = (amount) => {
+const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
@@ -55,7 +55,9 @@ const formatCurrency = (amount) => {
     <CardHeader class="flex flex-row items-center justify-between">
       <CardTitle class="font-bold">Últimas Transações</CardTitle>
       <Button variant="outline" class="rounded-full" as-child>
-        <NuxtLink to="/transactions" aria-label="Ver todas as transações">Ver mais</NuxtLink>
+        <NuxtLink to="/transactions" aria-label="Ver todas as transações"
+          >Ver mais</NuxtLink
+        >
       </Button>
     </CardHeader>
     <CardContent class="space-y-6" role="list">
@@ -64,13 +66,19 @@ const formatCurrency = (amount) => {
         :key="transaction.id"
         class="flex items-center justify-between"
         role="listitem"
-        :aria-label="`${transaction.name}, ${new Date(transaction.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}, ${getAmountPrefix(transaction)}${formatCurrency(transaction.amount)}`"
+        :aria-label="`${transaction.name}, ${new Date(
+          transaction.date
+        ).toLocaleDateString('pt-BR', {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+        })}, ${getAmountPrefix(transaction)}${formatCurrency(transaction.amount)}`"
       >
         <div class="flex items-center gap-3">
           <div class="rounded-lg bg-opacity-[3%] p-3">
             <NuxtImg
               :src="
-                TRANSACTION_PAYMENT_METHOD_ICONS[transaction.paymentMethod] ||
+                TRANSACTION_PAYMENT_METHOD_ICONS[transaction.paymentMethod as keyof typeof TRANSACTION_PAYMENT_METHOD_ICONS] ||
                 TRANSACTION_PAYMENT_METHOD_ICONS.OTHER
               "
               height="20"
