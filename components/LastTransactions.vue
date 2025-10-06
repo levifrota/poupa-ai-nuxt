@@ -2,25 +2,14 @@
 import {
   TransactionType,
   TRANSACTION_PAYMENT_METHOD_ICONS,
-  type Transaction
+  type Transaction,
 } from "~/constants/transactions.js";
-// import { useTransactionsStore } from "@/stores/transactions";
-// import { computed } from "vue";
 
 // Store para obter os dados das transações
 const transactionsStore = useTransactionsStore();
 
 // Obter as últimas transações da store
 const transactions = computed(() => transactionsStore.lastTransactions);
-
-// const stringToDate = (dateString) => {
-//   const date = new Date(dateString);
-//   return date.toLocaleDateString("pt-Br", {
-//     month: "short",
-//     day: "numeric",
-//     year: "numeric",
-//   });
-// };
 
 const getAmountColor = (transaction: Transaction) => {
   if (transaction.type === TransactionType.EXPENSE) {
@@ -78,8 +67,9 @@ const formatCurrency = (amount: number) => {
           <div class="rounded-lg bg-opacity-[3%] p-3">
             <NuxtImg
               :src="
-                TRANSACTION_PAYMENT_METHOD_ICONS[transaction.paymentMethod as keyof typeof TRANSACTION_PAYMENT_METHOD_ICONS] ||
-                TRANSACTION_PAYMENT_METHOD_ICONS.OTHER
+                TRANSACTION_PAYMENT_METHOD_ICONS[
+                  transaction.paymentMethod as keyof typeof TRANSACTION_PAYMENT_METHOD_ICONS
+                ] || TRANSACTION_PAYMENT_METHOD_ICONS.OTHER
               "
               height="20"
               width="20"
@@ -101,7 +91,8 @@ const formatCurrency = (amount: number) => {
         </div>
 
         <p :class="['text-sm font-bold', getAmountColor(transaction)]">
-          {{ getAmountPrefix(transaction) }} {{ formatCurrency(transaction.amount) }}
+          {{ getAmountPrefix(transaction) }}
+          {{ formatCurrency(transaction.amount) }}
         </p>
       </div>
     </CardContent>

@@ -60,9 +60,6 @@ const handleLogout = async () => {
         >
           Transações
         </NuxtLink>
-        <!-- <NuxtLink to="/subscription" :class="linkClasses('/subscription')" aria-label="Navegar para Assinatura">
-          Assinatura
-        </NuxtLink> -->
         <NuxtLink
           to="/settings"
           :class="linkClasses('/settings')"

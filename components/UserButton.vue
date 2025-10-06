@@ -21,8 +21,8 @@
                   v-if="profileImageUrl"
                   :src="profileImageUrl"
                   :alt="`Foto de ${values.displayName || 'usuário'}`"
-                  class="h-full w-full object-cover"
-                />
+                  class="h-full w-full object-cover z-10"
+                >
                 <Icon v-else name="lucide:user" class="h-12 w-12 text-muted-foreground" />
               </div>
               <Button
@@ -40,7 +40,7 @@
                 accept="image/*"
                 class="hidden"
                 @change="handleImageUpload"
-              />
+              >
             </div>
             <p class="text-xs text-muted-foreground text-center">
               Clique no ícone da câmera para alterar sua foto de perfil

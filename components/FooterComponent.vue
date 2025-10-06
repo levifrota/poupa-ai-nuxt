@@ -1,7 +1,7 @@
 <template>
   <Menubar
     :class="[
-      'sticky bottom-0 flex w-[full] rounded-none justify-around md:hidden p-3',
+      'sticky bottom-0 flex w-full rounded-none justify-around md:hidden p-3',
       background,
     ]"
     aria-label="Navegação principal"
