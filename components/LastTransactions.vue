@@ -65,8 +65,8 @@ const formatCurrency = (amount: number) => {
       >
         <div class="flex items-center gap-3">
           <div class="rounded-lg bg-opacity-[3%] p-3">
-            <NuxtImg
-              :src="
+            <Icon
+              :name="
                 TRANSACTION_PAYMENT_METHOD_ICONS[
                   transaction.paymentMethod as keyof typeof TRANSACTION_PAYMENT_METHOD_ICONS
                 ] || TRANSACTION_PAYMENT_METHOD_ICONS.OTHER

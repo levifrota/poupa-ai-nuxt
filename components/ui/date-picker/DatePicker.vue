@@ -79,7 +79,7 @@ const formattedDate = computed(() => {
         variant="outline"
         :class="
           cn(
-            'w-[280px] justify-start text-left font-normal',
+            'w-60 sm:w-[280px] justify-start text-left font-normal',
             !props.modelValue && 'text-muted-foreground'
           )
         "

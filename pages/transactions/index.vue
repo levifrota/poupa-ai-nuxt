@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto p-4">
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between flex-col sm:flex-row">
       <h1 class="mb-4 text-2xl font-bold">Transações</h1>
       <UpsertTransactionDialog
         :is-open="isUpsertTransactionDialogOpen"
