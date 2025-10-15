@@ -2,6 +2,7 @@
 import { useTransactionsStore } from "@/stores/transactions.js";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
+import CustomLegend from "@/components/ui/chart-donut/CustomLegend.vue";
 
 // Store para obter os dados das transações
 const transactionsStore = useTransactionsStore();

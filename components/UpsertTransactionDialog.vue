@@ -141,22 +141,20 @@ const isUpdate = computed(() => !!props.transactionId);
 <template>
   <Dialog :open="props.isOpen" @update:open="(value) => emits('update:isOpen', value)">
     <slot />
-    <DialogContent
-      class="flex pl-4 pr-4 sm:pl-6 sm:pr-6 flex-col wrap sm:block w-[90%] pt-12 sm:pt-6 sm:w-full"
-    >
+    <DialogContent class="w-[90%] pt-12 sm:pt-6 sm:w-full">
       <DialogHeader>
         <DialogTitle> {{ isUpdate ? "Editar" : "Adicionar" }} Transação </DialogTitle>
         <DialogDescription>Insira as informações abaixo</DialogDescription>
       </DialogHeader>
 
-      <ScrollArea class="h-[450px] m-0 sm:h-full rounded-md p-1.5 sm:p-0">
+      <ScrollArea class="h-[450px] m-0 sm:h-full rounded-md pr-4">
         <form class="space-y-8" @submit="onSubmit">
           <FormField v-slot="{ componentField }" name="name">
             <FormItem>
               <FormLabel class="mb-4">Nome</FormLabel>
               <FormControl>
                 <Input
-                  class="w-full"
+                  class="w-60 sm:w-full"
                   placeholder="Digite o nome"
                   v-bind="componentField"
                 />
@@ -170,7 +168,7 @@ const isUpdate = computed(() => !!props.transactionId);
               <FormLabel>Valor</FormLabel>
               <FormControl>
                 <MoneyInput
-                  class="w-full"
+                  class="w-60 sm:w-full"
                   :model-value="componentField.modelValue || 0"
                   placeholder="Digite o valor"
                   @update:model-value="componentField['onUpdate:modelValue']"
@@ -185,7 +183,7 @@ const isUpdate = computed(() => !!props.transactionId);
               <FormLabel>Tipo</FormLabel>
               <Select v-bind="componentField">
                 <FormControl>
-                  <SelectTrigger class="w-auto">
+                  <SelectTrigger class="w-60 sm:w-auto">
                     <SelectValue placeholder="Tipo da transação" />
                   </SelectTrigger>
                 </FormControl>
@@ -208,7 +206,7 @@ const isUpdate = computed(() => !!props.transactionId);
               <FormLabel>Categoria</FormLabel>
               <Select v-bind="componentField">
                 <FormControl>
-                  <SelectTrigger class="w-auto">
+                  <SelectTrigger class="w-60 sm:w-auto">
                     <SelectValue placeholder="Categoria da transação" />
                   </SelectTrigger>
                 </FormControl>
@@ -231,7 +229,7 @@ const isUpdate = computed(() => !!props.transactionId);
               <FormLabel>Método de Pagamento</FormLabel>
               <Select v-bind="componentField">
                 <FormControl>
-                  <SelectTrigger class="w-auto">
+                  <SelectTrigger class="w-60 sm:w-auto">
                     <SelectValue placeholder="Método de Pagamento" />
                   </SelectTrigger>
                 </FormControl>
@@ -267,7 +265,7 @@ const isUpdate = computed(() => !!props.transactionId);
           <DialogFooter>
             <DialogClose as-child>
               <Button
-                class="w-auto"
+                class="w-60 sm:w-auto"
                 type="button"
                 variant="outline"
                 :disabled="isSubmitting"
@@ -275,7 +273,11 @@ const isUpdate = computed(() => !!props.transactionId);
                 Cancelar
               </Button>
             </DialogClose>
-            <Button class="mb-3 w-auto sm:mb-0" type="submit" :disabled="isSubmitting">
+            <Button
+              class="mb-3 w-60 sm:w-auto sm:mb-0"
+              type="submit"
+              :disabled="isSubmitting"
+            >
               {{ isSubmitting ? "Salvando..." : isUpdate ? "Atualizar" : "Adicionar" }}
             </Button>
           </DialogFooter>
