@@ -26,7 +26,9 @@ const props = defineProps<Props>();
         </p>
       </CardContent>
     </div>
-    <div class="absolute inset-y-0 right-4 flex items-center">
+    <div
+      class="h-12 sm:h-auto relative sm:absolute inset-y-0 sm:right-4 flex items-center ml-4 mr-4 sm:m-0"
+    >
       <slot name="action" />
     </div>
   </Card>

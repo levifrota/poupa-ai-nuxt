@@ -49,7 +49,7 @@ const formatCurrency = (amount: number) => {
         >
       </Button>
     </CardHeader>
-    <CardContent class="space-y-6" role="list">
+    <CardContent class="p-0 sm:px-6 space-y-6" role="list">
       <div
         v-for="transaction in transactions"
         :key="transaction.id"

@@ -12,7 +12,7 @@ defineProps<{
 </script>
 
 <template>
-  <Card class="text-sm" aria-label="Legenda do gráfico">
+  <Card class="text-sm border-none" aria-label="Legenda do gráfico">
     <CardContent class="p-3 min-w-[180px] flex flex-col gap-1" role="list">
       <div
         v-for="(item, key) in items"

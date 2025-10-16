@@ -55,8 +55,8 @@ const props = defineProps<{
 const emits = defineEmits(["update:isOpen", "submit"]);
 
 const validationSchema = z.object({
-  name: z.string().min(1, {
-    message: "O nome é obrigatório.",
+  name: z.string({
+    required_error: "O nome é obrigatório.",
   }),
   amount: z
     .number({
@@ -141,7 +141,7 @@ const isUpdate = computed(() => !!props.transactionId);
 <template>
   <Dialog :open="props.isOpen" @update:open="(value) => emits('update:isOpen', value)">
     <slot />
-    <DialogContent class="w-[90%] pt-12 sm:pt-6 sm:w-full">
+    <DialogContent class="w-[90%] pt-12 sm:pt-6 sm:w-full min-w-fit sm:min-w-auto">
       <DialogHeader>
         <DialogTitle> {{ isUpdate ? "Editar" : "Adicionar" }} Transação </DialogTitle>
         <DialogDescription>Insira as informações abaixo</DialogDescription>

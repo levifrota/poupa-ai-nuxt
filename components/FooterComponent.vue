@@ -8,8 +8,12 @@
   >
     <MenubarMenu>
       <MenubarTrigger class="flex justify-center align-center">
-        <NuxtLink to="/" :class="linkClasses('/')" aria-label="Navegar para o Painel">
-          <Icon name="lucide:layout-dashboard" :class="['h-16', iconClasses]" />
+        <NuxtLink
+          to="/"
+          :class="[linkClasses('/'), 'flex']"
+          aria-label="Navegar para o Painel"
+        >
+          <Icon name="lucide:layout-dashboard" :class="[iconClasses, iconSize]" />
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
@@ -18,10 +22,10 @@
       <MenubarTrigger>
         <NuxtLink
           to="/transactions"
-          :class="linkClasses('/transactions')"
+          :class="[linkClasses('/transactions'), 'flex']"
           aria-label="Navegar para Transações"
         >
-          <Icon name="lucide:arrow-left-right" :class="iconClasses" />
+          <Icon name="lucide:arrow-left-right" :class="[iconClasses, iconSize]" />
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
@@ -30,17 +34,17 @@
       <MenubarTrigger>
         <NuxtLink
           to="/settings"
-          :class="linkClasses('/settings')"
+          :class="[linkClasses('/settings'), 'flex']"
           aria-label="Navegar para Configurações"
         >
-          <Icon name="lucide:settings" :class="iconClasses" />
+          <Icon name="lucide:settings" :class="[iconClasses, iconSize]" />
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
 
     <MenubarMenu>
       <MenubarTrigger @click="isDialogOpen = true">
-        <Icon name="lucide:user" :class="iconClasses" />
+        <Icon name="lucide:user" :class="[iconClasses, iconSize]" />
       </MenubarTrigger>
     </MenubarMenu>
   </Menubar>
@@ -51,6 +55,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
+const fontStore = useFontStore();
 const themeStore = useThemeStore();
 const route = useRoute();
 const isDialogOpen = ref(false);
@@ -58,6 +63,8 @@ const isDialogOpen = ref(false);
 const linkClasses = (to: string) => {
   return route.path === to ? "font-bold text-primary" : "text-muted-foreground";
 };
+
+console.log("font: ", fontStore.fontSize);
 
 const background = computed(() => {
   switch (themeStore.theme) {
@@ -98,6 +105,19 @@ const iconClasses = computed(() => {
       return "text-gray-300";
     default:
       return "text-gray-200";
+  }
+});
+
+const iconSize = computed(() => {
+  switch (fontStore.fontSize) {
+    case "small":
+      return "text-medium";
+    case "medium":
+      return "text-large";
+    case "large":
+      return "text-xlarge";
+    default:
+      return "text-large";
   }
 });
 </script>

@@ -1,6 +1,6 @@
 <template>
   <ScrollArea class="col-span-2 h-full rounded-md border p-6">
-    <CardHeader>
+    <CardHeader class="text-center">
       <CardTitle>Gastos por Categoria</CardTitle>
     </CardHeader>
 
