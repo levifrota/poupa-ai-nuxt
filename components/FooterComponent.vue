@@ -64,8 +64,6 @@ const linkClasses = (to: string) => {
   return route.path === to ? "font-bold text-primary" : "text-muted-foreground";
 };
 
-console.log("font: ", fontStore.fontSize);
-
 const background = computed(() => {
   switch (themeStore.theme) {
     case "light":

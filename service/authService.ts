@@ -58,7 +58,6 @@ export const signUp = async ({ email, password, name }: SignUpData): Promise<Use
   try {
     const auth = await waitForAuth()
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-    console.log("Usuário cadastrado:", userCredential?.user);
     
     // Update profile with display name if provided
     if (name) {
