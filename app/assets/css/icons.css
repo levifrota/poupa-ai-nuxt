@@ -1,0 +1,12 @@
+/* Icon size for Icon components specifically */
+.text-small .icon {
+  font-size: 1rem !important;
+}
+
+.text-medium .icon {
+  font-size: 1.25rem !important;
+}
+
+.text-large .icon {
+  font-size: 1.5rem !important;
+}

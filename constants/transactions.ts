@@ -22,6 +22,8 @@ export enum TransactionPaymentMethod {
   DEBIT_CARD = "DEBIT_CARD",
   PIX = "PIX",
   BANK_TRANSFER = "BANK_TRANSFER",
+  FOOD_TICKET = "FOOD_TICKET",
+  MEAL_TICKET = "MEAL_TICKET",
   BANK_SLIP = "BANK_SLIP",
   OTHER = "OTHER",
 }
@@ -56,13 +58,15 @@ export const TRANSACTION_PAYMENT_METHOD_ICONS: Record<
   TransactionPaymentMethod,
   string
 > = {
-  CREDIT_CARD: "credit-card.svg",
-  DEBIT_CARD: "debit-card.svg",
-  BANK_TRANSFER: "bank-transfer.svg",
-  BANK_SLIP: "bank-slip.svg",
-  CASH: "money.svg",
-  PIX: "pix.svg",
-  OTHER: "other.svg",
+  CREDIT_CARD: "material-symbols:credit-card-outline",
+  DEBIT_CARD: "mdi:credit-card",
+  BANK_TRANSFER: "bi:bank",
+  BANK_SLIP: "lsicon:bar-code-filled",
+  CASH: "streamline-cyber:bank-note-2",
+  PIX: "ic:baseline-pix",
+  FOOD_TICKET: "map:grocery-or-supermarket",
+  MEAL_TICKET: "fluent:food-24-regular",
+  OTHER: "flowbite:dots-horizontal-outline",
 };
 
 export const TRANSACTION_PAYMENT_METHOD_LABELS: Record<
@@ -76,6 +80,8 @@ export const TRANSACTION_PAYMENT_METHOD_LABELS: Record<
   BANK_TRANSFER: "Transferência bancária",
   OTHER: "Outros",
   BANK_SLIP: "Boleto bancário",
+  FOOD_TICKET: "Vale alimentação",
+  MEAL_TICKET: "Vale refeição",
 };
 
 export const TRANSACTION_TYPE_OPTIONS = [
@@ -109,6 +115,14 @@ export const TRANSACTION_PAYMENT_METHOD_OPTIONS = [
   {
     label: TRANSACTION_PAYMENT_METHOD_LABELS["BANK_TRANSFER"],
     value: "BANK_TRANSFER" as TransactionPaymentMethod,
+  },
+  {
+    label: TRANSACTION_PAYMENT_METHOD_LABELS["FOOD_TICKET"],
+    value: "FOOD_TICKET" as TransactionPaymentMethod,
+  },
+  {
+    label: TRANSACTION_PAYMENT_METHOD_LABELS["MEAL_TICKET"],
+    value: "MEAL_TICKET" as TransactionPaymentMethod,
   },
   {
     label: TRANSACTION_PAYMENT_METHOD_LABELS["BANK_SLIP"],

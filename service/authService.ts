@@ -58,7 +58,6 @@ export const signUp = async ({ email, password, name }: SignUpData): Promise<Use
   try {
     const auth = await waitForAuth()
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-    console.log("Usuário cadastrado:", userCredential?.user);
     
     // Update profile with display name if provided
     if (name) {
@@ -135,6 +134,7 @@ export const getAuthErrorMessage = (errorCode: string): string => {
     'auth/cancelled-popup-request': 'Login cancelado.',
     'auth/network-request-failed': 'Erro de conexão. Verifique sua internet.',
     'auth/configuration-not-found': 'Configuração do Firebase não encontrada.',
+    'auth/invalid-credential': 'Credenciais inválidas. Tente novamente.',
   }
   
   return errorMessages[errorCode] || 'Erro inesperado. Tente novamente.'

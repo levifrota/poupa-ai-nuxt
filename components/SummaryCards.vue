@@ -64,11 +64,13 @@ const summaryList = computed(() => [
       <template #action>
         <UpsertTransactionDialog
           :is-open="isUpsertTransactionDialogOpen"
+          class="h[20%] sm:h-auto relative sm:absolute right-0 sm:right-4 justify-center"
           @update:is-open="isUpsertTransactionDialogOpen = $event"
           @submit="handleSubmit"
         >
-          <DialogTrigger as-child>
-            <Button size="icon">
+          <DialogTrigger as-child class="w-full">
+            <Button class="cursor-pointer">
+              <span>Adicionar Transação</span>
               <Icon name="lucide:plus" class="h-4 w-4" />
             </Button>
           </DialogTrigger>
@@ -77,7 +79,9 @@ const summaryList = computed(() => [
     </SummaryCard>
   </div>
 
-  <div class="grid max-w-[100%] grid-cols-[50%_50%] gap-3 sm:grid-cols-3 sm:gap-6">
+  <div
+    class="grid max-w-[100%] grid-cols-[45%_45%] justify-center gap-3 sm:grid-cols-3 sm:gap-6"
+  >
     <SummaryCard
       v-for="item in summaryList"
       :key="item.title"

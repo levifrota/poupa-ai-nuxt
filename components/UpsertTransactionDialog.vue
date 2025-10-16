@@ -55,8 +55,8 @@ const props = defineProps<{
 const emits = defineEmits(["update:isOpen", "submit"]);
 
 const validationSchema = z.object({
-  name: z.string().min(1, {
-    message: "O nome é obrigatório.",
+  name: z.string({
+    required_error: "O nome é obrigatório.",
   }),
   amount: z
     .number({
@@ -141,19 +141,23 @@ const isUpdate = computed(() => !!props.transactionId);
 <template>
   <Dialog :open="props.isOpen" @update:open="(value) => emits('update:isOpen', value)">
     <slot />
-    <DialogContent class="w-[80%] pr-0 sm:w-full">
-      <ScrollArea class="m-0 h-full rounded-md pr-4">
-        <DialogHeader>
-          <DialogTitle> {{ isUpdate ? "Editar" : "Adicionar" }} Transação </DialogTitle>
-          <DialogDescription>Insira as informações abaixo</DialogDescription>
-        </DialogHeader>
+    <DialogContent class="w-[90%] pt-12 sm:pt-6 sm:w-full min-w-fit sm:min-w-auto">
+      <DialogHeader>
+        <DialogTitle> {{ isUpdate ? "Editar" : "Adicionar" }} Transação </DialogTitle>
+        <DialogDescription>Insira as informações abaixo</DialogDescription>
+      </DialogHeader>
 
+      <ScrollArea class="h-[450px] m-0 sm:h-full rounded-md pr-4">
         <form class="space-y-8" @submit="onSubmit">
           <FormField v-slot="{ componentField }" name="name">
             <FormItem>
-              <FormLabel>Nome</FormLabel>
+              <FormLabel class="mb-4">Nome</FormLabel>
               <FormControl>
-                <Input placeholder="Digite o nome" v-bind="componentField" />
+                <Input
+                  class="w-60 sm:w-full"
+                  placeholder="Digite o nome"
+                  v-bind="componentField"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -164,6 +168,7 @@ const isUpdate = computed(() => !!props.transactionId);
               <FormLabel>Valor</FormLabel>
               <FormControl>
                 <MoneyInput
+                  class="w-60 sm:w-full"
                   :model-value="componentField.modelValue || 0"
                   placeholder="Digite o valor"
                   @update:model-value="componentField['onUpdate:modelValue']"
@@ -178,8 +183,8 @@ const isUpdate = computed(() => !!props.transactionId);
               <FormLabel>Tipo</FormLabel>
               <Select v-bind="componentField">
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o tipo da transação" />
+                  <SelectTrigger class="w-60 sm:w-auto">
+                    <SelectValue placeholder="Tipo da transação" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -201,8 +206,8 @@ const isUpdate = computed(() => !!props.transactionId);
               <FormLabel>Categoria</FormLabel>
               <Select v-bind="componentField">
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione a categoria da transação" />
+                  <SelectTrigger class="w-60 sm:w-auto">
+                    <SelectValue placeholder="Categoria da transação" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -224,8 +229,8 @@ const isUpdate = computed(() => !!props.transactionId);
               <FormLabel>Método de Pagamento</FormLabel>
               <Select v-bind="componentField">
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione um método de pagamento" />
+                  <SelectTrigger class="w-60 sm:w-auto">
+                    <SelectValue placeholder="Método de Pagamento" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -243,7 +248,7 @@ const isUpdate = computed(() => !!props.transactionId);
           </FormField>
 
           <FormField v-slot="{ componentField }" name="date">
-            <FormItem>
+            <FormItem class="flex flex-col">
               <FormLabel>Data</FormLabel>
               <FormControl>
                 <DatePicker
@@ -259,11 +264,20 @@ const isUpdate = computed(() => !!props.transactionId);
 
           <DialogFooter>
             <DialogClose as-child>
-              <Button type="button" variant="outline" :disabled="isSubmitting">
+              <Button
+                class="w-60 sm:w-auto"
+                type="button"
+                variant="outline"
+                :disabled="isSubmitting"
+              >
                 Cancelar
               </Button>
             </DialogClose>
-            <Button class="mb-3 sm:mb-0" type="submit" :disabled="isSubmitting">
+            <Button
+              class="mb-3 w-60 sm:w-auto sm:mb-0"
+              type="submit"
+              :disabled="isSubmitting"
+            >
               {{ isSubmitting ? "Salvando..." : isUpdate ? "Atualizar" : "Adicionar" }}
             </Button>
           </DialogFooter>

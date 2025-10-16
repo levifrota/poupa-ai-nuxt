@@ -21,7 +21,7 @@
                   v-if="profileImageUrl"
                   :src="profileImageUrl"
                   :alt="`Foto de ${values.displayName || 'usuário'}`"
-                  class="h-full w-full object-cover"
+                  class="h-full w-full object-cover z-10"
                 />
                 <Icon v-else name="lucide:user" class="h-12 w-12 text-muted-foreground" />
               </div>
@@ -131,21 +131,21 @@
             </p>
           </div>
         </form>
-      </ScrollArea>
 
-      <DialogFooter>
-        <Button variant="outline" :disabled="isSaving" @click="isDialogOpen = false">
-          Cancelar
-        </Button>
-        <Button type="submit" :disabled="isSaving || !hasChanges" @click="onSubmit">
-          <Icon
-            v-if="isSaving"
-            name="lucide:loader-2"
-            class="mr-2 h-4 w-4 animate-spin"
-          />
-          {{ isSaving ? "Salvando..." : "Salvar Alterações" }}
-        </Button>
-      </DialogFooter>
+        <DialogFooter>
+          <Button variant="outline" :disabled="isSaving" @click="isDialogOpen = false">
+            Cancelar
+          </Button>
+          <Button type="submit" :disabled="isSaving || !hasChanges" @click="onSubmit">
+            <Icon
+              v-if="isSaving"
+              name="lucide:loader-2"
+              class="mr-2 h-4 w-4 animate-spin"
+            />
+            {{ isSaving ? "Salvando..." : "Salvar Alterações" }}
+          </Button>
+        </DialogFooter>
+      </ScrollArea>
     </DialogContent>
   </Dialog>
 </template>
@@ -209,7 +209,10 @@ const originalImageUrl = ref<string>("");
 // Schema de validação
 const formSchema = toTypedSchema(
   z.object({
-    displayName: z.string().min(1, "Nome é obrigatório").max(50, "Nome muito longo"),
+    displayName: z
+      .string({ required_error: "O nome é obrigatório." })
+      .min(1, "Nome é obrigatório")
+      .max(50, "Nome muito longo"),
   })
 );
 
@@ -471,7 +474,10 @@ const changePassword = async () => {
   } catch (error: unknown) {
     console.error("Erro ao alterar senha:", error);
 
-    if (error.code === "auth/wrong-password") {
+    if (
+      error.code === "auth/wrong-password" ||
+      error.code === "auth/invalid-credential"
+    ) {
       alert("Senha atual incorreta.");
     } else {
       alert("Erro ao alterar senha. Tente novamente.");
@@ -508,7 +514,7 @@ const confirmDeleteAccount = async () => {
       const profileRef = doc(db(), "users", user.value.uid, "profile", "data");
       await setDoc(profileRef, {});
     } catch (error) {
-      console.log("Erro ao deletar dados do perfil: ", error);
+      console.error("Erro ao deletar dados do perfil: ", error);
     }
 
     // Deletar usuário
@@ -519,8 +525,11 @@ const confirmDeleteAccount = async () => {
   } catch (error: unknown) {
     console.error("Erro ao excluir conta:", error);
 
-    if (error.code === "auth/wrong-password") {
-      alert("Senha incorreta.");
+    if (
+      error.code === "auth/wrong-password" ||
+      error.code === "auth/invalid-credential"
+    ) {
+      alert("Credenciais incorretas.");
     } else if (error.code === "auth/requires-recent-login") {
       alert("Por favor, faça login novamente antes de excluir sua conta.");
     } else {
