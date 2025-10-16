@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { logOut } from "~/service/authService.js";
 import { useRouter } from "vue-router";
+import { handleLogout } from "../app/_data/global.js";
 
 const themeStore = useThemeStore();
 const route = useRoute();
@@ -10,16 +10,6 @@ const isDialogOpen = ref(false);
 
 const linkClasses = (href: string) => {
   return route.path === href ? "font-bold text-primary" : "text-muted-foreground";
-};
-
-const handleLogout = async () => {
-  try {
-    await logOut();
-    router.push("/login");
-  } catch (error) {
-    console.error("Erro ao sair:", error);
-    alert("Erro ao sair");
-  }
 };
 </script>
 
@@ -82,7 +72,7 @@ const handleLogout = async () => {
                 Gerenciar Perfil
               </MenubarItem>
               <MenubarSeparator />
-              <MenubarItem @click="handleLogout">
+              <MenubarItem @click="handleLogout(router)">
                 <Icon name="lucide:log-out" class="mr-2" />
                 Sair
               </MenubarItem>

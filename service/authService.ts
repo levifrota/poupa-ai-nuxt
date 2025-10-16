@@ -134,6 +134,7 @@ export const getAuthErrorMessage = (errorCode: string): string => {
     'auth/cancelled-popup-request': 'Login cancelado.',
     'auth/network-request-failed': 'Erro de conexão. Verifique sua internet.',
     'auth/configuration-not-found': 'Configuração do Firebase não encontrada.',
+    'auth/invalid-credential': 'Credenciais inválidas. Tente novamente.',
   }
   
   return errorMessages[errorCode] || 'Erro inesperado. Tente novamente.'

@@ -43,8 +43,19 @@
     </MenubarMenu>
 
     <MenubarMenu>
-      <MenubarTrigger @click="isDialogOpen = true">
+      <MenubarTrigger>
         <Icon name="lucide:user" :class="[iconClasses, iconSize]" />
+        <MenubarContent>
+          <MenubarItem @click="isDialogOpen = true">
+            <Icon name="lucide:user" class="mr-2" />
+            Gerenciar Perfil
+          </MenubarItem>
+          <MenubarSeparator />
+          <MenubarItem @click="handleLogout(router)">
+            <Icon name="lucide:log-out" class="mr-2" />
+            Sair
+          </MenubarItem>
+        </MenubarContent>
       </MenubarTrigger>
     </MenubarMenu>
   </Menubar>
@@ -54,10 +65,12 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { handleLogout } from "../app/_data/global.js";
 
 const fontStore = useFontStore();
 const themeStore = useThemeStore();
 const route = useRoute();
+const router = useRouter();
 const isDialogOpen = ref(false);
 
 const linkClasses = (to: string) => {

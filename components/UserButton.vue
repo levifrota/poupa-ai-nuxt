@@ -474,7 +474,10 @@ const changePassword = async () => {
   } catch (error: unknown) {
     console.error("Erro ao alterar senha:", error);
 
-    if (error.code === "auth/wrong-password") {
+    if (
+      error.code === "auth/wrong-password" ||
+      error.code === "auth/invalid-credential"
+    ) {
       alert("Senha atual incorreta.");
     } else {
       alert("Erro ao alterar senha. Tente novamente.");
@@ -522,8 +525,11 @@ const confirmDeleteAccount = async () => {
   } catch (error: unknown) {
     console.error("Erro ao excluir conta:", error);
 
-    if (error.code === "auth/wrong-password") {
-      alert("Senha incorreta.");
+    if (
+      error.code === "auth/wrong-password" ||
+      error.code === "auth/invalid-credential"
+    ) {
+      alert("Credenciais incorretas.");
     } else if (error.code === "auth/requires-recent-login") {
       alert("Por favor, faça login novamente antes de excluir sua conta.");
     } else {
