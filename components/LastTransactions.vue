@@ -7,16 +7,18 @@ import {
 
 // Store para obter os dados das transações
 const transactionsStore = useTransactionsStore();
-
+const themeStore = useThemeStore();
+const theme = themeStore.theme;
 // Obter as últimas transações da store
 const transactions = computed(() => transactionsStore.lastTransactions);
 
 const getAmountColor = (transaction: Transaction) => {
   if (transaction.type === TransactionType.EXPENSE) {
     return "text-red-500";
-  }
-  if (transaction.type === TransactionType.DEPOSIT) {
+  } else if (transaction.type === TransactionType.DEPOSIT) {
     return "text-primary";
+  } else if (theme !== "dark" && theme !== "high-contrast") {
+    return "text-muted-foreground";
   }
   return "text-white";
 };
