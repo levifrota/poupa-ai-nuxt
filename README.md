@@ -299,28 +299,10 @@ interface Transaction {
 - Vale Refeição
 - Outros
 
-## 🤝 Contribuindo
-
-Contribuições são bem-vindas! Por favor:
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
 ## 👥 Autores
 
 - Gideão Levi de Oliveira Frota
 - Ailton Guarinho de Vasconcelos
-
-## 🙏 Agradecimentos
-
-- [Nuxt](https://nuxt.com/) pela excelente framework
-- [Firebase](https://firebase.google.com/) pela infraestrutura
-- [Shadcn](https://ui.shadcn.com/) pelos componentes
-- [Groq](https://groq.com/) pela API de IA
-- Comunidade open source
 
 ## 📞 Suporte
 
