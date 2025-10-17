@@ -20,6 +20,7 @@ export interface TransactionInput {
   category: string;
   paymentMethod: string;
   date: Date;
+  installments?: number;
 }
 
 /**

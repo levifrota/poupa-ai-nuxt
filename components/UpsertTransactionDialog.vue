@@ -77,19 +77,24 @@ const validationSchema = z.object({
   date: z.date({
     required_error: "A data é obrigatória.",
   }),
+  installments: z.number().optional(),
 });
 
 type FormSchema = z.infer<typeof validationSchema>;
 
-const { handleSubmit, resetForm, setValues } = useForm({
+const { handleSubmit, resetForm, setValues, values } = useForm({
   validationSchema: toTypedSchema(validationSchema),
   initialValues: {
     amount: 0,
     date: new Date(),
+    installments: 1,
   },
 });
 
 const isSubmitting = ref(false);
+const showInstallments = computed(
+  () => values.paymentMethod === TransactionPaymentMethod.CREDIT_CARD
+);
 
 watchEffect(() => {
   if (props.transactionId) {
@@ -104,7 +109,7 @@ watchEffect(() => {
   }
 });
 
-const onSubmit = handleSubmit(async (values) => {
+const onSubmit = handleSubmit(async (formValues) => {
   try {
     isSubmitting.value = true;
 
@@ -115,20 +120,79 @@ const onSubmit = handleSubmit(async (values) => {
 
     const userId = user.value.uid;
 
+    // Se está atualizando uma transação existente, não processa parcelas
     if (props.transactionId) {
-      // Update existing transaction
-      await updateTransaction(userId, props.transactionId, values);
+      await updateTransaction(userId, props.transactionId, formValues);
+      emits("submit", { ...formValues, id: props.transactionId });
     } else {
-      // Add new transaction
-      await addTransaction(userId, values);
+      // Verificar se é uma transação parcelada
+      const installmentsCount =
+        formValues.paymentMethod === TransactionPaymentMethod.CREDIT_CARD &&
+        typeof formValues.installments === "number" &&
+        formValues.installments > 1
+          ? formValues.installments
+          : 1;
+
+      if (installmentsCount > 1) {
+        // Criar múltiplas transações para as parcelas
+        const installmentAmount = Number(
+          (formValues.amount / installmentsCount).toFixed(2)
+        );
+        const baseDate = new Date(formValues.date);
+        const promises = [];
+
+        // Criar cada parcela
+        for (let i = 0; i < installmentsCount; i++) {
+          // Em vez de adicionar 30 dias, vamos para o mesmo dia do mês seguinte
+          const installmentDate = new Date(baseDate);
+          installmentDate.setMonth(installmentDate.getMonth() + i);
+
+          // Lidar com casos como 31 de janeiro indo para fevereiro
+          const originalDay = baseDate.getDate();
+          const lastDayOfMonth = new Date(
+            installmentDate.getFullYear(),
+            installmentDate.getMonth() + 1,
+            0
+          ).getDate();
+          if (originalDay > lastDayOfMonth) {
+            installmentDate.setDate(lastDayOfMonth); // Ajusta para o último dia do mês se o dia original for maior
+          }
+
+          const installmentData = {
+            ...formValues,
+            name: `${formValues.name} - ${i + 1}/${installmentsCount}`,
+            amount:
+              i === installmentsCount - 1
+                ? Number(
+                    (
+                      formValues.amount -
+                      installmentAmount * (installmentsCount - 1)
+                    ).toFixed(2)
+                  ) // Ajusta a última parcela para evitar problemas de arredondamento
+                : installmentAmount,
+            date: installmentDate,
+          };
+
+          // Remove o campo de parcelas antes de salvar
+          const { installments, ...dataToSave } = installmentData;
+
+          promises.push(addTransaction(userId, dataToSave));
+        }
+
+        await Promise.all(promises);
+      } else {
+        // Transação normal (não parcelada)
+        const { installments, ...dataToSave } = formValues;
+        await addTransaction(userId, dataToSave);
+      }
+
+      emits("submit", formValues);
     }
 
-    emits("submit", { ...values, id: props.transactionId });
     emits("update:isOpen", false);
     resetForm();
   } catch (error) {
     console.error("Erro ao salvar transação:", error);
-    // You can add user notification here
     alert("Erro ao salvar transação. Tente novamente.");
   } finally {
     isSubmitting.value = false;
@@ -141,13 +205,15 @@ const isUpdate = computed(() => !!props.transactionId);
 <template>
   <Dialog :open="props.isOpen" @update:open="(value) => emits('update:isOpen', value)">
     <slot />
-    <DialogContent class="w-[90%] pt-12 sm:pt-6 sm:w-full min-w-fit sm:min-w-auto">
+    <DialogContent
+      class="w-[90%] h-[90%] pt-12 sm:pt-6 sm:w-full min-w-fit sm:min-w-auto"
+    >
       <DialogHeader>
         <DialogTitle> {{ isUpdate ? "Editar" : "Adicionar" }} Transação </DialogTitle>
         <DialogDescription>Insira as informações abaixo</DialogDescription>
       </DialogHeader>
 
-      <ScrollArea class="h-[450px] m-0 sm:h-full rounded-md pr-4">
+      <ScrollArea class="h-[450px] m-0 sm:max-h-max rounded-md pr-4">
         <form class="space-y-8" @submit="onSubmit">
           <FormField v-slot="{ componentField }" name="name">
             <FormItem>
@@ -247,6 +313,28 @@ const isUpdate = computed(() => !!props.transactionId);
             </FormItem>
           </FormField>
 
+          <!-- Campo de Parcelas - Aparece apenas quando o método de pagamento é Cartão de Crédito -->
+          <FormField
+            v-if="showInstallments"
+            v-slot="{ componentField }"
+            name="installments"
+          >
+            <FormItem>
+              <FormLabel>Número de Parcelas</FormLabel>
+              <FormControl>
+                <Input
+                  class="w-60 sm:w-full"
+                  type="number"
+                  min="1"
+                  max="48"
+                  placeholder="Número de parcelas"
+                  v-bind="componentField"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+
           <FormField v-slot="{ componentField }" name="date">
             <FormItem class="flex flex-col">
               <FormLabel>Data</FormLabel>
@@ -254,7 +342,9 @@ const isUpdate = computed(() => !!props.transactionId);
                 <DatePicker
                   :model-value="componentField.modelValue || new Date()"
                   @update:model-value="
-                    (value) => componentField['onUpdate:modelValue'](value || new Date())
+                    (value) =>
+                      componentField['onUpdate:modelValue'] &&
+                      componentField['onUpdate:modelValue'](value || new Date())
                   "
                 />
               </FormControl>
