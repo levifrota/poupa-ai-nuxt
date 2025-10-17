@@ -1,6 +1,6 @@
 # Poupa.ai 💰
 
-Seu assistente financeiro pessoal inteligente para controle e gestão de finanças.
+Seu assistente financeiro pessoal inteligente e acessível para controle e gestão de finanças.
 
 ## 📋 Sobre o Projeto
 
@@ -324,7 +324,7 @@ Contribuições são bem-vindas! Por favor:
 
 ## 📞 Suporte
 
-Para suporte, envie um email para [email protected] ou abra uma issue no GitHub.
+Para suporte, envie um email para [levi.frota.09@hotmail.com] ou abra uma issue no GitHub.
 
 ---
 
