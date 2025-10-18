@@ -34,9 +34,9 @@ export const useFontStore = defineStore('font', () => {
   const applyFontFamily = (newFontFamily: FontFamily) => {
     if (typeof window === 'undefined') return;
     
-    document.documentElement.classList.remove('font-default', 'font-open-dyslexic');
+    document.documentElement.classList.remove('font-default', 'font-open-dyslexic', 'font-arial');
     document.documentElement.classList.add(`font-${newFontFamily}`);
-    
+
     // Salvar no cookie com expiração de 365 dias
     const fontFamilyCookie = useCookie<string>('fontFamily', {
       maxAge: 60 * 60 * 24 * 365,

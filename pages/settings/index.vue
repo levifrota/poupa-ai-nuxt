@@ -127,19 +127,8 @@
 
 <script setup lang="ts">
 definePageMeta({
-  middleware: 'auth'
-})
-// import { Button } from "@/components/ui/button";
-// import {
-//   Select,
-//   SelectContent,
-//   SelectGroup,
-//   SelectItem,
-//   SelectLabel,
-//   SelectSeparator,
-//   SelectTrigger,
-//   SelectValue,
-// } from "@/components/ui/select";
+  middleware: "auth",
+});
 
 const themeStore = useThemeStore();
 const fontStore = useFontStore();
