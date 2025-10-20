@@ -122,14 +122,45 @@
         </div>
       </div>
     </div>
+
+    <!-- Seção de Ajuda -->
+    <div class="bg-card rounded-lg p-6 shadow-sm">
+      <h2 class="text-xl font-semibold mb-4">Ajuda</h2>
+
+      <div class="space-y-4">
+        <div>
+          <h3 class="text-sm font-medium mb-2">Tour de Introdução</h3>
+          <p class="text-sm text-muted-foreground mb-3">
+            Refaça o tour inicial para conhecer as funcionalidades do sistema.
+          </p>
+          <Button @click="handleRestartOnboarding">
+            <Icon name="lucide:help-circle" class="mr-2 h-4 w-4" />
+            Refazer Tour
+          </Button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { Button } from "~/components/ui/button";
+import { Icon } from "#components";
+
 definePageMeta({
   middleware: "auth",
 });
 
 const themeStore = useThemeStore();
 const fontStore = useFontStore();
+const onboardingStore = useOnboardingStore();
+const router = useRouter();
+
+const handleRestartOnboarding = () => {
+  onboardingStore.resetOnboarding();
+  router.push("/");
+  setTimeout(() => {
+    onboardingStore.startOnboarding();
+  }, 500);
+};
 </script>

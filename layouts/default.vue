@@ -3,13 +3,13 @@
     <template v-if="!isAuthPage">
       <NavbarComponent />
       <main class="flex-grow p-4">
-        <NuxtPage />
+        <slot />
       </main>
       <FooterComponent />
     </template>
     <template v-else>
       <main class="flex-grow p-4">
-        <NuxtPage />
+        <slot />
       </main>
     </template>
   </div>
