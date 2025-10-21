@@ -9,12 +9,24 @@ export const useOnboardingStore = defineStore('onboarding', () => {
   const checkOnboardingStatus = () => {
     if (import.meta.server) return;
     
+    // Verificar localStorage primeiro (mais confiável no cliente)
+    const storedValue = localStorage.getItem('onboarding-completed');
+    if (storedValue === 'true') {
+      hasCompletedOnboarding.value = true;
+      return;
+    }
+    
     const onboardingCookie = useCookie<string>('onboarding-completed', {
       maxAge: 60 * 60 * 24 * 365, // 1 ano
       path: '/'
     });
     
     hasCompletedOnboarding.value = onboardingCookie.value === 'true';
+    
+    // Sincronizar com localStorage
+    if (hasCompletedOnboarding.value) {
+      localStorage.setItem('onboarding-completed', 'true');
+    }
   };
 
   // Iniciar onboarding
@@ -40,6 +52,11 @@ export const useOnboardingStore = defineStore('onboarding', () => {
     isOnboardingActive.value = false;
     hasCompletedOnboarding.value = true;
     
+    // Salvar em localStorage
+    if (!import.meta.server) {
+      localStorage.setItem('onboarding-completed', 'true');
+    }
+    
     const onboardingCookie = useCookie<string>('onboarding-completed', {
       maxAge: 60 * 60 * 24 * 365,
       path: '/'
@@ -52,6 +69,11 @@ export const useOnboardingStore = defineStore('onboarding', () => {
     hasCompletedOnboarding.value = false;
     currentStep.value = 0;
     isOnboardingActive.value = false;
+    
+    // Remover do localStorage
+    if (!import.meta.server) {
+      localStorage.removeItem('onboarding-completed');
+    }
     
     const onboardingCookie = useCookie<string>('onboarding-completed', {
       maxAge: 60 * 60 * 24 * 365,

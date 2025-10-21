@@ -1,5 +1,8 @@
 <template>
   <ScrollArea class="m-0 mt-0 flex flex-col sm:m-0 sm:overflow-hidden sm:p-6">
+    <h1 class="text-center sm:text-justify self-center mb-8 text-2xl font-bold md:py-0">
+      Olá, {{ user?.displayName }}!
+    </h1>
     <div class="m-3 flex flex-col justify-between sm:flex-row">
       <h1 class="self-center py-2 text-2xl font-bold sm:self-auto md:py-0">Painel</h1>
 
@@ -33,6 +36,8 @@
 import TimeSelect from "@/components/TimeSelect.vue";
 import type { DateRange } from "reka-ui";
 import { toDate } from "reka-ui/date";
+
+const user = useCurrentUser();
 
 definePageMeta({
   middleware: "auth",

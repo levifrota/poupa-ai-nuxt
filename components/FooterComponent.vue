@@ -43,7 +43,7 @@
     </MenubarMenu>
 
     <MenubarMenu>
-      <MenubarTrigger>
+      <MenubarTrigger aria-label="Menu do usuário">
         <Icon name="lucide:user" :class="[iconClasses, iconSize]" />
         <MenubarContent>
           <MenubarItem @click="isDialogOpen = true">

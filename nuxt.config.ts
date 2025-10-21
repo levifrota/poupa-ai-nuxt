@@ -11,7 +11,7 @@ export default defineNuxtConfig({
       meta: [{ name: "description", content: "Poupa.ai" }],
       link: [{ rel: "icon", type: "image/x-icon", href: "/icon.png" }],
       charset: 'utf-16',
-      viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
+      viewport: 'width=device-width, initial-scale=1, maximum-scale=2',
     },
   },
   components: [

@@ -66,7 +66,7 @@
           </div>
 
           <!-- Informações da Conta -->
-          <div class="space-y-4">
+          <!-- <div class="space-y-4">
             <h3 class="text-sm font-medium">Informações da Conta</h3>
 
             <div class="rounded-lg border p-4 space-y-3">
@@ -97,7 +97,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
 
           <!-- Configurações de Segurança -->
           <div class="space-y-4">
@@ -126,7 +126,7 @@
               </Button>
             </div>
 
-            <p v-if="isGoogleUser" class="text-xs text-muted-foreground">
+            <p v-if="isGoogleUser" class="text-xs text-muted-foreground m-4">
               * Algumas opções não estão disponíveis para contas Google
             </p>
           </div>
@@ -290,39 +290,39 @@ watch(
 );
 
 // Métodos de formatação
-const formatDate = (timestamp: string | undefined) => {
-  if (!timestamp) return "Não disponível";
+// const formatDate = (timestamp: string | undefined) => {
+//   if (!timestamp) return "Não disponível";
 
-  return new Date(timestamp).toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
+//   return new Date(timestamp).toLocaleDateString("pt-BR", {
+//     day: "2-digit",
+//     month: "2-digit",
+//     year: "numeric",
+//     hour: "2-digit",
+//     minute: "2-digit",
+//   });
+// };
 
-const getProviderIcon = (providerId: string | undefined) => {
-  switch (providerId) {
-    case "google.com":
-      return "logos:google-icon";
-    case "password":
-      return "lucide:mail";
-    default:
-      return "lucide:user";
-  }
-};
+// const getProviderIcon = (providerId: string | undefined) => {
+//   switch (providerId) {
+//     case "google.com":
+//       return "logos:google-icon";
+//     case "password":
+//       return "lucide:mail";
+//     default:
+//       return "lucide:user";
+//   }
+// };
 
-const getProviderName = (providerId: string | undefined) => {
-  switch (providerId) {
-    case "google.com":
-      return "Google";
-    case "password":
-      return "Email/Senha";
-    default:
-      return "Desconhecido";
-  }
-};
+// const getProviderName = (providerId: string | undefined) => {
+//   switch (providerId) {
+//     case "google.com":
+//       return "Google";
+//     case "password":
+//       return "Email/Senha";
+//     default:
+//       return "Desconhecido";
+//   }
+// };
 
 // Métodos de imagem
 const triggerFileInput = () => {

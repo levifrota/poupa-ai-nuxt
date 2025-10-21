@@ -159,7 +159,7 @@ const steps: OnboardingStep[] = [
     icon: "lucide:rocket",
     route: "/",
     targetSelector: "body",
-    position: "bottom",
+    position: "top",
     tips: [
       "Este tour levará apenas 2 minutos",
       "Você pode pular ou pausar a qualquer momento",
@@ -242,8 +242,21 @@ const steps: OnboardingStep[] = [
     tips: [
       "Temas para daltonismo",
       "Ajuste de tamanho de fonte",
-      "Fonte para dislexia (OpenDyslexic)",
+      "Fonte para dislexia",
       "Modo alto contraste",
+    ],
+  },
+  {
+    title: "Perfil do Usuário",
+    description: "Gerencie suas informações pessoais e preferências da conta.",
+    icon: "lucide:user",
+    route: "/",
+    targetSelector: '[aria-label="Menu do usuário"]',
+    position: "left",
+    tips: [
+      "Atualize seus dados pessoais",
+      "Altere sua senha",
+      "Faça logout quando necessário",
     ],
   },
 ];
@@ -270,7 +283,11 @@ const navigateToStepRoute = async () => {
   }
 };
 
-const scrollToElement = (element: Element, isFooterElement: boolean = false) => {
+const scrollToElement = (
+  element: Element,
+  isFooterElement: boolean = false,
+  isBodyElement: boolean = false
+) => {
   const rect = element.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
   const viewportWidth = window.innerWidth;
@@ -278,6 +295,16 @@ const scrollToElement = (element: Element, isFooterElement: boolean = false) => 
   // Para elementos do footer no mobile, não fazer scroll - eles já estão fixos na parte inferior
   if (isFooterElement && isMobile.value) {
     return Promise.resolve();
+  }
+
+  // Para o elemento body (primeiro passo), fazer scroll para o topo
+  if (isBodyElement) {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth",
+    });
+    return new Promise((resolve) => setTimeout(resolve, 400));
   }
 
   // Verificar se o elemento está visível na viewport
@@ -338,10 +365,13 @@ const updatePositions = async () => {
   // Para mobile, buscar especificamente no footer para os passos de navegação
   let element: Element | null = null;
   let isFooterElement = false;
+  let isBodyElement = false;
 
   if (
     isMobile.value &&
-    (step.title === "Lista de Transações" || step.title === "Configurações")
+    (step.title === "Lista de Transações" ||
+      step.title === "Configurações" ||
+      step.title === "Perfil do Usuário")
   ) {
     // Buscar o elemento dentro do footer (Menubar com aria-label="Navegação principal")
     const footer = document.querySelector('[aria-label="Navegação principal"]');
@@ -351,6 +381,10 @@ const updatePositions = async () => {
     }
   } else {
     element = document.querySelector(step.targetSelector);
+    // Verificar se é o elemento body (primeiro passo)
+    if (element && element.tagName.toLowerCase() === "body") {
+      isBodyElement = true;
+    }
   }
 
   if (!element) {
@@ -389,7 +423,7 @@ const updatePositions = async () => {
   }
 
   // Fazer scroll para o elemento se necessário
-  await scrollToElement(element, isFooterElement);
+  await scrollToElement(element, isFooterElement, isBodyElement);
 
   // Recalcular rect após o scroll
   const rect = element.getBoundingClientRect();
@@ -419,11 +453,18 @@ const updatePositions = async () => {
     const left = viewportWidth / 2;
     const transform = "translateX(-50%)";
 
-    // Para passos 5 e 7 (elementos do footer), sempre posicionar acima do footer inteiro
-    if (step.title === "Lista de Transações" || step.title === "Configurações") {
+    // Para passos 5, 7 e 8 (elementos do footer), sempre posicionar acima do footer inteiro
+    if (
+      step.title === "Lista de Transações" ||
+      step.title === "Configurações" ||
+      step.title === "Perfil do Usuário"
+    ) {
       // Posicionar o card acima do footer, garantindo que o footer fique visível
       const footerTop = viewportHeight - footerHeight;
       top = Math.max(footerTop - cardHeight - cardPadding, cardPadding);
+    } else if (step.title === "Bem-vindo ao Poupa.ai! 👋") {
+      // Para o primeiro passo (body), sempre posicionar no topo
+      top = cardPadding;
     } else {
       // Para outros passos, verificar se o elemento está na metade superior ou inferior da tela
       const elementMiddle = rect.top + rect.height / 2;
