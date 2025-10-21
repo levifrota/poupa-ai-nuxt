@@ -10,16 +10,7 @@ interface Props {
   endDate?: Date;
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  startDate: () => {
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), 1);
-  },
-  endDate: () => {
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth() + 1, 0);
-  },
-});
+const props = defineProps<Props>();
 
 const loading = ref(false);
 const report = ref<string | null>(null);
@@ -202,7 +193,7 @@ async function handleDownloadPdf() {
         <DialogTitle>Relatório IA</DialogTitle>
         <DialogDescription>
           Use inteligência artificial para gerar um relatório com informações sobre suas
-          finanças. <br >
+          finanças. <br />
           <span className="text-red-500">
             Atenção: A ferramenta pode não ser precisa e pode gerar erros. Use as
             informações com cuidado.

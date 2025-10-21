@@ -17,34 +17,46 @@
     <!-- Card de instrução -->
     <div
       v-if="currentStepConfig"
-      class="absolute bg-card border rounded-lg shadow-2xl p-6 max-w-md z-10 transition-all duration-300"
+      class="absolute bg-card border rounded-lg shadow-2xl p-4 sm:p-6 max-w-[90vw] sm:max-w-md z-10 transition-all duration-300"
       :style="cardStyle"
     >
-      <div class="space-y-4">
+      <div class="space-y-3 sm:space-y-4">
         <!-- Header -->
-        <div class="flex items-start justify-between">
-          <div class="flex items-center gap-3">
-            <div class="p-2 bg-primary/10 rounded-lg">
-              <Icon :name="currentStepConfig.icon" class="h-6 w-6 text-primary" />
+        <div class="flex items-start justify-between gap-2">
+          <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+            <div class="p-1.5 sm:p-2 bg-primary/10 rounded-lg flex-shrink-0">
+              <Icon
+                :name="currentStepConfig.icon"
+                class="h-5 w-5 sm:h-6 sm:w-6 text-primary"
+              />
             </div>
-            <div>
-              <h3 class="text-lg font-semibold">{{ currentStepConfig.title }}</h3>
-              <p class="text-sm text-muted-foreground">
+            <div class="min-w-0 flex-1">
+              <h3 class="text-base sm:text-lg font-semibold truncate">
+                {{ currentStepConfig.title }}
+              </h3>
+              <p class="text-xs sm:text-sm text-muted-foreground">
                 Passo {{ onboardingStore.currentStep + 1 }} de {{ steps.length }}
               </p>
             </div>
           </div>
-          <Button variant="ghost" size="icon" @click="handleSkip">
+          <Button
+            variant="ghost"
+            size="icon"
+            class="h-8 w-8 flex-shrink-0"
+            @click="handleSkip"
+          >
             <Icon name="lucide:x" class="h-4 w-4" />
           </Button>
         </div>
 
         <!-- Conteúdo -->
         <div class="space-y-2">
-          <p class="text-sm">{{ currentStepConfig.description }}</p>
+          <p class="text-xs sm:text-sm leading-relaxed">
+            {{ currentStepConfig.description }}
+          </p>
           <ul
             v-if="currentStepConfig.tips"
-            class="text-sm space-y-1 text-muted-foreground"
+            class="text-xs sm:text-sm space-y-1 text-muted-foreground"
           >
             <li
               v-for="(tip, index) in currentStepConfig.tips"
@@ -53,16 +65,16 @@
             >
               <Icon
                 name="lucide:check"
-                class="h-4 w-4 text-primary mt-0.5 flex-shrink-0"
+                class="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary mt-0.5 flex-shrink-0"
               />
-              <span>{{ tip }}</span>
+              <span class="flex-1">{{ tip }}</span>
             </li>
           </ul>
         </div>
 
         <!-- Progress bar -->
         <div class="space-y-2">
-          <div class="h-2 bg-muted rounded-full overflow-hidden">
+          <div class="h-1.5 sm:h-2 bg-muted rounded-full overflow-hidden">
             <div
               class="h-full bg-primary transition-all duration-300"
               :style="{
@@ -77,19 +89,42 @@
           <Button
             variant="ghost"
             size="sm"
+            class="h-8 text-xs sm:text-sm"
             :disabled="onboardingStore.currentStep === 0"
             @click="onboardingStore.previousStep()"
           >
-            <Icon name="lucide:arrow-left" class="mr-2 h-4 w-4" />
-            Anterior
+            <Icon
+              name="lucide:arrow-left"
+              class="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4"
+            />
+            <span class="hidden sm:inline">Anterior</span>
+            <span class="sm:hidden">Ant.</span>
           </Button>
 
           <div class="flex gap-2">
-            <Button variant="outline" size="sm" @click="handleSkip"> Pular </Button>
-            <Button size="sm" @click="handleNext">
-              {{ isLastStep ? "Concluir" : "Próximo" }}
-              <Icon v-if="!isLastStep" name="lucide:arrow-right" class="ml-2 h-4 w-4" />
-              <Icon v-else name="lucide:check" class="ml-2 h-4 w-4" />
+            <Button
+              variant="outline"
+              size="sm"
+              class="h-8 text-xs sm:text-sm"
+              @click="handleSkip"
+            >
+              Pular
+            </Button>
+            <Button size="sm" class="h-8 text-xs sm:text-sm" @click="handleNext">
+              <span class="hidden sm:inline">{{
+                isLastStep ? "Concluir" : "Próximo"
+              }}</span>
+              <span class="sm:hidden">{{ isLastStep ? "OK" : "Prox." }}</span>
+              <Icon
+                v-if="!isLastStep"
+                name="lucide:arrow-right"
+                class="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4"
+              />
+              <Icon
+                v-else
+                name="lucide:check"
+                class="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4"
+              />
             </Button>
           </div>
         </div>
@@ -176,7 +211,7 @@ const steps: OnboardingStep[] = [
     icon: "lucide:arrow-left-right",
     route: "/transactions",
     targetSelector: '[aria-label="Navegar para Transações"]',
-    position: "bottom",
+    position: "top",
     tips: [
       "Busque transações específicas",
       "Edite ou exclua registros",
@@ -198,7 +233,7 @@ const steps: OnboardingStep[] = [
     ],
   },
   {
-    title: "Configurações de Acessibilidade",
+    title: "Configurações",
     description: "Personalize temas e fontes para melhor acessibilidade.",
     icon: "lucide:settings",
     route: "/settings",
@@ -218,6 +253,12 @@ const isLastStep = computed(() => onboardingStore.currentStep === steps.length -
 
 const spotlightStyle = ref({});
 const cardStyle = ref({});
+const isMobile = ref(false);
+
+// Detectar se é mobile
+const checkIsMobile = () => {
+  isMobile.value = window.innerWidth < 768;
+};
 
 const navigateToStepRoute = async () => {
   const step = currentStepConfig.value;
@@ -229,30 +270,128 @@ const navigateToStepRoute = async () => {
   }
 };
 
-const updatePositions = () => {
+const scrollToElement = (element: Element, isFooterElement: boolean = false) => {
+  const rect = element.getBoundingClientRect();
+  const viewportHeight = window.innerHeight;
+  const viewportWidth = window.innerWidth;
+
+  // Para elementos do footer no mobile, não fazer scroll - eles já estão fixos na parte inferior
+  if (isFooterElement && isMobile.value) {
+    return Promise.resolve();
+  }
+
+  // Verificar se o elemento está visível na viewport
+  const isVisible =
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <= viewportHeight &&
+    rect.right <= viewportWidth;
+
+  if (!isVisible) {
+    // Calcular a posição ideal para scroll
+    const footerHeight = isMobile.value ? 52 : 0;
+    const headerHeight = isMobile.value ? 0 : 60;
+    const cardHeight = 320; // Altura estimada do card + padding
+
+    let scrollTop = window.scrollY;
+    let scrollLeft = window.scrollX;
+
+    // Scroll vertical
+    if (rect.top < headerHeight) {
+      // Elemento acima da viewport
+      scrollTop = window.scrollY + rect.top - headerHeight - 20;
+    } else if (rect.bottom > viewportHeight - footerHeight) {
+      // Elemento abaixo da viewport
+      scrollTop =
+        window.scrollY + rect.bottom - viewportHeight + footerHeight + cardHeight + 20;
+    }
+
+    // Scroll horizontal (para desktop)
+    if (!isMobile.value) {
+      if (rect.left < 0) {
+        scrollLeft = window.scrollX + rect.left - 20;
+      } else if (rect.right > viewportWidth) {
+        scrollLeft = window.scrollX + rect.right - viewportWidth + 20;
+      }
+    }
+
+    // Fazer o scroll suave
+    window.scrollTo({
+      top: Math.max(0, scrollTop),
+      left: Math.max(0, scrollLeft),
+      behavior: "smooth",
+    });
+
+    // Aguardar o scroll completar antes de atualizar as posições
+    return new Promise((resolve) => setTimeout(resolve, 400));
+  }
+
+  return Promise.resolve();
+};
+
+const updatePositions = async () => {
   const step = currentStepConfig.value;
   if (!step) return;
 
-  const element = document.querySelector(step.targetSelector);
+  checkIsMobile();
+
+  // Para mobile, buscar especificamente no footer para os passos de navegação
+  let element: Element | null = null;
+  let isFooterElement = false;
+
+  if (
+    isMobile.value &&
+    (step.title === "Lista de Transações" || step.title === "Configurações")
+  ) {
+    // Buscar o elemento dentro do footer (Menubar com aria-label="Navegação principal")
+    const footer = document.querySelector('[aria-label="Navegação principal"]');
+    if (footer) {
+      element = footer.querySelector(step.targetSelector);
+      isFooterElement = true;
+    }
+  } else {
+    element = document.querySelector(step.targetSelector);
+  }
+
   if (!element) {
     console.warn(`Elemento não encontrado: ${step.targetSelector}`);
     // Fallback para centralizar se o elemento não for encontrado
-    spotlightStyle.value = {
-      top: "50%",
-      left: "50%",
-      width: "400px",
-      height: "300px",
-      transform: "translate(-50%, -50%)",
-    };
+    if (isMobile.value) {
+      spotlightStyle.value = {
+        top: "40%",
+        left: "50%",
+        width: "90vw",
+        height: "200px",
+        transform: "translate(-50%, -50%)",
+      };
 
-    cardStyle.value = {
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-    };
+      cardStyle.value = {
+        bottom: "80px", // Acima do footer
+        left: "50%",
+        transform: "translateX(-50%)",
+      };
+    } else {
+      spotlightStyle.value = {
+        top: "50%",
+        left: "50%",
+        width: "400px",
+        height: "300px",
+        transform: "translate(-50%, -50%)",
+      };
+
+      cardStyle.value = {
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+      };
+    }
     return;
   }
 
+  // Fazer scroll para o elemento se necessário
+  await scrollToElement(element, isFooterElement);
+
+  // Recalcular rect após o scroll
   const rect = element.getBoundingClientRect();
   const padding = 8;
 
@@ -265,47 +404,88 @@ const updatePositions = () => {
   };
 
   // Posição do card baseada na posição definida
-  const cardWidth = 384; // max-w-md
-  const cardPadding = 20;
-  let top = 0;
-  let left = 0;
-
-  switch (step.position) {
-    case "top":
-      top = rect.top - 200 - cardPadding;
-      left = rect.left + rect.width / 2 - cardWidth / 2;
-      break;
-    case "bottom":
-      top = rect.bottom + cardPadding;
-      left = rect.left + rect.width / 2 - cardWidth / 2;
-      break;
-    case "left":
-      top = rect.top + rect.height / 2 - 100;
-      left = rect.left - cardWidth - cardPadding;
-      break;
-    case "right":
-      top = rect.top + rect.height / 2 - 100;
-      left = rect.right + cardPadding;
-      break;
-  }
-
-  // Garantir que o card fique dentro da viewport
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
 
-  if (left < cardPadding) left = cardPadding;
-  if (left + cardWidth > viewportWidth - cardPadding) {
-    left = viewportWidth - cardWidth - cardPadding;
-  }
-  if (top < cardPadding) top = cardPadding;
-  if (top + 300 > viewportHeight - cardPadding) {
-    top = viewportHeight - 300 - cardPadding;
-  }
+  // Altura do footer (52px = h-13)
+  const footerHeight = 52;
+  const cardPadding = 20;
 
-  cardStyle.value = {
-    top: `${top}px`,
-    left: `${left}px`,
-  };
+  if (isMobile.value) {
+    // No mobile, sempre posicionar acima do footer ou abaixo do elemento
+    const cardHeight = 320; // Altura estimada do card
+
+    let top = 0;
+    const left = viewportWidth / 2;
+    const transform = "translateX(-50%)";
+
+    // Para passos 5 e 7 (elementos do footer), sempre posicionar acima do footer inteiro
+    if (step.title === "Lista de Transações" || step.title === "Configurações") {
+      // Posicionar o card acima do footer, garantindo que o footer fique visível
+      const footerTop = viewportHeight - footerHeight;
+      top = Math.max(footerTop - cardHeight - cardPadding, cardPadding);
+    } else {
+      // Para outros passos, verificar se o elemento está na metade superior ou inferior da tela
+      const elementMiddle = rect.top + rect.height / 2;
+      const viewportMiddle = viewportHeight / 2;
+
+      if (elementMiddle < viewportMiddle) {
+        // Elemento na parte superior - posicionar card abaixo
+        top = Math.min(
+          rect.bottom + cardPadding,
+          viewportHeight - cardHeight - footerHeight - cardPadding
+        );
+      } else {
+        // Elemento na parte inferior - posicionar card acima
+        top = Math.max(rect.top - cardHeight - cardPadding, cardPadding);
+      }
+    }
+
+    cardStyle.value = {
+      top: `${top}px`,
+      left: `${left}px`,
+      transform,
+    };
+  } else {
+    // Desktop - usar posicionamento original
+    const cardWidth = 384; // max-w-md
+    let top = 0;
+    let left = 0;
+
+    switch (step.position) {
+      case "top":
+        top = rect.top - 280 - cardPadding;
+        left = rect.left + rect.width / 2 - cardWidth / 2;
+        break;
+      case "bottom":
+        top = rect.bottom + cardPadding;
+        left = rect.left + rect.width / 2 - cardWidth / 2;
+        break;
+      case "left":
+        top = rect.top + rect.height / 2 - 140;
+        left = rect.left - cardWidth - cardPadding;
+        break;
+      case "right":
+        top = rect.top + rect.height / 2 - 140;
+        left = rect.right + cardPadding;
+        break;
+    }
+
+    // Garantir que o card fique dentro da viewport
+    if (left < cardPadding) left = cardPadding;
+    if (left + cardWidth > viewportWidth - cardPadding) {
+      left = viewportWidth - cardWidth - cardPadding;
+    }
+    if (top < cardPadding) top = cardPadding;
+    if (top + 300 > viewportHeight - cardPadding) {
+      top = viewportHeight - 300 - cardPadding;
+    }
+
+    cardStyle.value = {
+      top: `${top}px`,
+      left: `${left}px`,
+    };
+  }
 };
 
 const handleNext = () => {
@@ -334,13 +514,16 @@ watch(
   async () => {
     await navigateToStepRoute();
     await nextTick();
-    updatePositions();
+    // Aguardar um pouco mais para garantir que a página renderizou
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    await updatePositions();
   },
   { immediate: true }
 );
 
 // Atualizar posições quando a janela é redimensionada
 onMounted(() => {
+  checkIsMobile();
   window.addEventListener("resize", updatePositions);
 });
 

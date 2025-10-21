@@ -8,7 +8,7 @@
       <FooterComponent />
     </template>
     <template v-else>
-      <main class="flex-grow p-4">
+      <main class="flex-grow px-4">
         <slot />
       </main>
     </template>

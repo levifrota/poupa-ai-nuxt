@@ -38,8 +38,9 @@ definePageMeta({
   middleware: "auth",
 });
 
-const selectedStartDate = ref(new Date());
-const selectedEndDate = ref(new Date());
+const now = new Date();
+const selectedStartDate = ref(new Date(now.getFullYear(), now.getMonth(), 1));
+const selectedEndDate = ref(new Date(now.getFullYear(), now.getMonth() + 1, 0));
 
 const handleDateRangeUpdate = (dateRange: DateRange) => {
   if (dateRange.start && dateRange.end) {
