@@ -172,7 +172,7 @@ const steps: OnboardingStep[] = [
     icon: "lucide:plus-circle",
     route: "/",
     targetSelector: '[aria-label="Adicionar transação"]',
-    position: "left",
+    position: "right",
     tips: [
       "Registre receitas, despesas e investimentos",
       "Categorize suas transações",
@@ -225,7 +225,7 @@ const steps: OnboardingStep[] = [
     icon: "lucide:bot",
     route: "/",
     targetSelector: '[aria-label="Abrir diálogo de relatório de IA"]',
-    position: "left",
+    position: "right",
     tips: [
       "Análise inteligente das suas finanças",
       "Dicas personalizadas de economia",
@@ -252,7 +252,7 @@ const steps: OnboardingStep[] = [
     icon: "lucide:user",
     route: "/",
     targetSelector: '[aria-label="Menu do usuário"]',
-    position: "left",
+    position: "bottom",
     tips: [
       "Atualize seus dados pessoais",
       "Altere sua senha",
@@ -490,26 +490,79 @@ const updatePositions = async () => {
   } else {
     // Desktop - usar posicionamento original
     const cardWidth = 384; // max-w-md
+    const cardHeight = 320; // Altura estimada do card
     let top = 0;
     let left = 0;
 
-    switch (step.position) {
-      case "top":
-        top = rect.top - 280 - cardPadding;
-        left = rect.left + rect.width / 2 - cardWidth / 2;
-        break;
-      case "bottom":
-        top = rect.bottom + cardPadding;
-        left = rect.left + rect.width / 2 - cardWidth / 2;
-        break;
-      case "left":
-        top = rect.top + rect.height / 2 - 140;
-        left = rect.left - cardWidth - cardPadding;
-        break;
-      case "right":
-        top = rect.top + rect.height / 2 - 140;
-        left = rect.right + cardPadding;
-        break;
+    // Para passos 5, 6, 7 e 8, garantir que o card não cubra o spotlight
+    const isNavigationStep =
+      step.title === "Lista de Transações" ||
+      step.title === "Relatório com IA" ||
+      step.title === "Configurações" ||
+      step.title === "Perfil do Usuário";
+
+    if (isNavigationStep) {
+      // Calcular posição baseada na position definida, mas ajustar se necessário
+      const preferredPosition = step.position;
+
+      switch (preferredPosition) {
+        case "top":
+          top = rect.top - cardHeight - cardPadding;
+          left = rect.left + rect.width / 2 - cardWidth / 2;
+
+          // Se não couber acima, tentar embaixo
+          if (top < cardPadding) {
+            top = rect.bottom + cardPadding;
+          }
+          break;
+        case "bottom":
+          top = rect.bottom + cardPadding;
+          left = rect.left + rect.width / 2 - cardWidth / 2;
+
+          // Se não couber embaixo, tentar acima
+          if (top + cardHeight > viewportHeight - cardPadding) {
+            top = rect.top - cardHeight - cardPadding;
+          }
+          break;
+        case "left":
+          top = rect.top + rect.height / 2 - cardHeight / 2;
+          left = rect.left - cardWidth - cardPadding;
+
+          // Se não couber à esquerda, tentar à direita
+          if (left < cardPadding) {
+            left = rect.right + cardPadding;
+          }
+          break;
+        case "right":
+          top = rect.top + rect.height / 2 - cardHeight / 2;
+          left = rect.right + cardPadding;
+
+          // Se não couber à direita, tentar à esquerda
+          if (left + cardWidth > viewportWidth - cardPadding) {
+            left = rect.left - cardWidth - cardPadding;
+          }
+          break;
+      }
+    } else {
+      // Para outros passos, usar posicionamento original
+      switch (step.position) {
+        case "top":
+          top = rect.top - 280 - cardPadding;
+          left = rect.left + rect.width / 2 - cardWidth / 2;
+          break;
+        case "bottom":
+          top = rect.bottom + cardPadding;
+          left = rect.left + rect.width / 2 - cardWidth / 2;
+          break;
+        case "left":
+          top = rect.top + rect.height / 2 - 140;
+          left = rect.left - cardWidth - cardPadding;
+          break;
+        case "right":
+          top = rect.top + rect.height / 2 - 140;
+          left = rect.right + cardPadding;
+          break;
+      }
     }
 
     // Garantir que o card fique dentro da viewport
@@ -518,8 +571,8 @@ const updatePositions = async () => {
       left = viewportWidth - cardWidth - cardPadding;
     }
     if (top < cardPadding) top = cardPadding;
-    if (top + 300 > viewportHeight - cardPadding) {
-      top = viewportHeight - 300 - cardPadding;
+    if (top + cardHeight > viewportHeight - cardPadding) {
+      top = viewportHeight - cardHeight - cardPadding;
     }
 
     cardStyle.value = {
