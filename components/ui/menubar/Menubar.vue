@@ -8,8 +8,8 @@ import {
 } from 'reka-ui'
 import { computed, type HTMLAttributes } from 'vue'
 
-const props = defineProps<MenubarRootProps & { class?: HTMLAttributes['class'] }>()
-const emits = defineEmits<MenubarRootEmits>()
+const props = defineProps</* @vue-ignore */ MenubarRootProps & { class?: HTMLAttributes['class'] }>()
+const emits = defineEmits</* @vue-ignore */ MenubarRootEmits>()
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props

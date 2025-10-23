@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 import { MenubarSeparator, type MenubarSeparatorProps, useForwardProps } from 'reka-ui'
 import { computed, type HTMLAttributes } from 'vue'
 
-const props = defineProps<MenubarSeparatorProps & { class?: HTMLAttributes['class'] }>()
+const props = defineProps</* @vue-ignore */ MenubarSeparatorProps & { class?: HTMLAttributes['class'] }>()
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props

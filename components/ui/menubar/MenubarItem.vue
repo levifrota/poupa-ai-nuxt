@@ -9,13 +9,13 @@ import {
   useForwardPropsEmits,
 } from 'reka-ui'
 
-const props = defineProps<MenubarItemProps & {
+const props = defineProps</* @vue-ignore */ MenubarItemProps & {
   class?: HTMLAttributes['class']
   inset?: boolean
   variant?: 'default' | 'destructive'
 }>()
 
-const emits = defineEmits<MenubarItemEmits>()
+const emits = defineEmits</* @vue-ignore */ MenubarItemEmits>()
 
 const delegatedProps = reactiveOmit(props, 'class', 'inset', 'variant')
 const forwarded = useForwardPropsEmits(delegatedProps, emits)

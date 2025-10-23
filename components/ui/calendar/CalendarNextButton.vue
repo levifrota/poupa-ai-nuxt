@@ -6,7 +6,7 @@ import { CalendarNext, useForwardProps } from 'radix-vue'
 import { computed } from 'vue'
 import { buttonVariants } from '../button'
 
-const props = defineProps<CalendarNextProps & { class?: HTMLAttributes['class'] }>()
+const props = defineProps</* @vue-ignore */ CalendarNextProps & { class?: HTMLAttributes['class'] }>()
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props

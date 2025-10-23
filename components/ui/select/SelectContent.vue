@@ -16,13 +16,13 @@ defineOptions({
 })
 
 const props = withDefaults(
-  defineProps<SelectContentProps & { class?: HTMLAttributes['class'] }>(),
+  defineProps</* @vue-ignore */ SelectContentProps & { class?: HTMLAttributes['class'] }>(),
   {
     position: 'popper',
     class: '',
   },
 )
-const emits = defineEmits<SelectContentEmits>()
+const emits = defineEmits</* @vue-ignore */ SelectContentEmits>()
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props

@@ -4,9 +4,9 @@ import { RangeCalendarRoot, type RangeCalendarRootEmits, type RangeCalendarRootP
 import { computed, type HTMLAttributes } from 'vue'
 import { RangeCalendarCell, RangeCalendarCellTrigger, RangeCalendarGrid, RangeCalendarGridBody, RangeCalendarGridHead, RangeCalendarGridRow, RangeCalendarHeadCell, RangeCalendarHeader, RangeCalendarHeading, RangeCalendarNextButton, RangeCalendarPrevButton } from '.'
 
-const props = defineProps<RangeCalendarRootProps & { class?: HTMLAttributes['class'] }>()
+const props = defineProps</* @vue-ignore */ RangeCalendarRootProps & { class?: HTMLAttributes['class'] }>()
 
-const emits = defineEmits<RangeCalendarRootEmits>()
+const emits = defineEmits</* @vue-ignore */ RangeCalendarRootEmits>()
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props

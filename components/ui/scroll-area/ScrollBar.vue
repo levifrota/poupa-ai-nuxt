@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 import { ScrollAreaScrollbar, type ScrollAreaScrollbarProps, ScrollAreaThumb } from 'reka-ui'
 import { computed, type HTMLAttributes } from 'vue'
 
-const props = withDefaults(defineProps<ScrollAreaScrollbarProps & { class?: HTMLAttributes['class'] }>(), {
+const props = withDefaults(defineProps</* @vue-ignore */ ScrollAreaScrollbarProps & { class?: HTMLAttributes['class'] }>(), {
   orientation: 'vertical',
   class: '',
 })

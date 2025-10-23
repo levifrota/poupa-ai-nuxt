@@ -14,14 +14,14 @@ defineOptions({
 })
 
 const props = withDefaults(
-  defineProps<PopoverContentProps & { class?: HTMLAttributes['class'] }>(),
+  defineProps</* @vue-ignore */ PopoverContentProps & { class?: HTMLAttributes['class'] }>(),
   {
     align: 'center',
     sideOffset: 4,
     class: '',
   },
 )
-const emits = defineEmits<PopoverContentEmits>()
+const emits = defineEmits</* @vue-ignore */ PopoverContentEmits>()
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props

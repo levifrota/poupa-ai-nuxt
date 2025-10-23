@@ -9,7 +9,7 @@ import {
 import { computed, type HTMLAttributes } from 'vue'
 
 const props = withDefaults(
-  defineProps<MenubarContentProps & { class?: HTMLAttributes['class'] }>(),
+  defineProps</* @vue-ignore */ MenubarContentProps & { class?: HTMLAttributes['class'] }>(),
   {
     align: 'start',
     alignOffset: -4,

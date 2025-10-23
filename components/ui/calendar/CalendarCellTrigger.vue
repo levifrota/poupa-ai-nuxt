@@ -6,7 +6,7 @@ import { CalendarCellTrigger, useForwardProps } from 'radix-vue'
 import { computed } from 'vue'
 import { buttonVariants } from '../button'
 
-const props = defineProps<CalendarCellTriggerProps & { class?: HTMLAttributes['class'] }>()
+const props = defineProps</* @vue-ignore */ CalendarCellTriggerProps & { class?: HTMLAttributes['class'] }>()
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props

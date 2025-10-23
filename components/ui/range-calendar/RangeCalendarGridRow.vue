@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 import { RangeCalendarGridRow, type RangeCalendarGridRowProps, useForwardProps } from 'reka-ui'
 import { computed, type HTMLAttributes } from 'vue'
 
-const props = defineProps<RangeCalendarGridRowProps & { class?: HTMLAttributes['class'] }>()
+const props = defineProps</* @vue-ignore */ RangeCalendarGridRowProps & { class?: HTMLAttributes['class'] }>()
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props

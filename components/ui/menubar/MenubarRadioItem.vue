@@ -10,8 +10,8 @@ import {
 } from 'reka-ui'
 import { computed, type HTMLAttributes } from 'vue'
 
-const props = defineProps<MenubarRadioItemProps & { class?: HTMLAttributes['class'] }>()
-const emits = defineEmits<MenubarRadioItemEmits>()
+const props = defineProps</* @vue-ignore */ MenubarRadioItemProps & { class?: HTMLAttributes['class'] }>()
+const emits = defineEmits</* @vue-ignore */ MenubarRadioItemEmits>()
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props

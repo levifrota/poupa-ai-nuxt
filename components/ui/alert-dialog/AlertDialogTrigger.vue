@@ -2,7 +2,7 @@
 import type { AlertDialogTriggerProps } from "reka-ui"
 import { AlertDialogTrigger } from "reka-ui"
 
-const props = defineProps<AlertDialogTriggerProps>()
+const props = defineProps</* @vue-ignore */ AlertDialogTriggerProps>()
 </script>
 
 <template>

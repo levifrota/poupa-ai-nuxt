@@ -10,8 +10,8 @@ import {
 } from 'reka-ui'
 import { computed, type HTMLAttributes } from 'vue'
 
-const props = defineProps<MenubarCheckboxItemProps & { class?: HTMLAttributes['class'] }>()
-const emits = defineEmits<MenubarCheckboxItemEmits>()
+const props = defineProps</* @vue-ignore */ MenubarCheckboxItemProps & { class?: HTMLAttributes['class'] }>()
+const emits = defineEmits</* @vue-ignore */ MenubarCheckboxItemEmits>()
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props

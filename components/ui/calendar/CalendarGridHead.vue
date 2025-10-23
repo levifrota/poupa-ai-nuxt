@@ -2,7 +2,7 @@
 import type { CalendarGridHeadProps } from 'radix-vue'
 import { CalendarGridHead } from 'radix-vue'
 
-const props = defineProps<CalendarGridHeadProps>()
+const props = defineProps</* @vue-ignore */ CalendarGridHeadProps>()
 </script>
 
 <template>

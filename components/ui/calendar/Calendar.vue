@@ -26,7 +26,7 @@ const props = defineProps<
   }
 >();
 
-const emits = defineEmits<CalendarRootEmits>();
+const emits = defineEmits</* @vue-ignore */ CalendarRootEmits>();
 
 const delegatedProps = computed(() => {
   const { class: _, locale: __, weekdayFormat: ___, ...delegated } = props;

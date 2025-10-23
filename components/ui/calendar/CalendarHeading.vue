@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import { CalendarHeading, useForwardProps } from 'radix-vue'
 import { computed } from 'vue'
 
-const props = defineProps<CalendarHeadingProps & { class?: HTMLAttributes['class'] }>()
+const props = defineProps</* @vue-ignore */ CalendarHeadingProps & { class?: HTMLAttributes['class'] }>()
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props

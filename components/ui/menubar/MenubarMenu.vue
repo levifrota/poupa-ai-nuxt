@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MenubarMenu, type MenubarMenuProps } from 'reka-ui'
 
-const props = defineProps<MenubarMenuProps>()
+const props = defineProps</* @vue-ignore */ MenubarMenuProps>()
 </script>
 
 <template>

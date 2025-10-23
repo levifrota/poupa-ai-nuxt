@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { SelectGroup, type SelectGroupProps } from 'reka-ui'
 
-const props = defineProps<SelectGroupProps>()
+const props = defineProps</* @vue-ignore */ SelectGroupProps>()
 </script>
 
 <template>

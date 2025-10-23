@@ -6,7 +6,7 @@ import { ChevronDown } from 'lucide-vue-next'
 import { SelectIcon, SelectTrigger, type SelectTriggerProps, useForwardProps } from 'reka-ui'
 
 const props = withDefaults(
-  defineProps<SelectTriggerProps & { class?: HTMLAttributes['class'], size?: 'sm' | 'default' }>(),
+  defineProps</* @vue-ignore */ SelectTriggerProps & { class?: HTMLAttributes['class'], size?: 'sm' | 'default' }>(),
   { size: 'default', class: '' },
 )
 

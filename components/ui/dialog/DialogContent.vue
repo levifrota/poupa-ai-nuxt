@@ -12,8 +12,8 @@ import {
 import { computed, type HTMLAttributes } from 'vue'
 import DialogOverlay from './DialogOverlay.vue'
 
-const props = defineProps<DialogContentProps & { class?: HTMLAttributes['class'] }>()
-const emits = defineEmits<DialogContentEmits>()
+const props = defineProps</* @vue-ignore */ DialogContentProps & { class?: HTMLAttributes['class'] }>()
+const emits = defineEmits</* @vue-ignore */ DialogContentEmits>()
 
 const delegatedProps = computed(() => {
   const { class: _, ...delegated } = props

@@ -8,12 +8,12 @@ defineOptions({
   inheritAttrs: false,
 })
 
-const props = withDefaults(defineProps<TooltipContentProps & { class?: HTMLAttributes['class'] }>(), {
+const props = withDefaults(defineProps</* @vue-ignore */ TooltipContentProps & { class?: HTMLAttributes['class'] }>(), {
   sideOffset: 4,
   class: '',
 })
 
-const emits = defineEmits<TooltipContentEmits>()
+const emits = defineEmits</* @vue-ignore */ TooltipContentEmits>()
 
 const delegatedProps = reactiveOmit(props, 'class')
 const forwarded = useForwardPropsEmits(delegatedProps, emits)
