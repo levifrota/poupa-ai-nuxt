@@ -1,17 +1,36 @@
 <template>
-  <div v-if="onboardingStore.isOnboardingActive" class="fixed inset-0 z-50">
+  <div
+    v-if="onboardingStore.isOnboardingActive"
+    class="fixed inset-0 z-50"
+    role="dialog"
+    aria-modal="true"
+    :aria-labelledby="`onboarding-title-${onboardingStore.currentStep}`"
+    :aria-describedby="`onboarding-description-${onboardingStore.currentStep}`"
+    aria-label="Tour guiado do Poupa.ai"
+  >
     <!-- Overlay escuro -->
-    <div class="absolute inset-0 bg-black/60 transition-opacity" @click="handleSkip" />
+    <div
+      class="absolute inset-0 bg-black/60 transition-opacity"
+      aria-hidden="true"
+      @click="handleSkip"
+    />
 
     <!-- Spotlight para destacar o elemento -->
     <div
       v-if="currentStepConfig"
       class="absolute transition-all duration-300 pointer-events-none"
       :style="spotlightStyle"
+      aria-hidden="true"
     >
       <div
         class="absolute inset-0 rounded-lg ring-4 ring-primary ring-offset-4 ring-offset-black/60"
       />
+    </div>
+
+    <!-- Anúncio de mudança de passo para leitores de tela -->
+    <div role="status" aria-live="polite" aria-atomic="true" class="sr-only">
+      {{ currentStepConfig?.title }}. Passo {{ onboardingStore.currentStep + 1 }} de
+      {{ steps.length }}. {{ currentStepConfig?.description }}
     </div>
 
     <!-- Card de instrução -->
@@ -19,22 +38,34 @@
       v-if="currentStepConfig"
       class="absolute bg-card border rounded-lg shadow-2xl p-4 sm:p-6 max-w-[90vw] sm:max-w-md z-10 transition-all duration-300"
       :style="cardStyle"
+      role="document"
     >
       <div class="space-y-3 sm:space-y-4">
         <!-- Header -->
         <div class="flex items-start justify-between gap-2">
           <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-            <div class="p-1.5 sm:p-2 bg-primary/10 rounded-lg flex-shrink-0">
+            <div
+              class="p-1.5 sm:p-2 bg-primary/10 rounded-lg flex-shrink-0"
+              aria-hidden="true"
+            >
               <Icon
                 :name="currentStepConfig.icon"
                 class="h-5 w-5 sm:h-6 sm:w-6 text-primary"
               />
             </div>
             <div class="min-w-0 flex-1">
-              <h3 class="text-base sm:text-lg font-semibold truncate">
+              <h3
+                :id="`onboarding-title-${onboardingStore.currentStep}`"
+                class="text-base sm:text-lg font-semibold truncate"
+              >
                 {{ currentStepConfig.title }}
               </h3>
-              <p class="text-xs sm:text-sm text-muted-foreground">
+              <p
+                class="text-xs sm:text-sm text-muted-foreground"
+                :aria-label="`Progresso: passo ${onboardingStore.currentStep + 1} de ${
+                  steps.length
+                }`"
+              >
                 Passo {{ onboardingStore.currentStep + 1 }} de {{ steps.length }}
               </p>
             </div>
@@ -43,20 +74,26 @@
             variant="ghost"
             size="icon"
             class="h-8 w-8 flex-shrink-0"
+            aria-label="Fechar tour guiado"
+            title="Fechar tour guiado"
             @click="handleSkip"
           >
-            <Icon name="lucide:x" class="h-4 w-4" />
+            <Icon name="lucide:x" class="h-4 w-4" aria-hidden="true" />
           </Button>
         </div>
 
         <!-- Conteúdo -->
         <div class="space-y-2">
-          <p class="text-xs sm:text-sm leading-relaxed">
+          <p
+            :id="`onboarding-description-${onboardingStore.currentStep}`"
+            class="text-xs sm:text-sm leading-relaxed"
+          >
             {{ currentStepConfig.description }}
           </p>
           <ul
             v-if="currentStepConfig.tips"
             class="text-xs sm:text-sm space-y-1 text-muted-foreground"
+            aria-label="Dicas sobre esta funcionalidade"
           >
             <li
               v-for="(tip, index) in currentStepConfig.tips"
@@ -66,6 +103,7 @@
               <Icon
                 name="lucide:check"
                 class="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary mt-0.5 flex-shrink-0"
+                aria-hidden="true"
               />
               <span class="flex-1">{{ tip }}</span>
             </li>
@@ -74,43 +112,67 @@
 
         <!-- Progress bar -->
         <div class="space-y-2">
-          <div class="h-1.5 sm:h-2 bg-muted rounded-full overflow-hidden">
+          <div
+            class="h-1.5 sm:h-2 bg-muted rounded-full overflow-hidden"
+            role="progressbar"
+            :aria-valuenow="onboardingStore.currentStep + 1"
+            aria-valuemin="1"
+            :aria-valuemax="steps.length"
+            :aria-label="`Progresso do tour: ${onboardingStore.currentStep + 1} de ${
+              steps.length
+            } passos concluídos`"
+          >
             <div
               class="h-full bg-primary transition-all duration-300"
               :style="{
                 width: `${((onboardingStore.currentStep + 1) / steps.length) * 100}%`,
               }"
+              aria-hidden="true"
             />
           </div>
         </div>
 
         <!-- Ações -->
-        <div class="flex items-center justify-between gap-2">
+        <nav
+          class="flex items-center justify-between gap-2"
+          aria-label="Navegação do tour guiado"
+        >
           <Button
             variant="ghost"
             size="sm"
             class="h-8 text-xs sm:text-sm"
             :disabled="onboardingStore.currentStep === 0"
+            aria-label="Voltar para o passo anterior"
+            :aria-disabled="onboardingStore.currentStep === 0"
             @click="onboardingStore.previousStep()"
           >
             <Icon
               name="lucide:arrow-left"
               class="mr-1 sm:mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4"
+              aria-hidden="true"
             />
             <span class="hidden sm:inline">Anterior</span>
             <span class="sm:hidden">Ant.</span>
           </Button>
 
-          <div class="flex gap-2">
+          <div class="flex gap-2" role="group" aria-label="Ações do tour">
             <Button
               variant="outline"
               size="sm"
               class="h-8 text-xs sm:text-sm"
+              aria-label="Pular tour guiado"
               @click="handleSkip"
             >
               Pular
             </Button>
-            <Button size="sm" class="h-8 text-xs sm:text-sm" @click="handleNext">
+            <Button
+              size="sm"
+              class="h-8 text-xs sm:text-sm"
+              :aria-label="
+                isLastStep ? 'Concluir tour guiado' : 'Ir para o próximo passo'
+              "
+              @click="handleNext"
+            >
               <span class="hidden sm:inline">{{
                 isLastStep ? "Concluir" : "Próximo"
               }}</span>
@@ -119,15 +181,17 @@
                 v-if="!isLastStep"
                 name="lucide:arrow-right"
                 class="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4"
+                aria-hidden="true"
               />
               <Icon
                 v-else
                 name="lucide:check"
                 class="ml-1 sm:ml-2 h-3.5 w-3.5 sm:h-4 sm:w-4"
+                aria-hidden="true"
               />
             </Button>
           </div>
-        </div>
+        </nav>
       </div>
     </div>
   </div>
@@ -602,6 +666,25 @@ const handleSkip = () => {
   }
 };
 
+// Suporte para navegação por teclado (ESC para fechar)
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (event.key === "Escape") {
+    handleSkip();
+  }
+};
+
+// Adicionar listener de teclado
+onMounted(() => {
+  checkIsMobile();
+  window.addEventListener("resize", updatePositions);
+  window.addEventListener("keydown", handleKeyDown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", updatePositions);
+  window.removeEventListener("keydown", handleKeyDown);
+});
+
 // Atualizar posição do spotlight e card quando mudar de passo
 watch(
   () => onboardingStore.currentStep,
@@ -614,14 +697,19 @@ watch(
   },
   { immediate: true }
 );
-
-// Atualizar posições quando a janela é redimensionada
-onMounted(() => {
-  checkIsMobile();
-  window.addEventListener("resize", updatePositions);
-});
-
-onUnmounted(() => {
-  window.removeEventListener("resize", updatePositions);
-});
 </script>
+
+<style scoped>
+/* Screen reader only class for accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+</style>
