@@ -194,6 +194,29 @@
         </nav>
       </div>
     </div>
+
+    <!-- Alert Dialog de confirmação para sair -->
+    <AlertDialog v-model:open="showExitDialog">
+      <AlertDialogContent aria-describedby="exit-dialog-description">
+        <AlertDialogHeader>
+          <AlertDialogTitle id="exit-dialog-title">
+            Deseja sair do tour?
+          </AlertDialogTitle>
+          <AlertDialogDescription id="exit-dialog-description">
+            Tem certeza que deseja pular o tour? Você pode refazê-lo depois nas
+            configurações.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel aria-label="Cancelar e continuar o tour">
+            Cancelar
+          </AlertDialogCancel>
+          <AlertDialogAction aria-label="Confirmar e sair do tour" @click="confirmExit">
+            Sim, sair
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   </div>
 </template>
 
@@ -201,9 +224,20 @@
 import { computed, ref, watch, nextTick, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { Button } from "~/components/ui/button/index.js";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "~/components/ui/alert-dialog/index.js";
 
 const router = useRouter();
 const onboardingStore = useOnboardingStore();
+const showExitDialog = ref(false);
 
 interface OnboardingStep {
   title: string;
@@ -656,19 +690,20 @@ const handleNext = () => {
 };
 
 const handleSkip = () => {
-  if (
-    confirm(
-      "Tem certeza que deseja pular o tour? Você pode refazê-lo depois nas configurações."
-    )
-  ) {
-    onboardingStore.completeOnboarding();
-    router.push("/");
-  }
+  showExitDialog.value = true;
 };
 
-// Suporte para navegação por teclado (ESC para fechar)
+const confirmExit = () => {
+  onboardingStore.completeOnboarding();
+  router.push("/");
+  showExitDialog.value = false;
+};
+
+// Suporte para navegação por teclado (ESC para mostrar confirmação de saída)
 const handleKeyDown = (event: KeyboardEvent) => {
-  if (event.key === "Escape") {
+  // Apenas mostrar o dialog se não estiver já aberto
+  if (event.key === "Escape" && !showExitDialog.value) {
+    event.preventDefault();
     handleSkip();
   }
 };
