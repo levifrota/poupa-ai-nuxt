@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="TData, TValue">
 import { ref, computed } from "vue";
 import type { ColumnDef } from "@tanstack/vue-table";
 import Table from "./Table.vue";
@@ -7,8 +7,8 @@ import { useWindowSize } from "./windowSize"; // seu composable para detectar la
 
 // Props que virão da API
 const props = defineProps<{
-  data: any[]; // dados da API
-  columns: ColumnDef<any>[]; // estrutura da tabela
+  data: TData[]; // dados da API
+  columns: ColumnDef<TData, TValue>[]; 
 }>();
 
 // Campo de busca
