@@ -65,40 +65,6 @@
             <p class="text-xs text-muted-foreground">O email não pode ser alterado</p>
           </div>
 
-          <!-- Informações da Conta -->
-          <!-- <div class="space-y-4">
-            <h3 class="text-sm font-medium">Informações da Conta</h3>
-
-            <div class="rounded-lg border p-4 space-y-3">
-              <div class="flex justify-between items-center">
-                <span class="text-sm">Conta criada em:</span>
-                <span class="text-sm text-muted-foreground">
-                  {{ formatDate(user?.metadata?.creationTime) }}
-                </span>
-              </div>
-
-              <div class="flex justify-between items-center">
-                <span class="text-sm">Último acesso:</span>
-                <span class="text-sm text-muted-foreground">
-                  {{ formatDate(user?.metadata?.lastSignInTime) }}
-                </span>
-              </div>
-
-              <div class="flex justify-between items-center">
-                <span class="text-sm">Provedor de autenticação:</span>
-                <div class="flex items-center space-x-1">
-                  <Icon
-                    :name="getProviderIcon(user?.providerData?.[0]?.providerId)"
-                    class="h-4 w-4"
-                  />
-                  <span class="text-sm text-muted-foreground">
-                    {{ getProviderName(user?.providerData?.[0]?.providerId) }}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div> -->
-
           <!-- Configurações de Segurança -->
           <div class="space-y-4">
             <h3 class="text-sm font-medium">Configurações de Segurança</h3>
@@ -288,41 +254,6 @@ watch(
   },
   { immediate: true }
 );
-
-// Métodos de formatação
-// const formatDate = (timestamp: string | undefined) => {
-//   if (!timestamp) return "Não disponível";
-
-//   return new Date(timestamp).toLocaleDateString("pt-BR", {
-//     day: "2-digit",
-//     month: "2-digit",
-//     year: "numeric",
-//     hour: "2-digit",
-//     minute: "2-digit",
-//   });
-// };
-
-// const getProviderIcon = (providerId: string | undefined) => {
-//   switch (providerId) {
-//     case "google.com":
-//       return "logos:google-icon";
-//     case "password":
-//       return "lucide:mail";
-//     default:
-//       return "lucide:user";
-//   }
-// };
-
-// const getProviderName = (providerId: string | undefined) => {
-//   switch (providerId) {
-//     case "google.com":
-//       return "Google";
-//     case "password":
-//       return "Email/Senha";
-//     default:
-//       return "Desconhecido";
-//   }
-// };
 
 // Métodos de imagem
 const triggerFileInput = () => {
