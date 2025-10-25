@@ -1,4 +1,23 @@
 <template>
+  <!-- Dialog de confirmação para pular o tour -->
+  <Dialog v-model:open="showSkipDialog">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Pular tour guiado?</DialogTitle>
+        <DialogDescription>
+          Tem certeza que deseja pular o tour? Você pode refazê-lo depois nas
+          configurações.
+        </DialogDescription>
+      </DialogHeader>
+      <DialogFooter class="gap-2">
+        <Button variant="outline" @click="showSkipDialog = false">
+          Continuar tour
+        </Button>
+        <Button @click="confirmSkip">Pular tour</Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+
   <div
     v-if="onboardingStore.isOnboardingActive"
     class="fixed inset-0 z-50"
@@ -201,6 +220,14 @@
 import { computed, ref, watch, nextTick, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { Button } from "~/components/ui/button/index.js";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "~/components/ui/dialog";
 
 const router = useRouter();
 const onboardingStore = useOnboardingStore();
@@ -331,6 +358,7 @@ const isLastStep = computed(() => onboardingStore.currentStep === steps.length -
 const spotlightStyle = ref({});
 const cardStyle = ref({});
 const isMobile = ref(false);
+const showSkipDialog = ref(false);
 
 // Detectar se é mobile
 const checkIsMobile = () => {
@@ -656,19 +684,18 @@ const handleNext = () => {
 };
 
 const handleSkip = () => {
-  if (
-    confirm(
-      "Tem certeza que deseja pular o tour? Você pode refazê-lo depois nas configurações."
-    )
-  ) {
-    onboardingStore.completeOnboarding();
-    router.push("/");
-  }
+  showSkipDialog.value = true;
+};
+
+const confirmSkip = () => {
+  showSkipDialog.value = false;
+  onboardingStore.completeOnboarding();
+  router.push("/");
 };
 
 // Suporte para navegação por teclado (ESC para fechar)
 const handleKeyDown = (event: KeyboardEvent) => {
-  if (event.key === "Escape") {
+  if (event.key === "Escape" && onboardingStore.isOnboardingActive) {
     handleSkip();
   }
 };
