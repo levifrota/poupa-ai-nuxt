@@ -1,112 +1,63 @@
 <script setup lang="ts" generic="TData, TValue">
-import type { ColumnDef, SortingState } from "@tanstack/vue-table";
-import {
-  FlexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  getFilteredRowModel, // Importar para funcionalidade de filtro/busca
-  useVueTable,
-} from "@tanstack/vue-table";
+import { ref, computed } from "vue";
+import type { ColumnDef } from "@tanstack/vue-table";
+import Table from "./Table.vue";
+import TransactionCard from "./TransactionCard.vue";
+import { useWindowSize } from "./windowSize"; // seu composable para detectar largura
 
+// Props que virão da API
 const props = defineProps<{
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  searchKey?: string; // Chave para buscar (ex: 'description')
+  data: TData[]; // dados da API
+  columns: ColumnDef<TData, TValue>[]; 
 }>();
 
-const sorting = ref<SortingState>([{ id: "date", desc: true }]); // Ordenar por data, mais novas primeiro
-const globalFilter = ref(""); // Para a funcionalidade de busca global
-
-const table = useVueTable({
-  get data() {
-    return props.data;
-  },
-  get columns() {
-    return props.columns;
-  },
-  getCoreRowModel: getCoreRowModel(),
-  getSortedRowModel: getSortedRowModel(),
-  getFilteredRowModel: getFilteredRowModel(), // Habilitar filtro
-  state: {
-    get sorting() {
-      return sorting.value;
-    },
-    get globalFilter() {
-      return globalFilter.value;
-    },
-  },
-  onSortingChange: (updaterOrValue) => {
-    sorting.value =
-      typeof updaterOrValue === "function"
-        ? updaterOrValue(sorting.value)
-        : updaterOrValue;
-  },
-  onGlobalFilterChange: (updaterOrValue) => {
-    globalFilter.value =
-      typeof updaterOrValue === "function"
-        ? updaterOrValue(globalFilter.value)
-        : updaterOrValue;
-  },
-  // Configuração para busca global (se searchKey não for especificado, busca em todas as colunas)
-  // Se props.searchKey for fornecido, podemos configurar o filtro para uma coluna específica
-  // globalFilterFn: // Pode ser customizado se necessário
+// Campo de busca
+const search = ref("");
+// Computed para filtrar os dados da API
+const filteredData = computed(() => {
+  if (!search.value) return props.data ?? [];
+  const q = search.value.toLowerCase();
+  return (props.data ?? []).filter(item =>
+    Object.values(item).some(v => String(v ?? "").toLowerCase().includes(q))
+  );
 });
+
+// Responsividade
+const { width } = useWindowSize();
+const isMobile = computed(() => width.value < 1025);
+
+// Referência para tabela (opcional)
+const tableRef = ref<InstanceType<typeof Table> | null>(null);
 </script>
 
 <template>
-  <div>
-    <!-- Input de Busca -->
-    <div class="flex items-center py-4">
-      <label for="search-transactions" class="sr-only">Buscar transações</label>
-      <Input
-        id="search-transactions"
-        class="max-w-sm"
-        placeholder="Buscar transações..."
-        :model-value="globalFilter"
-        @update:model-value="table.setGlobalFilter($event)"
+  <div class="p-6 space-y-4">
+    <!-- Input de busca -->
+    <input
+      type="text"
+      placeholder="Buscar transações..."
+      class="w-full max-w-sm px-3 py-2 border rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+      v-model="search"
+    />
+
+    <!-- Desktop: tabela -->
+    <Table
+      v-if="!isMobile"
+      ref="tableRef"
+      :columns="columns"
+      :data="filteredData"
+    />
+
+    <!-- Mobile: cards -->
+    <div v-else class="grid gap-4">
+      <TransactionCard
+        v-for="(item, index) in [...filteredData].reverse()"
+        :key="index"
+        v-bind="item"
       />
-    </div>
-    <!-- Tabela -->
-    <div class="border rounded-md">
-      <Table>
-        <caption class="sr-only">
-          Tabela de Transações
-        </caption>
-        <TableHeader>
-          <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-            <TableHead v-for="header in headerGroup.headers" :key="header.id" scope="col">
-              <FlexRender
-                v-if="!header.isPlaceholder"
-                :render="header.column.columnDef.header"
-                :props="header.getContext()"
-              />
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <template v-if="table.getRowModel().rows?.length">
-            <TableRow
-              v-for="row in table.getRowModel().rows"
-              :key="row.id"
-              :data-state="row.getIsSelected() && 'selected'"
-            >
-              <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
-                <FlexRender
-                  :render="cell.column.columnDef.cell"
-                  :props="cell.getContext()"
-                />
-              </TableCell>
-            </TableRow>
-          </template>
-          <template v-else>
-            <TableRow>
-              <TableCell :colspan="columns.length" class="h-24 text-center">
-                Nenhum resultado encontrado.
-              </TableCell>
-            </TableRow>
-          </template>
-        </TableBody>
-      </Table>
+      <div v-if="filteredData.length === 0" class="text-center text-gray-500">
+        Nenhum item para mostrar.
+      </div>
     </div>
   </div>
 </template>
