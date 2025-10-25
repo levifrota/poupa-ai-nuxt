@@ -69,7 +69,7 @@ const summaryList = computed(() => [
           @submit="handleSubmit"
         >
           <DialogTrigger as-child class="w-full">
-            <Button class="cursor-pointer">
+            <Button class="cursor-pointer" aria-label="Adicionar transação">
               <span>Adicionar Transação</span>
               <Icon name="lucide:plus" class="h-4 w-4" />
             </Button>
