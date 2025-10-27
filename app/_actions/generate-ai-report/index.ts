@@ -1,16 +1,16 @@
-import type { GenerateAiReportSchema } from './schema.ts';
+import type { GenerateAiReportSchema } from './schema.js';
 import { generateAiReportSchema } from './schema.js';
 import { generateText } from 'ai';
 import { createOpenAI as createGroq } from '@ai-sdk/openai';
 import { useCurrentUser } from 'vuefire';
 import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db } from '../../../lib/firebase.js';
 import {
   TRANSACTION_CATEGORY_LABELS,
   TRANSACTION_TYPE_OPTIONS,
   type TransactionCategory,
-} from '~/constants/transactions.js';
-import type { Transaction } from '@/constants/transactions';
+} from '../../../constants/transactions.js';
+import type { Transaction } from '../../../constants/transactions.js';
 
 const generateAiReport = async ({ startDate, endDate }: GenerateAiReportSchema) => {
   const groq = createGroq({

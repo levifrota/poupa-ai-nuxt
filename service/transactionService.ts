@@ -1,4 +1,4 @@
-import { db } from "~/lib/firebase.js";
+import { db } from "../lib/firebase.js";
 import {
   collection,
   addDoc,
@@ -11,7 +11,7 @@ import {
   orderBy,
   Timestamp,
 } from "firebase/firestore";
-import type { Transaction } from "~/constants/transactions.js";
+import type { Transaction } from "../constants/transactions.js";
 
 export interface TransactionInput {
   name: string;

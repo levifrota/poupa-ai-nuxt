@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from "@tailwindcss/vite";
+import { fileURLToPath } from 'node:url';
 
 export default defineNuxtConfig({
   app: {
@@ -16,14 +17,19 @@ export default defineNuxtConfig({
   },
   components: [
     {
-      path: "~/components",
+      path: "@/components",
       pathPrefix: false,
       global: true,
     },
   ],
   compatibilityDate: "2024-11-01",
-  devtools: { enabled: true },
-  css: ["~/app/assets/css/tailwind.css", "~/app/assets/css/fonts.css", "~/app/assets/css/icons.css"],
+  devtools: { 
+      enabled: true,
+      timeline: {
+        enabled: true
+      }
+    },
+  css: ["@/assets/css/tailwind.css", "@/assets/css/fonts.css", "@/assets/css/icons.css"],
   runtimeConfig: {
     public: {
       firebaseApiKey: process.env.VITE_FIREBASE_API_KEY,
@@ -42,7 +48,6 @@ export default defineNuxtConfig({
     "@nuxt/fonts",
     "@nuxt/icon",
     "@nuxt/image",
-    "@nuxt/scripts",
     "shadcn-nuxt",
     "@vite-pwa/nuxt",
     "@pinia/nuxt",
@@ -53,40 +58,75 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
     optimizeDeps: {
       include: [
-        "isomorphic-dompurify"
+        "isomorphic-dompurify",
+        "firebase/auth",
+        "firebase/firestore",
+        "firebase/app",
+        "reka-ui"
       ],
     },
     ssr: {
       noExternal: [
-        "isomorphic-dompurify"
+        "isomorphic-dompurify",
+        "firebase",
+        "reka-ui"
       ],
     },
     resolve: {
       alias: {
+        '@': fileURLToPath(new URL('./app', import.meta.url)),
+        '~': fileURLToPath(new URL('./', import.meta.url)),
         'isomorphic-dompurify': 'isomorphic-dompurify'
+      }
+    },
+    server: {
+      hmr: {
+        timeout: 60000,
+        overlay: true, // Mudar para true
+        clientPort: 3000 // Adicionar porta específica
+      },
+      watch: {
+        usePolling: true, // Mudar para true
+        interval: 1000
+      }
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: undefined
+        }
       }
     }
   },
 
+   experimental: {
+    // Adicionar configurações experimentais do Nuxt 4
+    payloadExtraction: false,
+    renderJsonPayloads: true,
+    typedPages: true
+  },
+
+  alias: {
+    '@': fileURLToPath(new URL('./app', import.meta.url)),
+    '~': fileURLToPath(new URL('./', import.meta.url)),
+  },
+
   typescript: {
     strict: true,
-    tsConfig: {
-      compilerOptions: {
-        moduleResolution: 'nodenext',
-        esModuleInterop: true,
-        skipLibCheck: true
-      }
+    typeCheck: false
+  },
+
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag: string) => ['iconify-icon'].includes(tag)
     }
   },
 
   shadcn: {
     prefix: "",
-    /**
-     * Directory that the component lives in.
-     * @default "./components/ui"
-     */
-    componentDir: "./components/ui",
+    componentDir: "./app/components/ui",
   },
+
   vuefire: {
     auth: { enabled: true, sessionCookie: true },
     config: {
@@ -108,7 +148,9 @@ export default defineNuxtConfig({
       }
     ]
   },
+
   ssr: false,
+
   pwa: {
     useCredentials: true,
     registerType: 'autoUpdate',
@@ -169,7 +211,7 @@ export default defineNuxtConfig({
             cacheName: 'api-cache',
             expiration: {
               maxEntries: 10,
-              maxAgeSeconds: 60 * 60 * 24 // 1 day
+              maxAgeSeconds: 60 * 60 * 24
             }
           }
         }

@@ -1,4 +1,4 @@
-import { logOut } from "~/service/authService.js";
+import { logOut } from "../../service/authService.js";
 
 export const handleLogout = async (router: unknown) => {
   try {

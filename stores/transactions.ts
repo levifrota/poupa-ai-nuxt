@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { TransactionType, type Transaction } from '@/constants/transactions.js'
+import { TransactionType, type Transaction } from '../constants/transactions.js'
 
 export const useTransactionsStore = defineStore('transactions', () => {
   // Armazena as transações filtradas pelo TimeSelect
