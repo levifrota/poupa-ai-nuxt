@@ -27,7 +27,7 @@ export interface TransactionInput {
  */
 export const addTransaction = async (
   userId: string,
-  transactionData: TransactionInput
+  transactionData: TransactionInput,
 ): Promise<string> => {
   try {
     const transactionToSave = {
@@ -39,11 +39,12 @@ export const addTransaction = async (
 
     const docRef = await addDoc(
       collection(db(), "users", userId, "transactions"),
-      transactionToSave
+      transactionToSave,
     );
 
     return docRef.id;
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Erro ao adicionar transação:", error);
     throw new Error("Erro ao salvar transação no Firebase");
   }
@@ -55,7 +56,7 @@ export const addTransaction = async (
 export const updateTransaction = async (
   userId: string,
   transactionId: string,
-  transactionData: Partial<TransactionInput>
+  transactionData: Partial<TransactionInput>,
 ): Promise<void> => {
   try {
     const updateData: { [key: string]: string | number | Date | Timestamp } = {
@@ -73,11 +74,12 @@ export const updateTransaction = async (
       "users",
       userId,
       "transactions",
-      transactionId
+      transactionId,
     );
-    
+
     await updateDoc(transactionRef, updateData);
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Erro ao atualizar transação:", error);
     throw new Error("Erro ao atualizar transação no Firebase");
   }
@@ -88,7 +90,7 @@ export const updateTransaction = async (
  */
 export const deleteTransaction = async (
   userId: string,
-  transactionId: string
+  transactionId: string,
 ): Promise<void> => {
   try {
     const transactionRef = doc(
@@ -96,11 +98,12 @@ export const deleteTransaction = async (
       "users",
       userId,
       "transactions",
-      transactionId
+      transactionId,
     );
-    
+
     await deleteDoc(transactionRef);
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Erro ao remover transação:", error);
     throw new Error("Erro ao remover transação do Firebase");
   }
@@ -112,12 +115,12 @@ export const deleteTransaction = async (
 export const getTransactions = async (
   userId: string,
   startDate?: Date,
-  endDate?: Date
+  endDate?: Date,
 ): Promise<Transaction[]> => {
   try {
     let transactionsQuery = query(
       collection(db(), "users", userId, "transactions"),
-      orderBy("date", "desc")
+      orderBy("date", "desc"),
     );
 
     // Adicionar filtros de data se fornecidos
@@ -129,7 +132,7 @@ export const getTransactions = async (
         collection(db(), "users", userId, "transactions"),
         where("date", ">=", Timestamp.fromDate(startDate)),
         where("date", "<", Timestamp.fromDate(endDateAdjusted)),
-        orderBy("date", "desc")
+        orderBy("date", "desc"),
       );
     }
 
@@ -147,7 +150,8 @@ export const getTransactions = async (
     });
 
     return transactions;
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Erro ao buscar transações:", error);
     throw new Error("Erro ao buscar transações do Firebase");
   }

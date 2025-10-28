@@ -77,10 +77,16 @@ const weekDays = computed(() => getWeekDays(calendarLocale.value, weekdayFormat.
     </CalendarHeader>
 
     <div class="mt-4 flex flex-col gap-y-4 sm:flex-row sm:gap-x-4 sm:gap-y-0">
-      <CalendarGrid v-for="month in grid" :key="month.value.toString()">
+      <CalendarGrid
+        v-for="month in grid"
+        :key="month.value.toString()"
+      >
         <CalendarGridHead>
           <CalendarGridRow>
-            <CalendarHeadCell v-for="(day, index) in weekDays" :key="index">
+            <CalendarHeadCell
+              v-for="(day, index) in weekDays"
+              :key="index"
+            >
               {{ day }}
             </CalendarHeadCell>
           </CalendarGridRow>
@@ -96,7 +102,10 @@ const weekDays = computed(() => getWeekDays(calendarLocale.value, weekdayFormat.
               :key="weekDate.toString()"
               :date="weekDate"
             >
-              <CalendarCellTrigger :day="weekDate" :month="month.value" />
+              <CalendarCellTrigger
+                :day="weekDate"
+                :month="month.value"
+              />
             </CalendarCell>
           </CalendarGridRow>
         </CalendarGridBody>

@@ -10,10 +10,15 @@
         </DialogDescription>
       </DialogHeader>
       <DialogFooter class="gap-2">
-        <Button variant="outline" @click="showSkipDialog = false">
+        <Button
+          variant="outline"
+          @click="showSkipDialog = false"
+        >
           Continuar tour
         </Button>
-        <Button @click="confirmSkip">Pular tour</Button>
+        <Button @click="confirmSkip">
+          Pular tour
+        </Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>
@@ -47,7 +52,12 @@
     </div>
 
     <!-- Anúncio de mudança de passo para leitores de tela -->
-    <div role="status" aria-live="polite" aria-atomic="true" class="sr-only">
+    <div
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      class="sr-only"
+    >
       {{ currentStepConfig?.title }}. Passo
       {{ (onboardingStore?.currentStep ?? 0) + 1 }} de {{ steps.length }}.
       {{ currentStepConfig?.description }}
@@ -98,7 +108,11 @@
             title="Fechar tour guiado"
             @click="handleSkip"
           >
-            <Icon name="lucide:x" class="h-4 w-4" aria-hidden="true" />
+            <Icon
+              name="lucide:x"
+              class="h-4 w-4"
+              aria-hidden="true"
+            />
           </Button>
         </div>
 
@@ -177,7 +191,11 @@
             <span class="sm:hidden">Ant.</span>
           </Button>
 
-          <div class="flex gap-2" role="group" aria-label="Ações do tour">
+          <div
+            class="flex gap-2"
+            role="group"
+            aria-label="Ações do tour"
+          >
             <Button
               variant="outline"
               size="sm"
@@ -266,7 +284,7 @@ const steps: OnboardingStep[] = [
     description: "Clique aqui para adicionar suas receitas, despesas e investimentos.",
     icon: "lucide:plus-circle",
     route: "/",
-    targetSelector: '[aria-label="Adicionar transação"]',
+    targetSelector: "[aria-label=\"Adicionar transação\"]",
     position: "right",
     tips: [
       "Registre receitas, despesas e investimentos",
@@ -279,7 +297,7 @@ const steps: OnboardingStep[] = [
     description: "Acompanhe seu saldo, receitas, despesas e investimentos em tempo real.",
     icon: "lucide:wallet",
     route: "/",
-    targetSelector: '[aria-label*="Saldo"]',
+    targetSelector: "[aria-label*=\"Saldo\"]",
     position: "bottom",
     tips: [
       "Veja seu saldo atual",
@@ -292,7 +310,7 @@ const steps: OnboardingStep[] = [
     description: "Visualize a distribuição dos seus gastos por categoria e tipo.",
     icon: "lucide:pie-chart",
     route: "/",
-    targetSelector: '[aria-label="Gráfico de pizza da distribuição de transações"]',
+    targetSelector: "[aria-label=\"Gráfico de pizza da distribuição de transações\"]",
     position: "right",
     tips: [
       "Veja gastos por categoria",
@@ -305,7 +323,7 @@ const steps: OnboardingStep[] = [
     description: "Acesse todas as suas transações com filtros e busca.",
     icon: "lucide:arrow-left-right",
     route: "/transactions",
-    targetSelector: '[aria-label="Navegar para Transações"]',
+    targetSelector: "[aria-label=\"Navegar para Transações\"]",
     position: "top",
     tips: [
       "Busque transações específicas",
@@ -319,7 +337,7 @@ const steps: OnboardingStep[] = [
       "Gere relatórios inteligentes sobre suas finanças com análises e dicas personalizadas.",
     icon: "lucide:bot",
     route: "/",
-    targetSelector: '[aria-label="Abrir diálogo de relatório de IA"]',
+    targetSelector: "[aria-label=\"Abrir diálogo de relatório de IA\"]",
     position: "right",
     tips: [
       "Análise inteligente das suas finanças",
@@ -332,7 +350,7 @@ const steps: OnboardingStep[] = [
     description: "Personalize temas e fontes para melhor acessibilidade.",
     icon: "lucide:settings",
     route: "/settings",
-    targetSelector: '[aria-label="Navegar para Configurações"]',
+    targetSelector: "[aria-label=\"Navegar para Configurações\"]",
     position: "top",
     tips: [
       "Temas para daltonismo",
@@ -346,7 +364,7 @@ const steps: OnboardingStep[] = [
     description: "Gerencie suas informações pessoais e preferências da conta.",
     icon: "lucide:user",
     route: "/",
-    targetSelector: '[aria-label="Menu do usuário"]',
+    targetSelector: "[aria-label=\"Menu do usuário\"]",
     position: "bottom",
     tips: [
       "Atualize seus dados pessoais",
@@ -357,10 +375,10 @@ const steps: OnboardingStep[] = [
 ];
 
 const currentStepConfig = computed(() =>
-  onboardingStore ? steps[onboardingStore.currentStep] : null
+  onboardingStore ? steps[onboardingStore.currentStep] : null,
 );
 const isLastStep = computed(() =>
-  onboardingStore ? onboardingStore.currentStep === steps.length - 1 : false
+  onboardingStore ? onboardingStore.currentStep === steps.length - 1 : false,
 );
 
 const spotlightStyle = ref({});
@@ -379,14 +397,14 @@ const navigateToStepRoute = async () => {
     await router.push(step.route);
     await nextTick();
     // Aguardar um pouco mais para garantir que a página carregou
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 300));
   }
 };
 
 const scrollToElement = (
   element: Element,
   isFooterElement: boolean = false,
-  isBodyElement: boolean = false
+  isBodyElement: boolean = false,
 ) => {
   const rect = element.getBoundingClientRect();
   const viewportHeight = window.innerHeight;
@@ -404,15 +422,15 @@ const scrollToElement = (
       left: 0,
       behavior: "smooth",
     });
-    return new Promise((resolve) => setTimeout(resolve, 400));
+    return new Promise(resolve => setTimeout(resolve, 400));
   }
 
   // Verificar se o elemento está visível na viewport
-  const isVisible =
-    rect.top >= 0 &&
-    rect.left >= 0 &&
-    rect.bottom <= viewportHeight &&
-    rect.right <= viewportWidth;
+  const isVisible
+    = rect.top >= 0
+      && rect.left >= 0
+      && rect.bottom <= viewportHeight
+      && rect.right <= viewportWidth;
 
   if (!isVisible) {
     // Calcular a posição ideal para scroll
@@ -427,17 +445,19 @@ const scrollToElement = (
     if (rect.top < headerHeight) {
       // Elemento acima da viewport
       scrollTop = window.scrollY + rect.top - headerHeight - 20;
-    } else if (rect.bottom > viewportHeight - footerHeight) {
+    }
+    else if (rect.bottom > viewportHeight - footerHeight) {
       // Elemento abaixo da viewport
-      scrollTop =
-        window.scrollY + rect.bottom - viewportHeight + footerHeight + cardHeight + 20;
+      scrollTop
+        = window.scrollY + rect.bottom - viewportHeight + footerHeight + cardHeight + 20;
     }
 
     // Scroll horizontal (para desktop)
     if (!isMobile.value) {
       if (rect.left < 0) {
         scrollLeft = window.scrollX + rect.left - 20;
-      } else if (rect.right > viewportWidth) {
+      }
+      else if (rect.right > viewportWidth) {
         scrollLeft = window.scrollX + rect.right - viewportWidth + 20;
       }
     }
@@ -450,7 +470,7 @@ const scrollToElement = (
     });
 
     // Aguardar o scroll completar antes de atualizar as posições
-    return new Promise((resolve) => setTimeout(resolve, 400));
+    return new Promise(resolve => setTimeout(resolve, 400));
   }
 
   return Promise.resolve();
@@ -468,18 +488,19 @@ const updatePositions = async () => {
   let isBodyElement = false;
 
   if (
-    isMobile.value &&
-    (step.title === "Lista de Transações" ||
-      step.title === "Configurações" ||
-      step.title === "Perfil do Usuário")
+    isMobile.value
+    && (step.title === "Lista de Transações"
+      || step.title === "Configurações"
+      || step.title === "Perfil do Usuário")
   ) {
     // Buscar o elemento dentro do footer (Menubar com aria-label="Navegação principal")
-    const footer = document.querySelector('[aria-label="Navegação principal"]');
+    const footer = document.querySelector("[aria-label=\"Navegação principal\"]");
     if (footer) {
       element = footer.querySelector(step.targetSelector);
       isFooterElement = true;
     }
-  } else {
+  }
+  else {
     element = document.querySelector(step.targetSelector);
     // Verificar se é o elemento body (primeiro passo)
     if (element && element.tagName.toLowerCase() === "body") {
@@ -504,7 +525,8 @@ const updatePositions = async () => {
         left: "50%",
         transform: "translateX(-50%)",
       };
-    } else {
+    }
+    else {
       spotlightStyle.value = {
         top: "50%",
         left: "50%",
@@ -555,17 +577,19 @@ const updatePositions = async () => {
 
     // Para passos 5, 7 e 8 (elementos do footer), sempre posicionar acima do footer inteiro
     if (
-      step.title === "Lista de Transações" ||
-      step.title === "Configurações" ||
-      step.title === "Perfil do Usuário"
+      step.title === "Lista de Transações"
+      || step.title === "Configurações"
+      || step.title === "Perfil do Usuário"
     ) {
       // Posicionar o card acima do footer, garantindo que o footer fique visível
       const footerTop = viewportHeight - footerHeight;
       top = Math.max(footerTop - cardHeight - cardPadding, cardPadding);
-    } else if (step.title === "Bem-vindo ao Poupa.ai! 👋") {
+    }
+    else if (step.title === "Bem-vindo ao Poupa.ai! 👋") {
       // Para o primeiro passo (body), sempre posicionar no topo
       top = cardPadding;
-    } else {
+    }
+    else {
       // Para outros passos, verificar se o elemento está na metade superior ou inferior da tela
       const elementMiddle = rect.top + rect.height / 2;
       const viewportMiddle = viewportHeight / 2;
@@ -574,9 +598,10 @@ const updatePositions = async () => {
         // Elemento na parte superior - posicionar card abaixo
         top = Math.min(
           rect.bottom + cardPadding,
-          viewportHeight - cardHeight - footerHeight - cardPadding
+          viewportHeight - cardHeight - footerHeight - cardPadding,
         );
-      } else {
+      }
+      else {
         // Elemento na parte inferior - posicionar card acima
         top = Math.max(rect.top - cardHeight - cardPadding, cardPadding);
       }
@@ -587,7 +612,8 @@ const updatePositions = async () => {
       left: `${left}px`,
       transform,
     };
-  } else {
+  }
+  else {
     // Desktop - usar posicionamento original
     const cardWidth = 384; // max-w-md
     const cardHeight = 320; // Altura estimada do card
@@ -595,11 +621,11 @@ const updatePositions = async () => {
     let left = 0;
 
     // Para passos 5, 6, 7 e 8, garantir que o card não cubra o spotlight
-    const isNavigationStep =
-      step.title === "Lista de Transações" ||
-      step.title === "Relatório com IA" ||
-      step.title === "Configurações" ||
-      step.title === "Perfil do Usuário";
+    const isNavigationStep
+      = step.title === "Lista de Transações"
+        || step.title === "Relatório com IA"
+        || step.title === "Configurações"
+        || step.title === "Perfil do Usuário";
 
     if (isNavigationStep) {
       // Calcular posição baseada na position definida, mas ajustar se necessário
@@ -643,7 +669,8 @@ const updatePositions = async () => {
           }
           break;
       }
-    } else {
+    }
+    else {
       // Para outros passos, usar posicionamento original
       switch (step.position) {
         case "top":
@@ -687,7 +714,8 @@ const handleNext = () => {
   if (isLastStep.value) {
     onboardingStore.completeOnboarding();
     router.push("/");
-  } else {
+  }
+  else {
     onboardingStore.nextStep();
   }
 };
@@ -711,7 +739,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
 };
 
 // Adicionar listener de teclado
-if (process.client) {
+if (import.meta.client) {
   onMounted(async () => {
     await nextTick();
     onboardingStore = useOnboardingStore();
@@ -727,10 +755,10 @@ if (process.client) {
         await navigateToStepRoute();
         await nextTick();
         // Aguardar um pouco mais para garantir que a página renderizou
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 100));
         await updatePositions();
       },
-      { immediate: true }
+      { immediate: true },
     );
   });
 

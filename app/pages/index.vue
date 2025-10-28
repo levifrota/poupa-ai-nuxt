@@ -4,13 +4,18 @@
       Olá, {{ user?.displayName }}!
     </h1>
     <div class="m-3 flex flex-col justify-between sm:flex-row">
-      <h1 class="self-center py-2 text-2xl font-bold sm:self-auto md:py-0">Painel</h1>
+      <h1 class="self-center py-2 text-2xl font-bold sm:self-auto md:py-0">
+        Painel
+      </h1>
 
       <div
         class="flex flex-wrap flex-row items-center justify-center gap-3 sm:justify-normal"
       >
         <TimeSelect @update:date-range="handleDateRangeUpdate" />
-        <AiReportButton :start-date="selectedStartDate" :end-date="selectedEndDate" />
+        <AiReportButton
+          :start-date="selectedStartDate"
+          :end-date="selectedEndDate"
+        />
       </div>
     </div>
 

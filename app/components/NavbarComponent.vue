@@ -42,7 +42,11 @@ const linkClasses = (href: string) => {
         alt="Poupa Aí"
       />
       <div class="hidden gap-6 md:flex">
-        <NuxtLink to="/" :class="linkClasses('/')" aria-label="Navegar para o Painel">
+        <NuxtLink
+          to="/"
+          :class="linkClasses('/')"
+          aria-label="Navegar para o Painel"
+        >
           Painel
         </NuxtLink>
         <NuxtLink
@@ -70,12 +74,18 @@ const linkClasses = (href: string) => {
             </MenubarTrigger>
             <MenubarContent>
               <MenubarItem @click="isDialogOpen = true">
-                <Icon name="lucide:user" class="mr-2" />
+                <Icon
+                  name="lucide:user"
+                  class="mr-2"
+                />
                 Gerenciar Perfil
               </MenubarItem>
               <MenubarSeparator />
               <MenubarItem @click="handleLogout(router)">
-                <Icon name="lucide:log-out" class="mr-2" />
+                <Icon
+                  name="lucide:log-out"
+                  class="mr-2"
+                />
                 Sair
               </MenubarItem>
             </MenubarContent>

@@ -10,7 +10,7 @@ const props = withDefaults(defineProps<{ items?: BulletLegendItemInterface[] }>(
 });
 
 const emits = defineEmits<{
-  legendItemClick: [d: BulletLegendItemInterface, i: number];
+  "legendItemClick": [d: BulletLegendItemInterface, i: number];
   "update:items": [payload: BulletLegendItemInterface[]];
 }>();
 
@@ -21,7 +21,7 @@ function keepStyling() {
   nextTick(() => {
     const elements = elRef.value?.querySelectorAll(selector);
     const classes = buttonVariants({ variant: "ghost", size: "sm" }).split(" ");
-    elements?.forEach((el) => el.classList.add(...classes, "!inline-flex", "!mr-2"));
+    elements?.forEach(el => el.classList.add(...classes, "!inline-flex", "!mr-2"));
   });
 }
 
@@ -32,20 +32,21 @@ onMounted(() => {
 function onLegendItemClick(d: BulletLegendItemInterface, i: number) {
   emits("legendItemClick", d, i);
   const isBulletActive = !props.items[i].inactive;
-  const isFilterApplied = props.items.some((i) => i.inactive);
+  const isFilterApplied = props.items.some(i => i.inactive);
   if (isFilterApplied && isBulletActive) {
     // reset filter
     emits(
       "update:items",
-      props.items.map((item) => ({ ...item, inactive: false }))
+      props.items.map(item => ({ ...item, inactive: false })),
     );
-  } else {
+  }
+  else {
     // apply selection, set other item as inactive
     emits(
       "update:items",
-      props.items.map((item) =>
-        item.name === d.name ? { ...d, inactive: false } : { ...item, inactive: true }
-      )
+      props.items.map(item =>
+        item.name === d.name ? { ...d, inactive: false } : { ...item, inactive: true },
+      ),
     );
   }
   keepStyling();
@@ -60,6 +61,9 @@ function onLegendItemClick(d: BulletLegendItemInterface, i: number) {
       '--vis-legend-bullet-size': '16px',
     }"
   >
-    <VisBulletLegend :items="items" :on-legend-item-click="onLegendItemClick" />
+    <VisBulletLegend
+      :items="items"
+      :on-legend-item-click="onLegendItemClick"
+    />
   </div>
 </template>

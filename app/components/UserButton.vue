@@ -10,7 +10,10 @@
       </DialogHeader>
 
       <ScrollArea class="max-h-[70vh] pr-4">
-        <form class="space-y-6" @submit="onSubmit">
+        <form
+          class="space-y-6"
+          @submit="onSubmit"
+        >
           <!-- Foto do Perfil -->
           <div class="flex flex-col items-center space-y-4">
             <div class="relative">
@@ -22,8 +25,12 @@
                   :src="profileImageUrl"
                   :alt="`Foto de ${values.displayName || 'usuário'}`"
                   class="h-full w-full object-cover z-10"
+                >
+                <Icon
+                  v-else
+                  name="lucide:user"
+                  class="h-12 w-12 text-muted-foreground"
                 />
-                <Icon v-else name="lucide:user" class="h-12 w-12 text-muted-foreground" />
               </div>
               <Button
                 type="button"
@@ -32,7 +39,10 @@
                 class="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0"
                 @click="triggerFileInput"
               >
-                <Icon name="lucide:camera" class="h-4 w-4" />
+                <Icon
+                  name="lucide:camera"
+                  class="h-4 w-4"
+                />
               </Button>
               <input
                 ref="fileInput"
@@ -40,7 +50,7 @@
                 accept="image/*"
                 class="hidden"
                 @change="handleImageUpload"
-              />
+              >
             </div>
             <p class="text-xs text-muted-foreground text-center">
               Clique no ícone da câmera para alterar sua foto de perfil
@@ -48,11 +58,17 @@
           </div>
 
           <!-- Nome de Exibição -->
-          <FormField v-slot="{ componentField }" name="displayName">
+          <FormField
+            v-slot="{ componentField }"
+            name="displayName"
+          >
             <FormItem>
               <FormLabel>Nome de Exibição</FormLabel>
               <FormControl>
-                <Input placeholder="Digite seu nome" v-bind="componentField" />
+                <Input
+                  placeholder="Digite seu nome"
+                  v-bind="componentField"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -61,13 +77,21 @@
           <!-- Email (somente leitura) -->
           <div class="space-y-2">
             <label class="text-sm font-medium">Email</label>
-            <Input :model-value="user?.email || ''" disabled class="bg-muted" />
-            <p class="text-xs text-muted-foreground">O email não pode ser alterado</p>
+            <Input
+              :model-value="user?.email || ''"
+              disabled
+              class="bg-muted"
+            />
+            <p class="text-xs text-muted-foreground">
+              O email não pode ser alterado
+            </p>
           </div>
 
           <!-- Configurações de Segurança -->
           <div class="space-y-4">
-            <h3 class="text-sm font-medium">Configurações de Segurança</h3>
+            <h3 class="text-sm font-medium">
+              Configurações de Segurança
+            </h3>
 
             <div class="space-y-3">
               <Button
@@ -77,7 +101,10 @@
                 :disabled="isGoogleUser"
                 @click="changePassword"
               >
-                <Icon name="lucide:key" class="mr-2 h-4 w-4" />
+                <Icon
+                  name="lucide:key"
+                  class="mr-2 h-4 w-4"
+                />
                 Alterar Senha
               </Button>
 
@@ -87,22 +114,36 @@
                 class="w-full justify-start text-destructive hover:text-destructive"
                 @click="confirmDeleteAccount"
               >
-                <Icon name="lucide:trash-2" class="mr-2 h-4 w-4" />
+                <Icon
+                  name="lucide:trash-2"
+                  class="mr-2 h-4 w-4"
+                />
                 Excluir Conta
               </Button>
             </div>
 
-            <p v-if="isGoogleUser" class="text-xs text-muted-foreground m-4">
+            <p
+              v-if="isGoogleUser"
+              class="text-xs text-muted-foreground m-4"
+            >
               * Algumas opções não estão disponíveis para contas Google
             </p>
           </div>
         </form>
 
         <DialogFooter>
-          <Button variant="outline" :disabled="isSaving" @click="isDialogOpen = false">
+          <Button
+            variant="outline"
+            :disabled="isSaving"
+            @click="isDialogOpen = false"
+          >
             Cancelar
           </Button>
-          <Button type="submit" :disabled="isSaving || !hasChanges" @click="onSubmit">
+          <Button
+            type="submit"
+            :disabled="isSaving || !hasChanges"
+            @click="onSubmit"
+          >
             <Icon
               v-if="isSaving"
               name="lucide:loader-2"
@@ -164,7 +205,7 @@ const emit = defineEmits<{
 
 const isDialogOpen = computed({
   get: () => props.isOpen ?? false,
-  set: (value) => emit("update:isOpen", value),
+  set: value => emit("update:isOpen", value),
 });
 
 const isSaving = ref(false);
@@ -179,7 +220,7 @@ const formSchema = toTypedSchema(
       .string({ required_error: "O nome é obrigatório." })
       .min(1, "Nome é obrigatório")
       .max(50, "Nome muito longo"),
-  })
+  }),
 );
 
 const { handleSubmit, setValues, values } = useForm({
@@ -196,7 +237,7 @@ const onSubmit = handleSubmit(async (formValues) => {
 // Computadas
 const isGoogleUser = computed(() => {
   return user.value?.providerData?.some(
-    (provider) => provider.providerId === "google.com"
+    provider => provider.providerId === "google.com",
   );
 });
 
@@ -223,7 +264,8 @@ const loadProfileImage = async (userId: string) => {
         return true;
       }
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Erro ao carregar imagem do perfil:", error);
     return false;
   }
@@ -252,7 +294,7 @@ watch(
       }
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 // Métodos de imagem
@@ -325,7 +367,8 @@ const handleImageUpload = async (event: Event) => {
     }
 
     profileImageUrl.value = base64Image;
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Erro ao carregar imagem:", error);
     alert("Erro ao carregar imagem. Tente novamente.");
   }
@@ -341,9 +384,10 @@ const saveProfileImage = async (userId: string, base64Image: string): Promise<vo
         photoURL: base64Image,
         updatedAt: new Date(),
       },
-      { merge: true }
+      { merge: true },
     );
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Erro ao salvar imagem no Firestore:", error);
     throw new Error("Erro ao salvar imagem");
   }
@@ -363,8 +407,8 @@ const handleSave = async (formValues: { displayName: string }) => {
 
     // Salvar imagem no Firestore se foi alterada
     if (
-      profileImageUrl.value !== originalImageUrl.value &&
-      profileImageUrl.value.startsWith("data:")
+      profileImageUrl.value !== originalImageUrl.value
+      && profileImageUrl.value.startsWith("data:")
     ) {
       await saveProfileImage(user.value.uid, profileImageUrl.value);
       originalImageUrl.value = profileImageUrl.value;
@@ -375,10 +419,12 @@ const handleSave = async (formValues: { displayName: string }) => {
 
     // Notificar sucesso
     alert("Perfil atualizado com sucesso!");
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Erro ao salvar perfil:", error);
     alert("Erro ao salvar alterações. Tente novamente.");
-  } finally {
+  }
+  finally {
     isSaving.value = false;
   }
 };
@@ -402,15 +448,17 @@ const changePassword = async () => {
     await reauthenticateWithCredential(user.value, credential);
     await updatePassword(user.value, newPassword);
     alert("Senha alterada com sucesso!");
-  } catch (error: unknown) {
+  }
+  catch (error: unknown) {
     console.error("Erro ao alterar senha:", error);
 
     if (
-      error.code === "auth/wrong-password" ||
-      error.code === "auth/invalid-credential"
+      error.code === "auth/wrong-password"
+      || error.code === "auth/invalid-credential"
     ) {
       alert("Senha atual incorreta.");
-    } else {
+    }
+    else {
       alert("Erro ao alterar senha. Tente novamente.");
     }
   }
@@ -420,13 +468,13 @@ const confirmDeleteAccount = async () => {
   if (!user.value) return;
 
   const confirmation = confirm(
-    "Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita e todos os seus dados serão perdidos permanentemente."
+    "Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita e todos os seus dados serão perdidos permanentemente.",
   );
 
   if (!confirmation) return;
 
   const finalConfirmation = prompt(
-    'Digite "EXCLUIR" para confirmar a exclusão da conta:'
+    "Digite \"EXCLUIR\" para confirmar a exclusão da conta:",
   );
 
   if (finalConfirmation !== "EXCLUIR") return;
@@ -444,7 +492,8 @@ const confirmDeleteAccount = async () => {
     try {
       const profileRef = doc(db(), "users", user.value.uid, "profile", "data");
       await setDoc(profileRef, {});
-    } catch (error) {
+    }
+    catch (error) {
       console.error("Erro ao deletar dados do perfil: ", error);
     }
 
@@ -453,17 +502,20 @@ const confirmDeleteAccount = async () => {
 
     // Redirecionar para página de login
     await router.push("/login");
-  } catch (error: unknown) {
+  }
+  catch (error: unknown) {
     console.error("Erro ao excluir conta:", error);
 
     if (
-      error.code === "auth/wrong-password" ||
-      error.code === "auth/invalid-credential"
+      error.code === "auth/wrong-password"
+      || error.code === "auth/invalid-credential"
     ) {
       alert("Credenciais incorretas.");
-    } else if (error.code === "auth/requires-recent-login") {
+    }
+    else if (error.code === "auth/requires-recent-login") {
       alert("Por favor, faça login novamente antes de excluir sua conta.");
-    } else {
+    }
+    else {
       alert("Erro ao excluir conta. Tente novamente.");
     }
   }

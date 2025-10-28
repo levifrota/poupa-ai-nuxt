@@ -1,21 +1,21 @@
 <script lang="ts" setup>
-import { cn } from '../../../../lib/utils'
-import { buttonVariants } from '@/components/ui/button'
-import { RangeCalendarCellTrigger, type RangeCalendarCellTriggerProps, useForwardProps } from 'reka-ui'
-import { computed, type HTMLAttributes } from 'vue'
+import { cn } from "../../../../lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+import { RangeCalendarCellTrigger, type RangeCalendarCellTriggerProps, useForwardProps } from "reka-ui";
+import { computed, type HTMLAttributes } from "vue";
 
-const props = withDefaults(defineProps<RangeCalendarCellTriggerProps & { class?: HTMLAttributes['class'] }>(), {
-  as: 'button',
-  class: '',
-})
+const props = withDefaults(defineProps<RangeCalendarCellTriggerProps & { class?: HTMLAttributes["class"] }>(), {
+  as: "button",
+  class: "",
+});
 
 const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props
+  const { class: _, ...delegated } = props;
 
-  return delegated
-})
+  return delegated;
+});
 
-const forwardedProps = useForwardProps(delegatedProps)
+const forwardedProps = useForwardProps(delegatedProps);
 </script>
 
 <template>
@@ -36,7 +36,7 @@ const forwardedProps = useForwardProps(delegatedProps)
         'data-[disabled]:text-muted-foreground data-[disabled]:opacity-50',
         // Unavailable
         'data-[unavailable]:text-destructive-foreground data-[unavailable]:line-through',
-        props.class
+        props.class,
       )
     "
     v-bind="forwardedProps"

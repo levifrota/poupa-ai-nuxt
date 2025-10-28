@@ -1,1 +1,1 @@
-export { default as MoneyInput } from './MoneyInput.vue'
+export { default as MoneyInput } from "./MoneyInput.vue";

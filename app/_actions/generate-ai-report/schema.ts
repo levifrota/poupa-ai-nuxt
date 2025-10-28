@@ -6,17 +6,17 @@ export const generateAiReportSchema = z
       (value) => {
         if (!value) return false;
         const date = new Date(value);
-        return !isNaN(date.getTime());
+        return !Number.isNaN(date.getTime());
       },
-      "Data de início inválida"
+      "Data de início inválida",
     ),
     endDate: z.string().refine(
       (value) => {
         if (!value) return false;
         const date = new Date(value);
-        return !isNaN(date.getTime());
+        return !Number.isNaN(date.getTime());
       },
-      "Data de fim inválida"
+      "Data de fim inválida",
     ),
   })
   .refine(
@@ -28,7 +28,7 @@ export const generateAiReportSchema = z
     {
       message: "A data de início deve ser anterior ou igual à data de fim",
       path: ["endDate"],
-    }
+    },
   );
 
 export type GenerateAiReportSchema = z.infer<typeof generateAiReportSchema>;

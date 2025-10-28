@@ -3,18 +3,35 @@
     <div class="flex flex-col items-center justify-center">
       <div class="w-full max-w-md space-y-4">
         <header class="flex flex-col items-center justify-center space-y-2">
-          <img src="/logo.svg" alt="Poupa grana" class="w-48" />
-          <h1 class="text-2xl font-bold">Acesse sua conta</h1>
+          <img
+            src="/logo.svg"
+            alt="Poupa grana"
+            class="w-48"
+          >
+          <h1 class="text-2xl font-bold">
+            Acesse sua conta
+          </h1>
         </header>
 
         <!-- Error Alert -->
-        <div v-if="error" class="rounded-md bg-red-50 border border-red-200 p-3">
-          <p class="text-sm text-red-700">{{ error }}</p>
+        <div
+          v-if="error"
+          class="rounded-md bg-red-50 border border-red-200 p-3"
+        >
+          <p class="text-sm text-red-700">
+            {{ error }}
+          </p>
         </div>
 
-        <form class="space-y-4" @submit.prevent="login">
+        <form
+          class="space-y-4"
+          @submit.prevent="login"
+        >
           <div class="space-y-2">
-            <label for="email" class="text-sm font-medium"> Email </label>
+            <label
+              for="email"
+              class="text-sm font-medium"
+            > Email </label>
             <input
               id="email"
               v-model="formData.email"
@@ -23,11 +40,14 @@
               class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               :disabled="loading"
               required
-            />
+            >
           </div>
 
           <div class="space-y-2">
-            <label for="password" class="text-sm font-medium"> Senha </label>
+            <label
+              for="password"
+              class="text-sm font-medium"
+            > Senha </label>
             <input
               id="password"
               v-model="formData.password"
@@ -35,7 +55,7 @@
               class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               :disabled="loading"
               required
-            />
+            >
           </div>
 
           <button
@@ -63,13 +83,19 @@
           :disabled="loading"
           @click="handleGoogleAuth"
         >
-          <Icon name="logos:google-icon" class="mr-2" />
+          <Icon
+            name="logos:google-icon"
+            class="mr-2"
+          />
           Google
         </button>
 
         <p class="text-center text-sm">
           Não tem uma conta?
-          <NuxtLink to="/register" class="font-semibold text-primary">
+          <NuxtLink
+            to="/register"
+            class="font-semibold text-primary"
+          >
             Cadastre-se
           </NuxtLink>
         </p>
@@ -80,7 +106,7 @@
         src="/login.png"
         alt="Imagem de um celular com um gráfico de finanças"
         class="h-screen w-full object-cover"
-      />
+      >
     </div>
   </div>
 </template>
@@ -100,7 +126,7 @@ watch(
       router.push("/");
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 definePageMeta({

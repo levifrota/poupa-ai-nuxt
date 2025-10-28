@@ -5,7 +5,7 @@ import { computed } from "vue";
 import CustomLegend from "./ui/chart-donut/CustomLegend.vue";
 
 const { $pinia } = useNuxtApp();
-const transactionsStore = useTransactionsStore($pinia);
+// const transactionsStore = useTransactionsStore($pinia);
 const themesStore = useThemeStore($pinia);
 const { theme } = storeToRefs(themesStore);
 
@@ -14,7 +14,7 @@ const typesPercentage = ref<Record<string, number>>({});
 
 let transactionsStoreInstance: ReturnType<typeof useTransactionsStore> | null = null;
 
-if (process.client) {
+if (import.meta.client) {
   onMounted(async () => {
     await nextTick();
 
@@ -30,7 +30,7 @@ if (process.client) {
       () => themesStoreInstance.theme,
       (newTheme) => {
         theme.value = newTheme;
-      }
+      },
     );
 
     // Watch para mudanças nos dados
@@ -38,7 +38,7 @@ if (process.client) {
       () => transactionsStoreInstance!.typesPercentage,
       (newPercentage) => {
         typesPercentage.value = newPercentage;
-      }
+      },
     );
   });
 }
@@ -64,37 +64,37 @@ const formatValue = (value: number): string => `${value}%`;
 // Paletas de cores para diferentes temas
 const colorPalettes = {
   // Tema claro padrão
-  light: {
+  "light": {
     DEPOSIT: "#4CAF50", // Verde
     INVESTMENT: "#2196F3", // Azul
     EXPENSE: "#F44336", // Vermelho
   },
   // Tema escuro
-  dark: {
+  "dark": {
     DEPOSIT: "#66BB6A", // Verde mais claro
     INVESTMENT: "#42A5F5", // Azul mais claro
     EXPENSE: "#EF5350", // Vermelho mais claro
   },
   // Tema para daltônicos (deuteranopia)
-  deuteranopia: {
+  "deuteranopia": {
     DEPOSIT: "#0072B2", // Azul
     INVESTMENT: "#F0E442", // Amarelo
     EXPENSE: "#CC79A7", // Rosa
   },
   // Tema para daltônicos (protanopia)
-  protanopia: {
+  "protanopia": {
     DEPOSIT: "#0072B2", // Azul
     INVESTMENT: "#F0E442", // Amarelo
     EXPENSE: "#56B4E9", // Azul claro
   },
   // Tema para daltônicos (tritanopia)
-  tritanopia: {
+  "tritanopia": {
     DEPOSIT: "#009E73", // Verde
     INVESTMENT: "#E69F00", // Laranja
     EXPENSE: "#D55E00", // Vermelho-laranja
   },
   // Tema colorblind geral
-  colorblind: {
+  "colorblind": {
     DEPOSIT: "#009E73", // Verde
     INVESTMENT: "#0072B2", // Azul
     EXPENSE: "#D55E00", // Laranja
@@ -111,15 +111,20 @@ const colorPalettes = {
 const currentColorPalette = computed(() => {
   if (theme.value === "deuteranopia") {
     return colorPalettes.deuteranopia;
-  } else if (theme.value === "protanopia") {
+  }
+  else if (theme.value === "protanopia") {
     return colorPalettes.protanopia;
-  } else if (theme.value === "tritanopia") {
+  }
+  else if (theme.value === "tritanopia") {
     return colorPalettes.tritanopia;
-  } else if (theme.value === "colorblind") {
+  }
+  else if (theme.value === "colorblind") {
     return colorPalettes.colorblind;
-  } else if (theme.value === "high-contrast") {
+  }
+  else if (theme.value === "high-contrast") {
     return colorPalettes["high-contrast"];
-  } else {
+  }
+  else {
     return theme.value === "dark" ? colorPalettes.dark : colorPalettes.light;
   }
 });
@@ -127,10 +132,10 @@ const currentColorPalette = computed(() => {
 // Cores dinâmicas baseadas no tema
 const colors = computed(() => {
   return chartData.value.map(
-    (item) =>
+    item =>
       currentColorPalette.value[
         item.originalType as keyof typeof currentColorPalette.value
-      ] || "#C9CBCF"
+      ] || "#C9CBCF",
   );
 });
 
@@ -140,7 +145,7 @@ const legendItems = computed(() =>
     color: colors.value[i],
     value: formatValue(Number(item.value)),
     inactive: false,
-  }))
+  })),
 );
 </script>
 

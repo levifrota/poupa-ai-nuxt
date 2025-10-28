@@ -1,95 +1,96 @@
 <script setup lang="ts">
-import { cn } from '../../lib/utils.js'
-import { useCurrentUser } from 'vuefire'
+import { cn } from "../../lib/utils.js";
+import { useCurrentUser } from "vuefire";
 import {
   CalendarDate,
   type DateValue,
   isEqualMonth,
-} from '@internationalized/date'
+} from "@internationalized/date";
 import {
   Calendar,
   ChevronLeft,
   ChevronRight,
-} from 'lucide-vue-next'
-import { type DateRange, RangeCalendarRoot, useDateFormatter } from 'reka-ui'
-import { createMonth, type Grid, toDate } from 'reka-ui/date'
-import { collection, getDocs, query, where, orderBy } from 'firebase/firestore'
-import { db } from '../../lib/firebase.js'
-import type { Transaction } from '../../constants/transactions.js'
-import { ref, computed, watch, onMounted, nextTick, type Ref } from 'vue'
-import { useTransactionsStore } from '../../stores/transactions.js'
-import { useRoute, useRouter } from 'vue-router'
+} from "lucide-vue-next";
+import { type DateRange, RangeCalendarRoot, useDateFormatter } from "reka-ui";
+import { createMonth, type Grid, toDate } from "reka-ui/date";
+import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
+import { db } from "../../lib/firebase.js";
+import type { Transaction } from "../../constants/transactions.js";
+import { ref, computed, watch, onMounted, nextTick, type Ref } from "vue";
+import { useTransactionsStore } from "../../stores/transactions.js";
+import { useRoute, useRouter } from "vue-router";
 
 // Importar componentes UI necessários
-import { Button, buttonVariants } from './ui/button/index.js'
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover/index.js'
-import { RangeCalendarCell, RangeCalendarCellTrigger, RangeCalendarGrid, RangeCalendarGridBody, RangeCalendarGridHead, RangeCalendarGridRow, RangeCalendarHeadCell } from './ui/range-calendar/index.js'
+import { Button, buttonVariants } from "./ui/button/index.js";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover/index.js";
+import { RangeCalendarCell, RangeCalendarCellTrigger, RangeCalendarGrid, RangeCalendarGridBody, RangeCalendarGridHead, RangeCalendarGridRow, RangeCalendarHeadCell } from "./ui/range-calendar/index.js";
 
 // Definir props e emits para o componente
 const props = defineProps<{
-  label?: string
-  description?: string
-}>()
+  label?: string;
+  description?: string;
+}>();
 
 const emit = defineEmits<{
-  'update:dateRange': [dateRange: DateRange]
-  'transactions-loaded': [transactions: Transaction[]]
-}>()
+  "update:dateRange": [dateRange: DateRange];
+  "transactions-loaded": [transactions: Transaction[]];
+}>();
 
 // Referências reativas para a store
 const transactionsStore = useTransactionsStore();
 
 // Acesso à rota e ao router para manipular os parâmetros da URL
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 
 // Flag para indicar se o componente está montado
-const isMounted = ref(false)
+const isMounted = ref(false);
 
 // Flag para controlar o estado aberto/fechado do Popover
-const isPopoverOpen = ref(false)
+const isPopoverOpen = ref(false);
 
 // Computed para loading e error
 const isLoading = computed(() => transactionsStore.isLoading);
 const error = computed(() => transactionsStore.error);
 
 // Data atual para inicialização
-const today = new Date()
-const currentMonth = today.getMonth()
-const currentYear = today.getFullYear()
+const today = new Date();
+const currentMonth = today.getMonth();
+const currentYear = today.getFullYear();
 
 // Função para converter string para CalendarDate
 const stringToCalendarDate = (dateString: string | null): CalendarDate | null => {
-  if (!dateString) return null
+  if (!dateString) return null;
   try {
-    const date = new Date(dateString)
-    return new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate())
-  } catch (e) {
-    console.error('Erro ao converter data:', e)
-    return null
+    const date = new Date(dateString);
+    return new CalendarDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
   }
-}
+  catch (e) {
+    console.error("Erro ao converter data:", e);
+    return null;
+  }
+};
 
 // Verificar se existem parâmetros na URL
-const startFromUrl = stringToCalendarDate(route.query.start as string | null)
-const endFromUrl = stringToCalendarDate(route.query.end as string | null)
+const startFromUrl = stringToCalendarDate(route.query.start as string | null);
+const endFromUrl = stringToCalendarDate(route.query.end as string | null);
 
 // Inicializar com os valores da URL ou com o mês atual
 const value = ref({
   start: startFromUrl || new CalendarDate(currentYear, currentMonth + 1, 1),
   end: endFromUrl || new CalendarDate(currentYear, currentMonth + 1, new Date(currentYear, currentMonth + 1, 0).getDate()),
-}) as Ref<DateRange>
+}) as Ref<DateRange>;
 
-const locale = ref('pt-BR')
-const formatter = useDateFormatter(locale.value)
+const locale = ref("pt-BR");
+const formatter = useDateFormatter(locale.value);
 
 // ID único para acessibilidade
-const calendarId = `calendar-${Math.random().toString(36).substring(2, 9)}`
-const labelId = `calendar-label-${Math.random().toString(36).substring(2, 9)}`
-const descriptionId = `calendar-description-${Math.random().toString(36).substring(2, 9)}`
+const calendarId = `calendar-${Math.random().toString(36).substring(2, 9)}`;
+const labelId = `calendar-label-${Math.random().toString(36).substring(2, 9)}`;
+const descriptionId = `calendar-description-${Math.random().toString(36).substring(2, 9)}`;
 
-const placeholder = ref(value.value.start) as Ref<DateValue>
-const secondMonthPlaceholder = ref(value.value.end) as Ref<DateValue>
+const placeholder = ref(value.value.start) as Ref<DateValue>;
+const secondMonthPlaceholder = ref(value.value.end) as Ref<DateValue>;
 
 const firstMonth = ref(
   createMonth({
@@ -98,7 +99,7 @@ const firstMonth = ref(
     fixedWeeks: true,
     weekStartsOn: 0,
   }),
-) as Ref<Grid<DateValue>>
+) as Ref<Grid<DateValue>>;
 const secondMonth = ref(
   createMonth({
     dateObj: secondMonthPlaceholder.value,
@@ -106,16 +107,16 @@ const secondMonth = ref(
     fixedWeeks: true,
     weekStartsOn: 0,
   }),
-) as Ref<Grid<DateValue>>
+) as Ref<Grid<DateValue>>;
 
-function updateMonth(reference: 'first' | 'second', months: number) {
-  if (reference === 'first') {
-    placeholder.value = placeholder.value.add({ months })
+function updateMonth(reference: "first" | "second", months: number) {
+  if (reference === "first") {
+    placeholder.value = placeholder.value.add({ months });
   }
   else {
     secondMonthPlaceholder.value = secondMonthPlaceholder.value.add({
       months,
-    })
+    });
   }
 }
 
@@ -127,14 +128,14 @@ watch(locale, (newLocale: string) => {
     locale: newLocale,
     fixedWeeks: true,
     weekStartsOn: 0,
-  })
+  });
   secondMonth.value = createMonth({
     dateObj: secondMonthPlaceholder.value,
     locale: newLocale,
     fixedWeeks: true,
     weekStartsOn: 0,
-  })
-})
+  });
+});
 
 watch(placeholder, (_placeholder: DateValue) => {
   firstMonth.value = createMonth({
@@ -142,13 +143,13 @@ watch(placeholder, (_placeholder: DateValue) => {
     weekStartsOn: 0,
     fixedWeeks: false,
     locale: locale.value,
-  })
+  });
   if (isEqualMonth(secondMonthPlaceholder.value, _placeholder)) {
     secondMonthPlaceholder.value = secondMonthPlaceholder.value.add({
       months: 1,
-    })
+    });
   }
-})
+});
 
 watch(secondMonthPlaceholder, (_secondMonthPlaceholder: DateValue) => {
   secondMonth.value = createMonth({
@@ -156,10 +157,10 @@ watch(secondMonthPlaceholder, (_secondMonthPlaceholder: DateValue) => {
     weekStartsOn: 0,
     fixedWeeks: false,
     locale: locale.value,
-  })
+  });
   if (isEqualMonth(_secondMonthPlaceholder, placeholder.value))
-    placeholder.value = placeholder.value.subtract({ months: 1 })
-})
+    placeholder.value = placeholder.value.subtract({ months: 1 });
+});
 
 // Função para buscar transações no intervalo de datas selecionado
 async function fetchTransactions() {
@@ -175,66 +176,68 @@ async function fetchTransactions() {
     const userId = user.value?.uid;
 
     if (!userId) {
-      console.error('[TimeSelect] Usuário não autenticado');
-      transactionsStore.setError('Usuário não autenticado');
+      console.error("[TimeSelect] Usuário não autenticado");
+      transactionsStore.setError("Usuário não autenticado");
       return;
     }
 
     // Converter datas do formato CalendarDate para Date do JavaScript
-    const startDate = toDate(value.value.start)
-    const endDate = toDate(value.value.end)
+    const startDate = toDate(value.value.start);
+    const endDate = toDate(value.value.end);
 
     // Adicionar um dia ao endDate para incluir o último dia na busca
-    endDate.setDate(endDate.getDate() + 1)
+    endDate.setDate(endDate.getDate() + 1);
 
     const transactionsQuery = query(
-      collection(db(), 'users', userId, 'transactions'),
-      where('date', '>=', startDate),
-      where('date', '<', endDate),
-      orderBy('date', 'desc')
-    )
+      collection(db(), "users", userId, "transactions"),
+      where("date", ">=", startDate),
+      where("date", "<", endDate),
+      orderBy("date", "desc"),
+    );
 
-    const querySnapshot = await getDocs(transactionsQuery)
+    const querySnapshot = await getDocs(transactionsQuery);
 
     // Mapear os documentos para objetos Transaction
     const fetchedTransactions = querySnapshot.docs.map((doc) => {
-      const data = doc.data()
+      const data = doc.data();
       return {
         id: doc.id,
         ...data,
         date: data.date?.toDate() || new Date(),
-      } as Transaction
-    })
+      } as Transaction;
+    });
 
     // Atualizar a store com as transações filtradas
     transactionsStore.setTransactions(fetchedTransactions);
 
     // Emitir evento com as transações carregadas
-    emit('transactions-loaded', fetchedTransactions)
-  } catch (err) {
-    console.error('[TimeSelect] Erro ao buscar transações:', err)
-    transactionsStore.setError('Erro ao buscar transações. Tente novamente mais tarde.')
-  } finally {
+    emit("transactions-loaded", fetchedTransactions);
+  }
+  catch (err) {
+    console.error("[TimeSelect] Erro ao buscar transações:", err);
+    transactionsStore.setError("Erro ao buscar transações. Tente novamente mais tarde.");
+  }
+  finally {
     transactionsStore.setLoading(false);
   }
 }
 
 // Função para atualizar os parâmetros da URL
 const updateUrlParams = (dateRange: DateRange) => {
-  if (!dateRange.start || !dateRange.end) return
+  if (!dateRange.start || !dateRange.end) return;
 
-  const startDate = toDate(dateRange.start)
-  const endDate = toDate(dateRange.end)
+  const startDate = toDate(dateRange.start);
+  const endDate = toDate(dateRange.end);
 
   // Atualizar a URL sem recarregar a página
   router.replace({
     query: {
       ...route.query,
       start: startDate.toISOString(),
-      end: endDate.toISOString()
-    }
-  })
-}
+      end: endDate.toISOString(),
+    },
+  });
+};
 
 // Observar mudanças no intervalo de datas
 watch(() => value.value, (newValue) => {
@@ -245,13 +248,13 @@ watch(() => value.value, (newValue) => {
 
   if (newValue.start && newValue.end) {
     // Emitir evento de atualização do intervalo de datas
-    emit('update:dateRange', newValue)
+    emit("update:dateRange", newValue);
     // Atualizar parâmetros na URL
-    updateUrlParams(newValue)
+    updateUrlParams(newValue);
     // Buscar transações com o novo intervalo
-    fetchTransactions()
+    fetchTransactions();
   }
-}, { deep: true })
+}, { deep: true });
 
 // Buscar transações ao montar o componente
 onMounted(async () => {
@@ -262,48 +265,47 @@ onMounted(async () => {
 
   // Se houver parâmetros na URL, usar esses valores
   if (route.query.start && route.query.end) {
-
-    const startDate = stringToCalendarDate(route.query.start as string)
-    const endDate = stringToCalendarDate(route.query.end as string)
+    const startDate = stringToCalendarDate(route.query.start as string);
+    const endDate = stringToCalendarDate(route.query.end as string);
 
     if (startDate && endDate) {
       value.value = {
         start: startDate,
-        end: endDate
-      }
+        end: endDate,
+      };
     }
   }
 
-  fetchTransactions()
-})
+  fetchTransactions();
+});
 
 // Formatação para exibição do intervalo de datas
 const formattedDateRange = computed(() => {
-  if (!value.value.start) return 'Selecione uma data'
+  if (!value.value.start) return "Selecione uma data";
 
   const startFormatted = formatter.custom(toDate(value.value.start), {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
-  })
+  });
 
-  if (!value.value.end) return startFormatted
+  if (!value.value.end) return startFormatted;
 
   const endFormatted = formatter.custom(toDate(value.value.end), {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
-  })
+  });
 
-  return `${startFormatted} - ${endFormatted}`
-})
+  return `${startFormatted} - ${endFormatted}`;
+});
 
 const getDayAriaLabel = (date: DateValue) => {
   const jsDate = toDate(date);
-  const formattedDate = new Intl.DateTimeFormat('pt-BR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
+  const formattedDate = new Intl.DateTimeFormat("pt-BR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
   }).format(jsDate);
   return `Selecionar data ${formattedDate}`;
 };
@@ -312,10 +314,21 @@ const getDayAriaLabel = (date: DateValue) => {
 <template>
   <div>
     <!-- Mensagem de erro, se houver -->
-    <div v-if="error" role="alert" class="text-red-500 mb-2">{{ error }}</div>
+    <div
+      v-if="error"
+      role="alert"
+      class="text-red-500 mb-2"
+    >
+      {{ error }}
+    </div>
 
     <!-- Indicador de carregamento -->
-    <div v-if="isLoading" role="status" aria-live="polite" class="mb-2">
+    <div
+      v-if="isLoading"
+      role="status"
+      aria-live="polite"
+      class="mb-2"
+    >
       <span class="sr-only">Carregando transações...</span>
       <span aria-hidden="true">Carregando...</span>
     </div>
@@ -330,19 +343,28 @@ const getDayAriaLabel = (date: DateValue) => {
           :class="
             cn(
               'w-[280px] justify-start text-left font-normal',
-              !value && 'text-muted-foreground'
+              !value && 'text-muted-foreground',
             )
           "
           aria-haspopup="dialog"
         >
-          <span :id="labelId" class="sr-only">{{
+          <span
+            :id="labelId"
+            class="sr-only"
+          >{{
             props.label || "Seletor de período"
           }}</span>
-          <span :id="descriptionId" class="sr-only">{{
+          <span
+            :id="descriptionId"
+            class="sr-only"
+          >{{
             props.description || "Selecione um intervalo de datas para filtrar transações"
           }}</span>
 
-          <Calendar class="mr-2 h-4 w-4" aria-hidden="true" />
+          <Calendar
+            class="mr-2 h-4 w-4"
+            aria-hidden="true"
+          />
           {{ formattedDateRange }}
         </Button>
       </PopoverTrigger>
@@ -365,34 +387,48 @@ const getDayAriaLabel = (date: DateValue) => {
                   :class="
                     cn(
                       buttonVariants({ variant: 'outline' }),
-                      'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100'
+                      'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100',
                     )
                   "
                   aria-label="Mês anterior"
                   @click="updateMonth('first', -1)"
                 >
-                  <ChevronLeft class="h-4 w-4" aria-hidden="true" />
+                  <ChevronLeft
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                  />
                 </button>
-                <div :class="cn('text-sm font-medium')" role="heading" aria-level="2">
+                <div
+                  :class="cn('text-sm font-medium')"
+                  role="heading"
+                  aria-level="2"
+                >
                   {{ formatter.fullMonthAndYear(toDate(firstMonth.value)) }}
                 </div>
                 <button
                   :class="
                     cn(
                       buttonVariants({ variant: 'outline' }),
-                      'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100'
+                      'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100',
                     )
                   "
                   aria-label="Próximo mês"
                   @click="updateMonth('first', 1)"
                 >
-                  <ChevronRight class="h-4 w-4" aria-hidden="true" />
+                  <ChevronRight
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                  />
                 </button>
               </div>
-              <RangeCalendarGrid role="grid" aria-labelledby="calendar-grid-label-1">
-                <span id="calendar-grid-label-1" class="sr-only"
-                  >Calendário para selecionar data inicial</span
-                >
+              <RangeCalendarGrid
+                role="grid"
+                aria-labelledby="calendar-grid-label-1"
+              >
+                <span
+                  id="calendar-grid-label-1"
+                  class="sr-only"
+                >Calendário para selecionar data inicial</span>
                 <RangeCalendarGridHead>
                   <RangeCalendarGridRow role="row">
                     <RangeCalendarHeadCell
@@ -435,15 +471,22 @@ const getDayAriaLabel = (date: DateValue) => {
                   :class="
                     cn(
                       buttonVariants({ variant: 'outline' }),
-                      'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100'
+                      'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100',
                     )
                   "
                   aria-label="Mês anterior"
                   @click="updateMonth('second', -1)"
                 >
-                  <ChevronLeft class="h-4 w-4" aria-hidden="true" />
+                  <ChevronLeft
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                  />
                 </button>
-                <div :class="cn('text-sm font-medium')" role="heading" aria-level="2">
+                <div
+                  :class="cn('text-sm font-medium')"
+                  role="heading"
+                  aria-level="2"
+                >
                   {{ formatter.fullMonthAndYear(toDate(secondMonth.value)) }}
                 </div>
 
@@ -451,19 +494,26 @@ const getDayAriaLabel = (date: DateValue) => {
                   :class="
                     cn(
                       buttonVariants({ variant: 'outline' }),
-                      'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100'
+                      'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100',
                     )
                   "
                   aria-label="Próximo mês"
                   @click="updateMonth('second', 1)"
                 >
-                  <ChevronRight class="h-4 w-4" aria-hidden="true" />
+                  <ChevronRight
+                    class="h-4 w-4"
+                    aria-hidden="true"
+                  />
                 </button>
               </div>
-              <RangeCalendarGrid role="grid" aria-labelledby="calendar-grid-label-2">
-                <span id="calendar-grid-label-2" class="sr-only"
-                  >Calendário para selecionar data final</span
-                >
+              <RangeCalendarGrid
+                role="grid"
+                aria-labelledby="calendar-grid-label-2"
+              >
+                <span
+                  id="calendar-grid-label-2"
+                  class="sr-only"
+                >Calendário para selecionar data final</span>
                 <RangeCalendarGridHead>
                   <RangeCalendarGridRow role="row">
                     <RangeCalendarHeadCell
@@ -503,7 +553,10 @@ const getDayAriaLabel = (date: DateValue) => {
           </div>
 
           <!-- Status da seleção para leitores de tela -->
-          <div aria-live="polite" class="sr-only">
+          <div
+            aria-live="polite"
+            class="sr-only"
+          >
             {{ formattedDateRange }}
           </div>
         </RangeCalendarRoot>

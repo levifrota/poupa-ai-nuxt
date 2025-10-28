@@ -16,7 +16,7 @@ watch(
   () => props.modelValue,
   (newValue) => {
     internalValue.value = newValue;
-  }
+  },
 );
 
 function onInput(event: Event) {
@@ -29,5 +29,8 @@ function onInput(event: Event) {
 </script>
 
 <template>
-  <Input :model-value="formatted" @input="onInput" />
+  <Input
+    :model-value="formatted"
+    @input="onInput"
+  />
 </template>

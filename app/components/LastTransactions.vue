@@ -19,9 +19,11 @@ const transactions = computed(() => transactionsStore.lastTransactions);
 const getAmountColor = (transaction: Transaction) => {
   if (transaction.type === TransactionType.EXPENSE) {
     return "text-red-500";
-  } else if (transaction.type === TransactionType.DEPOSIT) {
+  }
+  else if (transaction.type === TransactionType.DEPOSIT) {
     return "text-primary";
-  } else if (theme.value !== "dark" && theme.value !== "high-contrast") {
+  }
+  else if (theme.value !== "dark" && theme.value !== "high-contrast") {
     return "text-muted-foreground";
   }
   return "text-white";
@@ -48,21 +50,31 @@ const formatCurrency = (amount: number) => {
 <template>
   <ScrollArea class="rounded-md border p-3.5">
     <CardHeader class="flex flex-row items-center justify-between">
-      <CardTitle class="font-bold">Últimas Transações</CardTitle>
-      <Button variant="outline" class="rounded-full" as-child>
-        <NuxtLink to="/transactions" aria-label="Ver todas as transações"
-          >Ver mais</NuxtLink
-        >
+      <CardTitle class="font-bold">
+        Últimas Transações
+      </CardTitle>
+      <Button
+        variant="outline"
+        class="rounded-full"
+        as-child
+      >
+        <NuxtLink
+          to="/transactions"
+          aria-label="Ver todas as transações"
+        >Ver mais</NuxtLink>
       </Button>
     </CardHeader>
-    <CardContent class="p-0 sm:px-6 space-y-6" role="list">
+    <CardContent
+      class="p-0 sm:px-6 space-y-6"
+      role="list"
+    >
       <div
         v-for="transaction in transactions"
         :key="transaction.id"
         class="flex items-center justify-between"
         role="listitem"
         :aria-label="`${transaction.name}, ${new Date(
-          transaction.date
+          transaction.date,
         ).toLocaleDateString('pt-BR', {
           day: '2-digit',
           month: 'long',
@@ -83,7 +95,9 @@ const formatCurrency = (amount: number) => {
             />
           </div>
           <div class="">
-            <p class="text-sm font-bold">{{ transaction.name }}</p>
+            <p class="text-sm font-bold">
+              {{ transaction.name }}
+            </p>
             <p class="text-sm text-muted-foreground">
               {{
                 new Date(transaction.date).toLocaleDateString("pt-Br", {

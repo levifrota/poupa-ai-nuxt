@@ -50,7 +50,7 @@ const props = withDefaults(
     filterOpacity: 0.2,
     showTooltip: true,
     showLegend: true,
-  }
+  },
 );
 
 type KeyOfT = Extract<keyof T, string>;
@@ -65,20 +65,23 @@ const activeSegmentKey = ref<string>();
 const colors = computed(() =>
   props.colors?.length
     ? props.colors
-    : defaultColors(props.data.filter((d) => d[props.category]).filter(Boolean).length)
+    : defaultColors(props.data.filter(d => d[props.category]).filter(Boolean).length),
 );
 const legendItems = computed(() =>
   props.data.map((item, i) => ({
     name: item[props.index],
     color: colors.value[i],
     inactive: false,
-  }))
+  })),
 );
 </script>
 
 <template>
   <div :class="cn('w-full h-48 flex flex-col items-end', $attrs.class ?? '')">
-    <VisSingleContainer :style="{ height: isMounted ? '100%' : 'auto' }" :data="data">
+    <VisSingleContainer
+      :style="{ height: isMounted ? '100%' : 'auto' }"
+      :data="data"
+    >
       <ChartSingleTooltip
         :selector="Donut.selectors.segment"
         :index="category"

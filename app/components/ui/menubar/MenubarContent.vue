@@ -1,30 +1,30 @@
 <script setup lang="ts">
-import { cn } from '../../../../lib/utils'
+import { cn } from "../../../../lib/utils";
 import {
   MenubarContent,
   type MenubarContentProps,
   MenubarPortal,
   useForwardProps,
-} from 'reka-ui'
-import { computed, type HTMLAttributes } from 'vue'
+} from "reka-ui";
+import { computed, type HTMLAttributes } from "vue";
 
 const props = withDefaults(
-  defineProps<MenubarContentProps & { class?: HTMLAttributes['class'] }>(),
+  defineProps<MenubarContentProps & { class?: HTMLAttributes["class"] }>(),
   {
-    align: 'start',
+    align: "start",
     alignOffset: -4,
     sideOffset: 8,
-    class: '',
+    class: "",
   },
-)
+);
 
 const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props
+  const { class: _, ...delegated } = props;
 
-  return delegated
-})
+  return delegated;
+});
 
-const forwardedProps = useForwardProps(delegatedProps)
+const forwardedProps = useForwardProps(delegatedProps);
 </script>
 
 <template>

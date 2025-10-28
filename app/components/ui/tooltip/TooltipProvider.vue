@@ -12,7 +12,7 @@ withDefaults(
   }>(),
   {
     delayDuration: 0,
-  }
+  },
 );
 </script>
 

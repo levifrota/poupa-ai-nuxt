@@ -41,8 +41,8 @@ export interface Transaction {
   updatedAt: Date;
 }
 
-export const TRANSACTION_CATEGORY_LABELS: Record<TransactionCategory, string> =
-  {
+export const TRANSACTION_CATEGORY_LABELS: Record<TransactionCategory, string>
+  = {
     EDUCATION: "Educação",
     FOOD: "Alimentação",
     HOUSING: "Moradia",

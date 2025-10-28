@@ -15,7 +15,10 @@ const props = defineProps<Props>();
   >
     <div class="flex-1">
       <CardHeader class="flex-row items-center gap-4 pb-0 sm:p-6">
-        <Icon :name="props.icon" class="hidden sm:block h-6 w-6 text-primary" />
+        <Icon
+          :name="props.icon"
+          class="hidden sm:block h-6 w-6 text-primary"
+        />
         <p class="opacity-70">
           {{ props.title }}
         </p>
@@ -32,10 +35,17 @@ const props = defineProps<Props>();
       <slot name="action" />
     </div>
   </Card>
-  <Card v-else class="flex flex-col p-3" :aria-label="`${props.title}: ${props.value}`">
+  <Card
+    v-else
+    class="flex flex-col p-3"
+    :aria-label="`${props.title}: ${props.value}`"
+  >
     <div class="flex-1">
       <CardHeader class="flex-row items-center gap-4 p-0 sm:p-6">
-        <Icon :name="props.icon" class="hidden sm:block h-6 w-6 text-primary" />
+        <Icon
+          :name="props.icon"
+          class="hidden sm:block h-6 w-6 text-primary"
+        />
         <p class="text-muted-foreground">
           {{ props.title }}
         </p>

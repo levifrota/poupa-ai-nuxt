@@ -36,14 +36,14 @@ const table = useVueTable({
     },
   },
   onSortingChange: (updaterOrValue) => {
-    sorting.value =
-      typeof updaterOrValue === "function"
+    sorting.value
+      = typeof updaterOrValue === "function"
         ? updaterOrValue(sorting.value)
         : updaterOrValue;
   },
   onGlobalFilterChange: (updaterOrValue) => {
-    globalFilter.value =
-      typeof updaterOrValue === "function"
+    globalFilter.value
+      = typeof updaterOrValue === "function"
         ? updaterOrValue(globalFilter.value)
         : updaterOrValue;
   },
@@ -57,7 +57,10 @@ const table = useVueTable({
   <div>
     <!-- Input de Busca -->
     <div class="flex items-center py-4">
-      <label for="search-transactions" class="sr-only">Buscar transações</label>
+      <label
+        for="search-transactions"
+        class="sr-only"
+      >Buscar transações</label>
       <Input
         id="search-transactions"
         class="max-w-sm"
@@ -73,8 +76,15 @@ const table = useVueTable({
           Tabela de Transações
         </caption>
         <TableHeader>
-          <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-            <TableHead v-for="header in headerGroup.headers" :key="header.id" scope="col">
+          <TableRow
+            v-for="headerGroup in table.getHeaderGroups()"
+            :key="headerGroup.id"
+          >
+            <TableHead
+              v-for="header in headerGroup.headers"
+              :key="header.id"
+              scope="col"
+            >
               <FlexRender
                 v-if="!header.isPlaceholder"
                 :render="header.column.columnDef.header"
@@ -90,7 +100,10 @@ const table = useVueTable({
               :key="row.id"
               :data-state="row.getIsSelected() && 'selected'"
             >
-              <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
+              <TableCell
+                v-for="cell in row.getVisibleCells()"
+                :key="cell.id"
+              >
                 <FlexRender
                   :render="cell.column.columnDef.cell"
                   :props="cell.getContext()"
@@ -100,7 +113,10 @@ const table = useVueTable({
           </template>
           <template v-else>
             <TableRow>
-              <TableCell :colspan="columns.length" class="h-24 text-center">
+              <TableCell
+                :colspan="columns.length"
+                class="h-24 text-center"
+              >
                 Nenhum resultado encontrado.
               </TableCell>
             </TableRow>

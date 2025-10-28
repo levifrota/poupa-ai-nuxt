@@ -49,13 +49,15 @@ async function handleGenerateReportClick() {
     });
 
     report.value = DOMPurify.sanitize(marked.parse(aiReport));
-  } catch (error) {
+  }
+  catch (error) {
     console.error("[AiReportButton] Erro completo:", error);
-    report.value =
-      error instanceof Error
+    report.value
+      = error instanceof Error
         ? error.message
         : "Erro ao gerar relatório. Tente novamente.";
-  } finally {
+  }
+  finally {
     loading.value = false;
   }
 }
@@ -89,7 +91,7 @@ async function handleDownloadPdf() {
     const startDate = props.startDate;
     const endDate = props.endDate;
     const period = `Período: ${startDate?.toLocaleDateString(
-      "pt-BR"
+      "pt-BR",
     )} a ${endDate?.toLocaleDateString("pt-BR")}`;
     const periodWidth = doc.getTextWidth(period);
     const periodX = (pageWidth - periodWidth) / 2;
@@ -97,7 +99,7 @@ async function handleDownloadPdf() {
 
     // Adicionar data de geração
     const generationDate = `Gerado em: ${new Date().toLocaleDateString(
-      "pt-BR"
+      "pt-BR",
     )} às ${new Date().toLocaleTimeString("pt-BR")}`;
     const generationDateWidth = doc.getTextWidth(generationDate);
     const generationDateX = (pageWidth - generationDateWidth) / 2;
@@ -110,13 +112,13 @@ async function handleDownloadPdf() {
     // Processar o conteúdo do relatório
     const tempDiv = document.createElement("div");
     tempDiv.innerHTML = report.value;
-    const textContent = tempDiv.textContent || tempDiv.innerText || "";
+    const textContent = tempDiv.textContent || tempDiv.textContent || "";
 
     // Dividir o texto em parágrafos e linhas
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
 
-    const paragraphs = textContent.split("\n").filter((p) => p.trim()); // Dividir por parágrafos
+    const paragraphs = textContent.split("\n").filter(p => p.trim()); // Dividir por parágrafos
     const lines: string[] = [];
 
     // Processar cada parágrafo
@@ -136,7 +138,8 @@ async function handleDownloadPdf() {
         if (testWidth > maxLineWidth && currentLine) {
           lines.push(currentLine);
           currentLine = word;
-        } else {
+        }
+        else {
           currentLine = testLine;
         }
       }
@@ -185,10 +188,12 @@ async function handleDownloadPdf() {
       endDate?.toISOString().split("T")[0]
     }.pdf`;
     doc.save(fileName);
-  } catch (error) {
+  }
+  catch (error) {
     console.error("[AiReportButton] Erro ao gerar PDF:", error);
     alert("Erro ao gerar PDF. Tente novamente.");
-  } finally {
+  }
+  finally {
     downloadingPdf.value = false;
   }
 }
@@ -199,7 +204,10 @@ async function handleDownloadPdf() {
     <DialogTrigger as-child>
       <Button aria-label="Abrir diálogo de relatório de IA">
         Relatório IA
-        <Icon name="lucide:bot" class="mr-2" />
+        <Icon
+          name="lucide:bot"
+          class="mr-2"
+        />
       </Button>
     </DialogTrigger>
     <DialogContent class="max-h-[90%] max-w-[90%] sm:max-h-none sm:max-w-[450px]">
@@ -207,7 +215,7 @@ async function handleDownloadPdf() {
         <DialogTitle>Relatório IA</DialogTitle>
         <DialogDescription>
           Use inteligência artificial para gerar um relatório com informações sobre suas
-          finanças. <br />
+          finanças. <br>
           <span className="text-red-500">
             Atenção: A ferramenta pode não ser precisa e pode gerar erros. Use as
             informações com cuidado.
@@ -227,7 +235,9 @@ async function handleDownloadPdf() {
 
       <DialogFooter>
         <DialogClose as-child>
-          <Button variant="outline">Cancelar</Button>
+          <Button variant="outline">
+            Cancelar
+          </Button>
         </DialogClose>
         <Button
           :disabled="loading"
@@ -235,7 +245,11 @@ async function handleDownloadPdf() {
           aria-label="Gerar novo relatório de IA"
           @click="handleGenerateReportClick"
         >
-          <Icon v-if="loading" name="lucide:loader-circle" class="animate-spin" />
+          <Icon
+            v-if="loading"
+            name="lucide:loader-circle"
+            class="animate-spin"
+          />
           Gerar Relatório
         </Button>
 
@@ -246,8 +260,16 @@ async function handleDownloadPdf() {
           aria-label="Baixar relatório em PDF"
           @click="handleDownloadPdf"
         >
-          <Icon v-if="downloadingPdf" name="lucide:loader-circle" class="animate-spin" />
-          <Icon v-else name="lucide:download" class="mr-2" />
+          <Icon
+            v-if="downloadingPdf"
+            name="lucide:loader-circle"
+            class="animate-spin"
+          />
+          <Icon
+            v-else
+            name="lucide:download"
+            class="mr-2"
+          />
           Baixar PDF
         </Button>
       </DialogFooter>
@@ -271,6 +293,7 @@ async function handleDownloadPdf() {
     </DialogContent>
   </Dialog>
 </template>
+
 <style scoped>
 pre {
   font-family: inherit;

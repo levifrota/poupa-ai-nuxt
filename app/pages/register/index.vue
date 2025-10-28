@@ -3,18 +3,35 @@
     <div class="flex flex-col items-center justify-center">
       <div class="w-full max-w-md space-y-4">
         <header class="flex flex-col items-center justify-center space-y-2">
-          <img src="/logo.svg" alt="Poupa grana" class="w-48" >
-          <h1 class="text-2xl font-bold">Crie sua conta</h1>
+          <img
+            src="/logo.svg"
+            alt="Poupa grana"
+            class="w-48"
+          >
+          <h1 class="text-2xl font-bold">
+            Crie sua conta
+          </h1>
         </header>
 
         <!-- Error Alert -->
-        <div v-if="error" class="rounded-md bg-red-50 border border-red-200 p-3">
-          <p class="text-sm text-red-700">{{ error }}</p>
+        <div
+          v-if="error"
+          class="rounded-md bg-red-50 border border-red-200 p-3"
+        >
+          <p class="text-sm text-red-700">
+            {{ error }}
+          </p>
         </div>
 
-        <form class="space-y-4" @submit.prevent="register">
+        <form
+          class="space-y-4"
+          @submit.prevent="register"
+        >
           <div class="space-y-2">
-            <label for="name" class="text-sm font-medium"> Nome </label>
+            <label
+              for="name"
+              class="text-sm font-medium"
+            > Nome </label>
             <input
               id="name"
               v-model="formData.name"
@@ -27,7 +44,10 @@
           </div>
 
           <div class="space-y-2">
-            <label for="email" class="text-sm font-medium"> Email </label>
+            <label
+              for="email"
+              class="text-sm font-medium"
+            > Email </label>
             <input
               id="email"
               v-model="formData.email"
@@ -40,7 +60,10 @@
           </div>
 
           <div class="space-y-2">
-            <label for="password" class="text-sm font-medium"> Senha </label>
+            <label
+              for="password"
+              class="text-sm font-medium"
+            > Senha </label>
             <input
               id="password"
               v-model="formData.password"
@@ -77,13 +100,19 @@
           :disabled="loading"
           @click="handleGoogleAuth"
         >
-          <Icon name="logos:google-icon" class="mr-2" />
+          <Icon
+            name="logos:google-icon"
+            class="mr-2"
+          />
           Google
         </button>
 
         <p class="text-center text-sm">
           Já tem uma conta?
-          <NuxtLink to="/login" class="font-semibold text-primary">
+          <NuxtLink
+            to="/login"
+            class="font-semibold text-primary"
+          >
             Acesse sua conta
           </NuxtLink>
         </p>
@@ -114,7 +143,7 @@ watch(
       router.push("/");
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 definePageMeta({

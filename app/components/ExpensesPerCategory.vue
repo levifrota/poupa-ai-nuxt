@@ -19,11 +19,19 @@
       class="flex flex-col items-center justify-center h-40 text-gray-500 dark:text-gray-400"
       role="status"
     >
-      <Icon name="lucide:bar-chart-3" class="w-12 h-12 mb-2" aria-hidden="true" />
+      <Icon
+        name="lucide:bar-chart-3"
+        class="w-12 h-12 mb-2"
+        aria-hidden="true"
+      />
       <p>Nenhuma despesa registrada</p>
     </div>
 
-    <div v-else class="space-y-4" role="list">
+    <div
+      v-else
+      class="space-y-4"
+      role="list"
+    >
       <div
         v-for="expense in expenses"
         :key="expense.category"
@@ -48,9 +56,7 @@
             <span class="text-sm font-medium dark:text-white">{{
               formatCurrency(expense.amount)
             }}</span>
-            <span class="text-xs text-gray-500 dark:text-gray-400"
-              >{{ expense.percentage }}%</span
-            >
+            <span class="text-xs text-gray-500 dark:text-gray-400">{{ expense.percentage }}%</span>
           </div>
         </div>
 
@@ -157,11 +163,14 @@ const colorPalettes = {
 const currentColorPalette = computed(() => {
   if (theme.value === "deuteranopia") {
     return colorPalettes.deuteranopia;
-  } else if (theme.value === "protanopia") {
+  }
+  else if (theme.value === "protanopia") {
     return colorPalettes.protanopia;
-  } else if (theme.value === "tritanopia") {
+  }
+  else if (theme.value === "tritanopia") {
     return colorPalettes.tritanopia;
-  } else {
+  }
+  else {
     // Usar tema claro ou escuro padrão
     return theme.value === "dark" || theme.value === "high-contrast"
       ? colorPalettes.dark
@@ -175,15 +184,15 @@ const expenses = computed(() => {
   return expensesData.map(
     (item: { category: string; totalAmount: number; percentageOfTotal: number }) => ({
       category:
-        categoryTranslations[item.category as keyof typeof categoryTranslations] ||
-        item.category,
+        categoryTranslations[item.category as keyof typeof categoryTranslations]
+        || item.category,
       amount: item.totalAmount,
       percentage: item.percentageOfTotal,
       color:
         currentColorPalette.value[
           item.category as keyof typeof currentColorPalette.value
         ] || "#C9CBCF",
-    })
+    }),
   );
 });
 

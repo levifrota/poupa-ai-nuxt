@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import { cn } from '../../../../lib/utils'
+import { cn } from "../../../../lib/utils";
 import {
   MenubarPortal,
   MenubarSubContent,
   type MenubarSubContentEmits,
   type MenubarSubContentProps,
   useForwardPropsEmits,
-} from 'reka-ui'
-import { computed, type HTMLAttributes } from 'vue'
+} from "reka-ui";
+import { computed, type HTMLAttributes } from "vue";
 
-const props = defineProps<MenubarSubContentProps & { class?: HTMLAttributes['class'] }>()
-const emits = defineEmits<MenubarSubContentEmits>()
+const props = defineProps<MenubarSubContentProps & { class?: HTMLAttributes["class"] }>();
+const emits = defineEmits<MenubarSubContentEmits>();
 
 const delegatedProps = computed(() => {
-  const { class: _, ...delegated } = props
+  const { class: _, ...delegated } = props;
 
-  return delegated
-})
+  return delegated;
+});
 
-const forwarded = useForwardPropsEmits(delegatedProps, emits)
+const forwarded = useForwardPropsEmits(delegatedProps, emits);
 </script>
 
 <template>

@@ -13,7 +13,10 @@
           :class="[linkClasses('/'), 'flex']"
           aria-label="Navegar para o Painel"
         >
-          <Icon name="lucide:layout-dashboard" :class="[iconClasses, iconSize]" />
+          <Icon
+            name="lucide:layout-dashboard"
+            :class="[iconClasses, iconSize]"
+          />
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
@@ -25,7 +28,10 @@
           :class="[linkClasses('/transactions'), 'flex']"
           aria-label="Navegar para Transações"
         >
-          <Icon name="lucide:arrow-left-right" :class="[iconClasses, iconSize]" />
+          <Icon
+            name="lucide:arrow-left-right"
+            :class="[iconClasses, iconSize]"
+          />
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
@@ -37,22 +43,34 @@
           :class="[linkClasses('/settings'), 'flex']"
           aria-label="Navegar para Configurações"
         >
-          <Icon name="lucide:settings" :class="[iconClasses, iconSize]" />
+          <Icon
+            name="lucide:settings"
+            :class="[iconClasses, iconSize]"
+          />
         </NuxtLink>
       </MenubarTrigger>
     </MenubarMenu>
 
     <MenubarMenu>
       <MenubarTrigger aria-label="Menu do usuário">
-        <Icon name="lucide:user" :class="[iconClasses, iconSize]" />
+        <Icon
+          name="lucide:user"
+          :class="[iconClasses, iconSize]"
+        />
         <MenubarContent>
           <MenubarItem @click="isDialogOpen = true">
-            <Icon name="lucide:user" class="mr-2" />
+            <Icon
+              name="lucide:user"
+              class="mr-2"
+            />
             Gerenciar Perfil
           </MenubarItem>
           <MenubarSeparator />
           <MenubarItem @click="handleLogout(router)">
-            <Icon name="lucide:log-out" class="mr-2" />
+            <Icon
+              name="lucide:log-out"
+              class="mr-2"
+            />
             Sair
           </MenubarItem>
         </MenubarContent>

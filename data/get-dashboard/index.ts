@@ -9,7 +9,7 @@ import type {
   TransactionPaymentMethod,
   TransactionType,
 } from "@/constants/transactions.js";
-import { useCurrentUser } from 'vuefire';
+import { useCurrentUser } from "vuefire";
 
 interface Transaction {
   id: string;
@@ -43,7 +43,7 @@ export const getDashboard = async () => {
 
     const transactions: Transaction[] = querySnapshot.docs.map((doc) => {
       const data = doc.data();
-      
+
       return {
         id: doc.id,
         name: data.name,
@@ -59,15 +59,15 @@ export const getDashboard = async () => {
     });
 
     const depositsTotal = transactions
-      .filter((t) => t.type === "DEPOSIT")
+      .filter(t => t.type === "DEPOSIT")
       .reduce((acc, t) => acc + Number(t.amount || 0), 0);
 
     const investmentsTotal = transactions
-      .filter((t) => t.type === "INVESTMENT")
+      .filter(t => t.type === "INVESTMENT")
       .reduce((acc, t) => acc + Number(t.amount || 0), 0);
 
     const expensesTotal = transactions
-      .filter((t) => t.type === "EXPENSE")
+      .filter(t => t.type === "EXPENSE")
       .reduce((acc, t) => acc + Number(t.amount || 0), 0);
 
     const balance = depositsTotal - investmentsTotal - expensesTotal;
@@ -87,7 +87,7 @@ export const getDashboard = async () => {
     };
 
     const expenseTransactions = transactions.filter(
-      (t) => t.type === "EXPENSE",
+      t => t.type === "EXPENSE",
     );
 
     const categoryMap = new Map<string, number>();
@@ -122,9 +122,10 @@ export const getDashboard = async () => {
       typesPercentage,
       totalExpensePerCategory,
       lastTransactions,
-      totalTransactions
+      totalTransactions,
     };
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Erro ao buscar transações:", error);
     throw new Error("Erro ao buscar transações");
   }

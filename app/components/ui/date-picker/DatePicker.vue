@@ -1,85 +1,88 @@
 <script setup lang="ts">
-import { type DateValue, CalendarDate } from '@internationalized/date'
-import { Calendar as CalendarIcon } from 'lucide-vue-next'
-import { Calendar } from '@/components/ui/calendar'
-import { Button } from '@/components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { cn } from '../../../../lib/utils'
-import { computed, ref, watch } from 'vue'
+import { type DateValue, CalendarDate } from "@internationalized/date";
+import { Calendar as CalendarIcon } from "lucide-vue-next";
+import { Calendar } from "@/components/ui/calendar";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "../../../../lib/utils";
+import { computed, ref, watch } from "vue";
 
 const props = defineProps<{
-  modelValue?: string | number | Date
-}>()
+  modelValue?: string | number | Date;
+}>();
 
 const emits = defineEmits<{
-  (e: 'update:modelValue', payload: Date | undefined): void
-}>()
+  (e: "update:modelValue", payload: Date | undefined): void;
+}>();
 
 // Estado para controlar abertura do Popover
 const isPopoverOpen = ref(false);
 
 // Watch para monitorar mudanças no estado do popover
 watch(isPopoverOpen, (newValue) => {
-  console.log('[DatePicker] isPopoverOpen mudou para:', newValue);
+  console.log("[DatePicker] isPopoverOpen mudou para:", newValue);
 });
 // Converter Date para DateValue usando CalendarDate
 const internalValue = computed({
   get: () => {
-    if (!props.modelValue) return undefined
+    if (!props.modelValue) return undefined;
 
     try {
-      const date = new Date(props.modelValue)
-      if (isNaN(date.getTime())) {
-        return undefined
+      const date = new Date(props.modelValue);
+      if (Number.isNaN(date.getTime())) {
+        return undefined;
       }
 
       // Usar CalendarDate para criar um DateValue válido
       const calendarDate = new CalendarDate(
         date.getFullYear(),
         date.getMonth() + 1,
-        date.getDate()
-      )
-      return calendarDate
-    } catch (error) {
-      return undefined
+        date.getDate(),
+      );
+      return calendarDate;
+    }
+    catch (error) {
+      return undefined;
     }
   },
   set: (value: DateValue | undefined) => {
     if (!value) {
-      emits('update:modelValue', undefined)
-      return
+      emits("update:modelValue", undefined);
+      return;
     }
 
     try {
-      const jsDate = new Date(value.year, value.month - 1, value.day)
-      emits('update:modelValue', jsDate)
-    } catch (error) {
-      emits('update:modelValue', undefined)
+      const jsDate = new Date(value.year, value.month - 1, value.day);
+      emits("update:modelValue", jsDate);
     }
-  }
-})
+    catch (error) {
+      emits("update:modelValue", undefined);
+    }
+  },
+});
 
 const formattedDate = computed(() => {
-  if (!props.modelValue) return undefined
+  if (!props.modelValue) return undefined;
 
   try {
-    const date = new Date(props.modelValue)
-    if (isNaN(date.getTime())) {
-      return undefined
+    const date = new Date(props.modelValue);
+    if (Number.isNaN(date.getTime())) {
+      return undefined;
     }
 
-    const formatted = new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    }).format(date)
+    const formatted = new Intl.DateTimeFormat("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).format(date);
 
-    return formatted
-  } catch (error) {
-    console.error('[DatePicker] Erro ao formatar data:', error)
-    return undefined
+    return formatted;
   }
-})
+  catch (error) {
+    console.error("[DatePicker] Erro ao formatar data:", error);
+    return undefined;
+  }
+});
 </script>
 
 <template>

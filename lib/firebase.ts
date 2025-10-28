@@ -1,11 +1,11 @@
-import { useFirebaseAuth, useFirestore } from 'vuefire'
+import { useFirebaseAuth, useFirestore } from "vuefire";
 
 export function getAuth() {
-  return useFirebaseAuth()!
+  return useFirebaseAuth()!;
 }
 
 export function getDb() {
-  return useFirestore()!
+  return useFirestore()!;
 }
 
-export const db = getDb
+export const db = getDb;

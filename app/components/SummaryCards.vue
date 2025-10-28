@@ -6,9 +6,6 @@ import UpsertTransactionDialog from "@/components/UpsertTransactionDialog.vue";
 import { Button } from "@/components/ui/button";
 import { DialogTrigger } from "@/components/ui/dialog";
 
-const { $pinia } = useNuxtApp();
-const transactionsStore = useTransactionsStore($pinia);
-
 // Referências reativas para os dados da store
 const balance = ref(0);
 const depositsTotal = ref(0);
@@ -17,7 +14,7 @@ const expensesTotal = ref(0);
 
 let transactionsStoreInstance = null;
 
-if (process.client) {
+if (import.meta.client) {
   onMounted(async () => {
     await nextTick();
     // Inicializar a store após o componente estar montado
@@ -34,28 +31,28 @@ if (process.client) {
       () => transactionsStoreInstance.balance,
       (newVal) => {
         balance.value = newVal;
-      }
+      },
     );
 
     watch(
       () => transactionsStoreInstance.depositsTotal,
       (newVal) => {
         depositsTotal.value = newVal;
-      }
+      },
     );
 
     watch(
       () => transactionsStoreInstance.investmentsTotal,
       (newVal) => {
         investmentsTotal.value = newVal;
-      }
+      },
     );
 
     watch(
       () => transactionsStoreInstance.expensesTotal,
       (newVal) => {
         expensesTotal.value = newVal;
-      }
+      },
     );
   });
 }
@@ -67,7 +64,8 @@ function handleSubmit(data) {
 
   if (data.id) {
     transactionsStoreInstance.updateTransaction(data);
-  } else {
+  }
+  else {
     transactionsStoreInstance.addTransaction(data);
   }
 }
@@ -121,10 +119,19 @@ const summaryList = computed(() => [
           @update:is-open="isUpsertTransactionDialogOpen = $event"
           @submit="handleSubmit"
         >
-          <DialogTrigger as-child class="w-full">
-            <Button class="cursor-pointer" aria-label="Adicionar transação">
+          <DialogTrigger
+            as-child
+            class="w-full"
+          >
+            <Button
+              class="cursor-pointer"
+              aria-label="Adicionar transação"
+            >
               <span>Adicionar Transação</span>
-              <Icon name="lucide:plus" class="h-4 w-4" />
+              <Icon
+                name="lucide:plus"
+                class="h-4 w-4"
+              />
             </Button>
           </DialogTrigger>
         </UpsertTransactionDialog>

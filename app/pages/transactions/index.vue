@@ -1,7 +1,9 @@
 <template>
   <div class="container mx-auto p-4">
     <div class="flex items-center justify-between flex-col sm:flex-row">
-      <h1 class="mb-4 text-2xl font-bold">Transações</h1>
+      <h1 class="mb-4 text-2xl font-bold">
+        Transações
+      </h1>
       <UpsertTransactionDialog
         :is-open="isUpsertTransactionDialogOpen"
         :default-values="selectedTransaction"
@@ -14,28 +16,38 @@
         </DialogTrigger>
       </UpsertTransactionDialog>
     </div>
-    <div v-if="isLoading" class="flex justify-center items-center h-40">
+    <div
+      v-if="isLoading"
+      class="flex justify-center items-center h-40"
+    >
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       <span class="ml-2">Carregando transações...</span>
     </div>
-    <div v-else-if="error" class="text-red-500 text-center p-4">
+    <div
+      v-else-if="error"
+      class="text-red-500 text-center p-4"
+    >
       {{ error }}
     </div>
-    <DataTable v-else :columns="columns" :data="formattedTransactions" />
+    <DataTable
+      v-else
+      :columns="columns"
+      :data="formattedTransactions"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from 'vue';
-import DataTable from '../../components/transactions/DataTable.vue';
-import UpsertTransactionDialog from '../../components/UpsertTransactionDialog.vue';
-import { Button } from '../../components/ui/button/index.js';
-import { DialogTrigger } from '../../components/ui/dialog/index.js';
-import { columns, type Transaction } from '../../components/transactions/columns.js';
-import { useTransactionsStore } from '../../../stores/transactions.js';
-import { TRANSACTION_CATEGORY_LABELS, type TransactionCategory } from '../../../constants/transactions.js';
-import { deleteTransaction, getTransactions } from '../../../service/transactionService.js';
-import { useCurrentUser } from 'vuefire';
+import { computed, ref, onMounted, onUnmounted } from "vue";
+import DataTable from "../../components/transactions/DataTable.vue";
+import UpsertTransactionDialog from "../../components/UpsertTransactionDialog.vue";
+import { Button } from "../../components/ui/button/index.js";
+import { DialogTrigger } from "../../components/ui/dialog/index.js";
+import { columns, type Transaction } from "../../components/transactions/columns.js";
+import { useTransactionsStore } from "../../../stores/transactions.js";
+import { TRANSACTION_CATEGORY_LABELS, type TransactionCategory } from "../../../constants/transactions.js";
+import { deleteTransaction, getTransactions } from "../../../service/transactionService.js";
+import { useCurrentUser } from "vuefire";
 
 const isUpsertTransactionDialogOpen = ref(false);
 const selectedTransaction = ref<Transaction | null>(null);
@@ -43,15 +55,15 @@ const isLoading = ref(false);
 const error = ref<string | null>(null);
 
 definePageMeta({
-  middleware: 'auth'
-})
+  middleware: "auth",
+});
 
 const transactionStore = useTransactionsStore();
 const user = useCurrentUser();
 
 async function fetchTransactions() {
   if (!user.value?.uid) {
-    console.error('[Transactions] Usuário não autenticado');
+    console.error("[Transactions] Usuário não autenticado");
     error.value = "Usuário não autenticado";
     return;
   }
@@ -63,10 +75,12 @@ async function fetchTransactions() {
     const transaction = await getTransactions(user.value.uid);
 
     transactionStore.setTransactions(transaction);
-  } catch (err) {
-    console.error('[Transactions] Erro ao carregar transações:', err);
+  }
+  catch (err) {
+    console.error("[Transactions] Erro ao carregar transações:", err);
     error.value = "Erro ao carregar transações";
-  } finally {
+  }
+  finally {
     isLoading.value = false;
   }
 }
@@ -74,7 +88,8 @@ async function fetchTransactions() {
 function handleSubmit(data) {
   if (data.id) {
     transactionStore.updateTransaction(data);
-  } else {
+  }
+  else {
     transactionStore.addTransaction(data);
   }
 
@@ -102,15 +117,16 @@ async function handleDeleteTransaction(event: CustomEvent) {
   if (confirm(`Tem certeza que deseja excluir a transação "${transaction.name}"?`)) {
     try {
       if (!user.value?.uid) {
-        console.error('[Transactions] Usuário não autenticado no delete');
+        console.error("[Transactions] Usuário não autenticado no delete");
         return;
       }
 
       await deleteTransaction(user.value.uid, transaction.id);
 
       transactionStore.deleteTransaction(transaction.id);
-    } catch (error) {
-      console.error('[Transactions] Erro ao excluir transação:', error);
+    }
+    catch (error) {
+      console.error("[Transactions] Erro ao excluir transação:", error);
       alert("Erro ao excluir transação. Tente novamente.");
     }
   }
@@ -118,16 +134,16 @@ async function handleDeleteTransaction(event: CustomEvent) {
 
 // Adicionar event listeners
 onMounted(() => {
-  window.addEventListener('edit-transaction', handleEditTransaction as EventListener);
-  window.addEventListener('delete-transaction', handleDeleteTransaction as EventListener);
+  window.addEventListener("edit-transaction", handleEditTransaction as EventListener);
+  window.addEventListener("delete-transaction", handleDeleteTransaction as EventListener);
 
   fetchTransactions();
 });
 
 // Remover event listeners
 onUnmounted(() => {
-  window.removeEventListener('edit-transaction', handleEditTransaction as EventListener);
-  window.removeEventListener('delete-transaction', handleDeleteTransaction as EventListener);
+  window.removeEventListener("edit-transaction", handleEditTransaction as EventListener);
+  window.removeEventListener("delete-transaction", handleDeleteTransaction as EventListener);
 });
 
 const formattedTransactions = computed<Transaction[]>(() => {
@@ -140,7 +156,7 @@ const formattedTransactions = computed<Transaction[]>(() => {
     type: item.type,
     category: TRANSACTION_CATEGORY_LABELS[item.category as TransactionCategory] || item.category,
     paymentMethod: item.paymentMethod,
-    amount: item.type === 'EXPENSE' ? -Math.abs(item.amount) : Math.abs(item.amount),
+    amount: item.type === "EXPENSE" ? -Math.abs(item.amount) : Math.abs(item.amount),
   }));
 
   return formatted;

@@ -12,8 +12,14 @@ defineProps<{
 </script>
 
 <template>
-  <Card class="text-sm border-none" aria-label="Legenda do gráfico">
-    <CardContent class="p-3 min-w-[180px] flex flex-col gap-1" role="list">
+  <Card
+    class="text-sm border-none"
+    aria-label="Legenda do gráfico"
+  >
+    <CardContent
+      class="p-3 min-w-[180px] flex flex-col gap-1"
+      role="list"
+    >
       <div
         v-for="(item, key) in items"
         :key="key"
@@ -23,7 +29,12 @@ defineProps<{
       >
         <div class="flex items-center">
           <span class="w-2.5 h-2.5 mr-2">
-            <svg width="100%" height="100%" viewBox="0 0 30 30" aria-hidden="true">
+            <svg
+              width="100%"
+              height="100%"
+              viewBox="0 0 30 30"
+              aria-hidden="true"
+            >
               <path
                 d=" M 15 15 m -14, 0 a 14,14 0 1,1 28,0 a 14,14 0 1,1 -28,0"
                 :stroke="item.color"

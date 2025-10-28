@@ -124,7 +124,7 @@ const { handleSubmit, resetForm, setValues } = useForm({
 
 const isSubmitting = ref(false);
 
-if (process.client) {
+if (import.meta.client) {
   onMounted(async () => {
     console.log("[UpsertTransactionDialog] onMounted executado");
     await nextTick();
@@ -134,15 +134,15 @@ if (process.client) {
     // Log das constantes para verificar se estão carregadas
     console.log(
       "[UpsertTransactionDialog] TRANSACTION_TYPE_OPTIONS:",
-      TRANSACTION_TYPE_OPTIONS
+      TRANSACTION_TYPE_OPTIONS,
     );
     console.log(
       "[UpsertTransactionDialog] TRANSACTION_CATEGORY_OPTIONS:",
-      TRANSACTION_CATEGORY_OPTIONS
+      TRANSACTION_CATEGORY_OPTIONS,
     );
     console.log(
       "[UpsertTransactionDialog] TRANSACTION_PAYMENT_METHOD_OPTIONS:",
-      TRANSACTION_PAYMENT_METHOD_OPTIONS
+      TRANSACTION_PAYMENT_METHOD_OPTIONS,
     );
   });
 }
@@ -152,12 +152,13 @@ watchEffect(() => {
 
   if (props.transactionId) {
     const transaction = transactionsStore.transactions.find(
-      (t) => t.id === props.transactionId
+      t => t.id === props.transactionId,
     );
     if (transaction) {
       setValues(transaction);
     }
-  } else if (props.defaultValues) {
+  }
+  else if (props.defaultValues) {
     setValues(props.defaultValues);
   }
 });
@@ -176,7 +177,8 @@ const onSubmit = handleSubmit(async (values) => {
     if (props.transactionId) {
       // Update existing transaction
       await updateTransaction(userId, props.transactionId, values);
-    } else {
+    }
+    else {
       // Add new transaction
       await addTransaction(userId, values);
     }
@@ -184,11 +186,13 @@ const onSubmit = handleSubmit(async (values) => {
     emits("submit", { ...values, id: props.transactionId });
     emits("update:isOpen", false);
     resetForm();
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Erro ao salvar transação:", error);
     // You can add user notification here
     alert("Erro ao salvar transação. Tente novamente.");
-  } finally {
+  }
+  finally {
     isSubmitting.value = false;
   }
 });
@@ -197,7 +201,10 @@ const isUpdate = computed(() => !!props.transactionId);
 </script>
 
 <template>
-  <Dialog :open="props.isOpen" @update:open="(value) => emits('update:isOpen', value)">
+  <Dialog
+    :open="props.isOpen"
+    @update:open="(value) => emits('update:isOpen', value)"
+  >
     <slot />
     <DialogContent class="w-[90%] pt-12 sm:pt-6 sm:w-full min-w-fit sm:min-w-auto">
       <DialogHeader>
@@ -206,10 +213,18 @@ const isUpdate = computed(() => !!props.transactionId);
       </DialogHeader>
 
       <ScrollArea class="h-[450px] m-0 sm:h-full rounded-md pr-4">
-        <form class="space-y-8" @submit="onSubmit">
-          <FormField v-slot="{ componentField }" name="name">
+        <form
+          class="space-y-8"
+          @submit="onSubmit"
+        >
+          <FormField
+            v-slot="{ componentField }"
+            name="name"
+          >
             <FormItem>
-              <FormLabel class="mb-4">Nome</FormLabel>
+              <FormLabel class="mb-4">
+                Nome
+              </FormLabel>
               <FormControl>
                 <Input
                   class="w-60 sm:w-full"
@@ -221,7 +236,10 @@ const isUpdate = computed(() => !!props.transactionId);
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="amount">
+          <FormField
+            v-slot="{ componentField }"
+            name="amount"
+          >
             <FormItem>
               <FormLabel>Valor</FormLabel>
               <FormControl>
@@ -236,10 +254,16 @@ const isUpdate = computed(() => !!props.transactionId);
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="type">
+          <FormField
+            v-slot="{ componentField }"
+            name="type"
+          >
             <FormItem>
               <FormLabel>Tipo</FormLabel>
-              <Select v-bind="componentField" v-model:open="typeSelectOpen">
+              <Select
+                v-bind="componentField"
+                v-model:open="typeSelectOpen"
+              >
                 <FormControl>
                   <SelectTrigger
                     class="w-60 sm:w-auto"
@@ -264,16 +288,22 @@ const isUpdate = computed(() => !!props.transactionId);
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="category">
+          <FormField
+            v-slot="{ componentField }"
+            name="category"
+          >
             <FormItem>
               <FormLabel>Categoria</FormLabel>
-              <Select v-bind="componentField" v-model:open="categorySelectOpen">
+              <Select
+                v-bind="componentField"
+                v-model:open="categorySelectOpen"
+              >
                 <FormControl>
                   <SelectTrigger
                     class="w-60 sm:w-auto"
                     @click="
                       console.log(
-                        '[UpsertTransactionDialog] SelectTrigger Categoria clicado'
+                        '[UpsertTransactionDialog] SelectTrigger Categoria clicado',
                       )
                     "
                   >
@@ -294,16 +324,22 @@ const isUpdate = computed(() => !!props.transactionId);
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="paymentMethod">
+          <FormField
+            v-slot="{ componentField }"
+            name="paymentMethod"
+          >
             <FormItem>
               <FormLabel>Método de Pagamento</FormLabel>
-              <Select v-bind="componentField" v-model:open="paymentMethodSelectOpen">
+              <Select
+                v-bind="componentField"
+                v-model:open="paymentMethodSelectOpen"
+              >
                 <FormControl>
                   <SelectTrigger
                     class="w-60 sm:w-auto"
                     @click="
                       console.log(
-                        '[UpsertTransactionDialog] SelectTrigger Método de Pagamento clicado'
+                        '[UpsertTransactionDialog] SelectTrigger Método de Pagamento clicado',
                       )
                     "
                   >
@@ -324,7 +360,10 @@ const isUpdate = computed(() => !!props.transactionId);
             </FormItem>
           </FormField>
 
-          <FormField v-slot="{ componentField }" name="date">
+          <FormField
+            v-slot="{ componentField }"
+            name="date"
+          >
             <FormItem class="flex flex-col">
               <FormLabel>Data</FormLabel>
               <FormControl>

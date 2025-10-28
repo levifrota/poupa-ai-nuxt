@@ -1,8 +1,35 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from "@tailwindcss/vite";
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath } from "node:url";
 
 export default defineNuxtConfig({
+
+  modules: [
+    "@nuxt/content",
+    "@nuxt/eslint",
+    "@nuxt/fonts",
+    "@nuxt/icon",
+    "@nuxt/image",
+    "shadcn-nuxt",
+    "@vite-pwa/nuxt",
+    "@pinia/nuxt",
+    "nuxt-vuefire",
+  ],
+
+  ssr: false,
+  components: [
+    {
+      path: "@/components",
+      pathPrefix: false,
+      global: true,
+    },
+  ],
+  devtools: {
+    enabled: true,
+    timeline: {
+      enabled: true,
+    },
+  },
   app: {
     head: {
       title: "Poupa.ai",
@@ -11,25 +38,17 @@ export default defineNuxtConfig({
       },
       meta: [{ name: "description", content: "Poupa.ai" }],
       link: [{ rel: "icon", type: "image/x-icon", href: "/icon.png" }],
-      charset: 'utf-16',
-      viewport: 'width=device-width, initial-scale=1, maximum-scale=2',
+      charset: "utf-16",
+      viewport: "width=device-width, initial-scale=1, maximum-scale=2",
     },
   },
-  components: [
-    {
-      path: "@/components",
-      pathPrefix: false,
-      global: true,
-    },
-  ],
-  compatibilityDate: "2024-11-01",
-  devtools: { 
-      enabled: true,
-      timeline: {
-        enabled: true
-      }
-    },
   css: ["@/assets/css/tailwind.css", "@/assets/css/fonts.css", "@/assets/css/icons.css"],
+
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag: string) => ["iconify-icon"].includes(tag),
+    },
+  },
   runtimeConfig: {
     public: {
       firebaseApiKey: process.env.VITE_FIREBASE_API_KEY,
@@ -41,18 +60,28 @@ export default defineNuxtConfig({
       firebaseMeasurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID,
     },
   },
- 
-  modules: [
-    "@nuxt/content",
-    "@nuxt/eslint",
-    "@nuxt/fonts",
-    "@nuxt/icon",
-    "@nuxt/image",
-    "shadcn-nuxt",
-    "@vite-pwa/nuxt",
-    "@pinia/nuxt",
-    "nuxt-vuefire"
-  ],
+
+  alias: {
+    "@": fileURLToPath(new URL("./app", import.meta.url)),
+    "~": fileURLToPath(new URL("./", import.meta.url)),
+  },
+
+  experimental: {
+    // Adicionar configurações experimentais do Nuxt 4
+    payloadExtraction: false,
+    renderJsonPayloads: true,
+    typedPages: true,
+  },
+  compatibilityDate: "2024-11-01",
+
+  nitro: {
+    publicAssets: [
+      {
+        baseUrl: "/",
+        dir: "public",
+      },
+    ],
+  },
 
   vite: {
     plugins: [tailwindcss()],
@@ -62,64 +91,123 @@ export default defineNuxtConfig({
         "firebase/auth",
         "firebase/firestore",
         "firebase/app",
-        "reka-ui"
+        "reka-ui",
       ],
     },
     ssr: {
       noExternal: [
         "isomorphic-dompurify",
         "firebase",
-        "reka-ui"
+        "reka-ui",
       ],
     },
     resolve: {
       alias: {
-        '@': fileURLToPath(new URL('./app', import.meta.url)),
-        '~': fileURLToPath(new URL('./', import.meta.url)),
-        'isomorphic-dompurify': 'isomorphic-dompurify'
-      }
+        "@": fileURLToPath(new URL("./app", import.meta.url)),
+        "~": fileURLToPath(new URL("./", import.meta.url)),
+        "isomorphic-dompurify": "isomorphic-dompurify",
+      },
     },
     server: {
       hmr: {
         timeout: 60000,
         overlay: true, // Mudar para true
-        clientPort: 3000 // Adicionar porta específica
+        clientPort: 3000, // Adicionar porta específica
       },
       watch: {
         usePolling: true, // Mudar para true
-        interval: 1000
-      }
+        interval: 1000,
+      },
     },
     build: {
       rollupOptions: {
         output: {
-          manualChunks: undefined
-        }
-      }
-    }
-  },
-
-   experimental: {
-    // Adicionar configurações experimentais do Nuxt 4
-    payloadExtraction: false,
-    renderJsonPayloads: true,
-    typedPages: true
-  },
-
-  alias: {
-    '@': fileURLToPath(new URL('./app', import.meta.url)),
-    '~': fileURLToPath(new URL('./', import.meta.url)),
+          manualChunks: undefined,
+        },
+      },
+    },
   },
 
   typescript: {
     strict: true,
-    typeCheck: false
+    typeCheck: false,
   },
 
-  vue: {
-    compilerOptions: {
-      isCustomElement: (tag: string) => ['iconify-icon'].includes(tag)
-    }
+  pwa: {
+    useCredentials: true,
+    registerType: "autoUpdate",
+    includeAssets: ["icon.png", "icons/*.png"],
+    manifest: {
+      name: "Poupa.ai",
+      short_name: "Poupa.ai",
+      description: "Seu assistente financeiro pessoal",
+      theme_color: "#ffffff",
+      background_color: "#ffffff",
+      display: "standalone",
+      scope: "/",
+      start_url: "/",
+      lang: "pt-BR",
+      orientation: "portrait-primary",
+      icons: [
+        {
+          src: "icons/icon144.png",
+          sizes: "144x144",
+          type: "image/png",
+          purpose: "any",
+        },
+        {
+          src: "icons/icon192.png",
+          sizes: "192x192",
+          type: "image/png",
+          purpose: "any",
+        },
+        {
+          src: "icons/icon192.png",
+          sizes: "192x192",
+          type: "image/png",
+          purpose: "maskable",
+        },
+        {
+          src: "icons/icon512_maskable.png",
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "maskable",
+        },
+        {
+          src: "icons/icon512_rounded.png",
+          sizes: "512x512",
+          type: "image/png",
+          purpose: "any",
+        },
+      ],
+    },
+    workbox: {
+      navigateFallback: "/",
+      navigateFallbackDenylist: [/^\/api\//],
+      globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/api\./i,
+          handler: "NetworkFirst",
+          options: {
+            cacheName: "api-cache",
+            expiration: {
+              maxEntries: 10,
+              maxAgeSeconds: 60 * 60 * 24,
+            },
+          },
+        },
+      ],
+    },
+    client: {
+      installPrompt: true,
+      periodicSyncForUpdates: 20,
+    },
+    devOptions: {
+      enabled: false,
+      type: "module",
+      suppressWarnings: true,
+    },
   },
 
   shadcn: {
@@ -137,94 +225,6 @@ export default defineNuxtConfig({
       messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
       appId: process.env.VITE_FIREBASE_APP_ID,
       measurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID,
-    },
-  },
-  
-  nitro: {
-    publicAssets: [
-      {
-        baseUrl: '/',
-        dir: 'public'
-      }
-    ]
-  },
-
-  ssr: false,
-
-  pwa: {
-    useCredentials: true,
-    registerType: 'autoUpdate',
-    includeAssets: ['icon.png', 'icons/*.png'],
-    manifest: {
-      name: "Poupa.ai",
-      short_name: "Poupa.ai",
-      description: "Seu assistente financeiro pessoal",
-      theme_color: "#ffffff",
-      background_color: "#ffffff",
-      display: "standalone",
-      scope: "/",
-      start_url: "/",
-      lang: "pt-BR",
-      orientation: "portrait-primary",
-      icons: [
-        {
-          src: "icons/icon144.png",
-          sizes: "144x144",
-          type: "image/png",
-          purpose: "any"
-        },
-        {
-          src: "icons/icon192.png",
-          sizes: "192x192",
-          type: "image/png",
-          purpose: "any"
-        },
-        {
-          src: "icons/icon192.png",
-          sizes: "192x192",
-          type: "image/png",
-          purpose: "maskable"
-        },
-        {
-          src: "icons/icon512_maskable.png",
-          sizes: "512x512",
-          type: "image/png",
-          purpose: "maskable"
-        },
-        {
-          src: "icons/icon512_rounded.png",
-          sizes: "512x512",
-          type: "image/png",
-          purpose: "any"
-        },
-      ],
-    },
-    workbox: {
-      navigateFallback: '/',
-      navigateFallbackDenylist: [/^\/api\//],
-      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
-      runtimeCaching: [
-        {
-          urlPattern: /^https:\/\/api\./i,
-          handler: 'NetworkFirst',
-          options: {
-            cacheName: 'api-cache',
-            expiration: {
-              maxEntries: 10,
-              maxAgeSeconds: 60 * 60 * 24
-            }
-          }
-        }
-      ]
-    },
-    client: {
-      installPrompt: true,
-      periodicSyncForUpdates: 20,
-    },
-    devOptions: {
-      enabled: false,
-      type: 'module',
-      suppressWarnings: true
     },
   },
 });

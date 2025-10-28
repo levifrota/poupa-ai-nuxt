@@ -1,34 +1,34 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-export type Theme = 'dark' | 'light' | 'colorblind' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'high-contrast';
+export type Theme = "dark" | "light" | "colorblind" | "protanopia" | "deuteranopia" | "tritanopia" | "high-contrast";
 
-export const useThemeStore = defineStore('theme', () => {
+export const useThemeStore = defineStore("theme", () => {
   const isValidTheme = (value: string | null): value is Theme => {
-    return value === 'dark' || value === 'light' || value === 'colorblind' ||
-           value === 'protanopia' || value === 'deuteranopia' || value === 'tritanopia' || 
-           value === 'high-contrast';
+    return value === "dark" || value === "light" || value === "colorblind"
+      || value === "protanopia" || value === "deuteranopia" || value === "tritanopia"
+      || value === "high-contrast";
   };
 
   const getSavedTheme = (): Theme => {
-    if (import.meta.server) return 'dark';
-    
-    const themeCookie = useCookie<string>('theme');
+    if (import.meta.server) return "dark";
+
+    const themeCookie = useCookie<string>("theme");
     const saved = themeCookie.value;
-    return isValidTheme(saved) ? saved : 'dark';
+    return isValidTheme(saved) ? saved : "dark";
   };
 
   const theme = ref<Theme>(getSavedTheme());
 
   const applyTheme = (newTheme: Theme) => {
     if (import.meta.server) return;
-    
-    document.documentElement.classList.remove('dark', 'light', 'colorblind', 'protanopia', 'deuteranopia', 'tritanopia', 'high-contrast');
-    
+
+    document.documentElement.classList.remove("dark", "light", "colorblind", "protanopia", "deuteranopia", "tritanopia", "high-contrast");
+
     document.documentElement.classList.add(newTheme);
 
-    const themeCookie = useCookie<string>('theme', {
+    const themeCookie = useCookie<string>("theme", {
       maxAge: 60 * 60 * 24 * 365,
-      path: '/'
+      path: "/",
     });
     themeCookie.value = newTheme;
   };
@@ -54,6 +54,6 @@ export const useThemeStore = defineStore('theme', () => {
 
   return {
     theme,
-    setTheme
+    setTheme,
   };
 });
