@@ -123,10 +123,11 @@
       </div>
     </div>
 
+    <BudgetSettings />
+
     <!-- Seção de Ajuda -->
     <div class="bg-card rounded-lg p-6 shadow-sm">
       <h2 class="text-xl font-semibold mb-4">Ajuda</h2>
-
       <div class="space-y-4">
         <div>
           <h3 class="text-sm font-medium mb-2">Tour de Introdução</h3>
@@ -146,6 +147,7 @@
 <script setup lang="ts">
 import { Button } from "~/components/ui/button";
 import { Icon } from "#components";
+import BudgetSettings from "~/components/BudgetSettings.vue";
 
 definePageMeta({
   middleware: "auth",

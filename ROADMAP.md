@@ -27,8 +27,8 @@ implemented and committed individually on the `feat/adding-new-features` branch.
 - ✅ Export filtered transactions (current date range) to CSV for spreadsheets/accountants — [lib/exportTransactions.ts](lib/exportTransactions.ts), [pages/transactions/index.vue](pages/transactions/index.vue)
 
 ## 4. Budgets per Category
-- ⬜ Monthly limit per `TransactionCategory`
-- ⬜ Visual/textual alert when a category nears or exceeds its budget
+- ✅ Monthly limit per `TransactionCategory` — [service/budgetService.ts](service/budgetService.ts), [stores/budgets.ts](stores/budgets.ts), [components/BudgetSettings.vue](components/BudgetSettings.vue)
+- ✅ Visual/textual alert when a category nears or exceeds its budget — [components/ExpensesPerCategory.vue](components/ExpensesPerCategory.vue)
 
 ## 5. Savings Goals
 - ⬜ Create goals with target amount + deadline

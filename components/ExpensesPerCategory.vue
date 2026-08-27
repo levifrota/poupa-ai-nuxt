@@ -31,7 +31,9 @@
         role="listitem"
         :aria-label="`${expense.category}: ${formatCurrency(expense.amount)} (${
           expense.percentage
-        }%)`"
+        }%)${expense.budget ? `, orçamento de ${formatCurrency(expense.budget)}` : ''}${
+          expense.isOverBudget ? ', orçamento excedido' : ''
+        }`"
       >
         <div class="flex justify-between items-center">
           <div class="flex items-center gap-2">
@@ -67,19 +69,45 @@
             :style="{ width: `${expense.percentage}%`, backgroundColor: expense.color }"
           />
         </div>
+
+        <p
+          v-if="expense.budget"
+          class="text-xs"
+          :class="expense.isOverBudget ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-gray-500 dark:text-gray-400'"
+          :role="expense.isOverBudget ? 'alert' : undefined"
+        >
+          {{ formatCurrency(expense.amount) }} de {{ formatCurrency(expense.budget) }} do
+          orçamento mensal ({{ expense.budgetPercentage }}%)
+          <span v-if="expense.isOverBudget"> — orçamento excedido</span>
+        </p>
       </div>
     </div>
   </ScrollArea>
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
+import { useCurrentUser } from "vuefire";
 import { useTransactionsStore } from "@/stores/transactions.js";
+import { useBudgetsStore } from "@/stores/budgets.js";
+import { getBudgets } from "@/service/budgetService.js";
 import { storeToRefs } from "pinia";
 
 const transactionsStore = useTransactionsStore();
+const budgetsStore = useBudgetsStore();
 const themeStore = useThemeStore();
 const { theme } = storeToRefs(themeStore);
+const user = useCurrentUser();
+
+onMounted(async () => {
+  if (!user.value?.uid) return;
+  try {
+    const budgets = await getBudgets(user.value.uid);
+    budgetsStore.setBudgets(budgets);
+  } catch (error) {
+    console.error("Erro ao carregar orçamentos:", error);
+  }
+});
 
 // Mapeamento de categorias em inglês para português
 const categoryTranslations = {
@@ -172,17 +200,25 @@ const expenses = computed(() => {
   const expensesData = transactionsStore.totalExpensePerCategory || [];
 
   return expensesData.map(
-    (item: { category: string; totalAmount: number; percentageOfTotal: number }) => ({
-      category:
-        categoryTranslations[item.category as keyof typeof categoryTranslations] ||
-        item.category,
-      amount: item.totalAmount,
-      percentage: item.percentageOfTotal,
-      color:
-        currentColorPalette.value[
-          item.category as keyof typeof currentColorPalette.value
-        ] || "#C9CBCF",
-    })
+    (item: { category: string; totalAmount: number; percentageOfTotal: number }) => {
+      const budget = budgetsStore.getBudgetFor(item.category);
+      const budgetPercentage = budget ? Math.round((item.totalAmount / budget) * 100) : 0;
+
+      return {
+        category:
+          categoryTranslations[item.category as keyof typeof categoryTranslations] ||
+          item.category,
+        amount: item.totalAmount,
+        percentage: item.percentageOfTotal,
+        color:
+          currentColorPalette.value[
+            item.category as keyof typeof currentColorPalette.value
+          ] || "#C9CBCF",
+        budget,
+        budgetPercentage,
+        isOverBudget: !!budget && item.totalAmount > budget,
+      };
+    }
   );
 });
 
