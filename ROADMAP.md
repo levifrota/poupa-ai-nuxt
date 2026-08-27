@@ -31,8 +31,8 @@ implemented and committed individually on the `feat/adding-new-features` branch.
 - ✅ Visual/textual alert when a category nears or exceeds its budget — [components/ExpensesPerCategory.vue](components/ExpensesPerCategory.vue)
 
 ## 5. Savings Goals
-- ⬜ Create goals with target amount + deadline
-- ⬜ Track progress with a progress bar (reusing pattern from `ExpensesPerCategory.vue`)
+- ✅ Create goals with target amount + deadline — [service/savingsGoalService.ts](service/savingsGoalService.ts), [stores/savingsGoals.ts](stores/savingsGoals.ts), [components/UpsertSavingsGoalDialog.vue](components/UpsertSavingsGoalDialog.vue)
+- ✅ Track progress with a progress bar (reusing pattern from `ExpensesPerCategory.vue`) — [components/SavingsGoals.vue](components/SavingsGoals.vue), [pages/(home)/index.vue](pages/(home)/index.vue)
 
 ## 6. Recurring Transactions
 - ⬜ Mark a transaction as recurring (weekly/monthly/yearly)

@@ -23,6 +23,7 @@
         >
           <TransactionPieChart />
           <ExpensesPerCategory />
+          <SavingsGoals />
         </div>
       </div>
 
@@ -34,6 +35,7 @@
 <script setup lang="ts">
 // O componente TimeSelect só funciona se for chamado aqui
 import TimeSelect from "@/components/TimeSelect.vue";
+import SavingsGoals from "@/components/SavingsGoals.vue";
 import type { DateRange } from "reka-ui";
 import { toDate } from "reka-ui/date";
 
