@@ -56,7 +56,7 @@ implemented and committed individually on the `feat/adding-new-features` branch.
 - ✅ Plan tiers UI (Gratuito/Premium) with monthly/yearly billing toggle and a simulated "Assinar" flow. No real payment processing (Stripe) and no feature gating yet — all features remain free, and the page is not linked from navigation. — [constants/subscription.ts](constants/subscription.ts), [lib/subscription.ts](lib/subscription.ts), [pages/subscription/index.vue](pages/subscription/index.vue)
 
 ## 12. Family/Shared Budgets
-- ⬜ Invite other users to a shared budget with permissions
+- ✅ Invite other users to a shared budget with permissions (owner-managed members, per-category monthly limits, email-based pending invites) — [service/sharedBudgetService.ts](service/sharedBudgetService.ts), [stores/sharedBudgets.ts](stores/sharedBudgets.ts), [components/UpsertSharedBudgetDialog.vue](components/UpsertSharedBudgetDialog.vue), [components/PendingSharedBudgetInvites.vue](components/PendingSharedBudgetInvites.vue), [components/SharedBudgetsSettings.vue](components/SharedBudgetsSettings.vue), [pages/settings/index.vue](pages/settings/index.vue)
 
 ## 13. Read transactions notifications on smartphone mode
 - ⬜ Track transactions by reading notifications and adding them automatically to the app (e.g. bank notifications, credit card notifications, etc.)

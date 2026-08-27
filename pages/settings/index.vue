@@ -125,6 +125,10 @@
 
     <BudgetSettings />
 
+    <PendingSharedBudgetInvites />
+
+    <SharedBudgetsSettings />
+
     <!-- Seção de Ajuda -->
     <div class="bg-card rounded-lg p-6 shadow-sm">
       <h2 class="text-xl font-semibold mb-4">Ajuda</h2>
@@ -148,6 +152,8 @@
 import { Button } from "~/components/ui/button";
 import { Icon } from "#components";
 import BudgetSettings from "~/components/BudgetSettings.vue";
+import PendingSharedBudgetInvites from "~/components/PendingSharedBudgetInvites.vue";
+import SharedBudgetsSettings from "~/components/SharedBudgetsSettings.vue";
 
 definePageMeta({
   middleware: "auth",
