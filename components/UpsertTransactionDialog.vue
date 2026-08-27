@@ -67,7 +67,7 @@ onMounted(fetchAccounts);
 
 const props = defineProps<{
   isOpen: boolean;
-  defaultValues?: FormSchema;
+  defaultValues?: Partial<FormSchema>;
   transactionId?: string;
 }>();
 

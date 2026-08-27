@@ -50,6 +50,7 @@ export function useSpeechRecognition(lang = "pt-BR") {
       };
 
       recognition.onerror = (event) => {
+        console.error("Erro no reconhecimento de voz:", event.error);
         error.value = event.error;
         isListening.value = false;
       };
@@ -67,7 +68,13 @@ export function useSpeechRecognition(lang = "pt-BR") {
     error.value = null;
     transcript.value = "";
     isListening.value = true;
-    recognition.start();
+    try {
+      recognition.start();
+    } catch (exception) {
+      console.error("Erro ao iniciar reconhecimento de voz:", exception);
+      error.value = exception instanceof Error ? exception.message : "start-failed";
+      isListening.value = false;
+    }
   }
 
   function stop() {

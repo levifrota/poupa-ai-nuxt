@@ -53,7 +53,7 @@ implemented and committed individually on the `feat/adding-new-features` branch.
 - ✅ Read the AI financial report aloud (Web Speech API) — [composables/useSpeechSynthesis.ts](composables/useSpeechSynthesis.ts), [components/AiReportButton.vue](components/AiReportButton.vue)
 
 ## 11. Subscription / Paywall
-- ⬜ Implement plan tiers and gate premium features (AI report, multi-account, etc.)
+- ⬜ Implement plan tiers and gate premium features (AI report, multi-account, etc.). This feature is still in the planning phase, and we are considering using Stripe for payment processing. The implementation will include a subscription management system, allowing users to upgrade or downgrade their plans, and access to premium features based on their subscription level. This feature will be implemented fully in the future, so the page is not accessible yet. All features are still available.
 
 ## 12. Family/Shared Budgets
 - ⬜ Invite other users to a shared budget with permissions
@@ -64,8 +64,5 @@ implemented and committed individually on the `feat/adding-new-features` branch.
 ## 14. Notify users when they are about to exceed their budget or savings goal
 - ⬜ Notify users when they are about to exceed their budget or savings goal (e.g. via push notifications, email, or in-app alerts)
 
-## 15. Implement subscription page for premium features
-- ⬜ Implement subscription page for premium features (e.g. AI report, multi-account, etc.) with pricing and payment options. NOTE: do not implement the actual payment processing, just the UI and flow for subscribing. This feature will be available only in the future. For now, all features will be free to use. Hide the page for now.
-
-## 16. Implement other currencies
+## 15. Implement other currencies
 - ⬜ Implement other currencies (e.g. USD, EUR, GBP, etc.) with exchange rates and currency conversion.
