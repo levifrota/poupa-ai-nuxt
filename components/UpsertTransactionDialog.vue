@@ -44,6 +44,7 @@ import { watchEffect, ref } from "vue";
 import { useTransactionsStore } from "~/stores/transactions.js";
 import { addTransaction, updateTransaction } from "~/service/transactionService.js";
 import { calculateNextOccurrenceDate } from "~/lib/recurrence.js";
+import { removeUndefined } from "~/lib/utils.js";
 import { useCurrentUser } from "vuefire";
 
 const transactionsStore = useTransactionsStore();
@@ -83,6 +84,9 @@ const validationSchema = z.object({
   tags: z.string().optional(),
   isRecurring: z.boolean().optional(),
   recurrenceFrequency: z.nativeEnum(RecurrenceFrequency).optional(),
+  isBill: z.boolean().optional(),
+  dueDate: z.date().optional(),
+  isPaid: z.boolean().optional(),
 });
 
 type FormSchema = z.infer<typeof validationSchema>;
@@ -93,6 +97,7 @@ const { handleSubmit, resetForm, setValues, values } = useForm({
     amount: 0,
     date: new Date(),
     isRecurring: false,
+    isBill: false,
   },
 });
 
@@ -126,7 +131,7 @@ const onSubmit = handleSubmit(async (values) => {
       .split(",")
       .map((tag) => tag.trim())
       .filter(Boolean);
-    const dataToSave = {
+    const dataToSave = removeUndefined({
       ...values,
       tags,
       ...(values.isRecurring &&
@@ -136,7 +141,8 @@ const onSubmit = handleSubmit(async (values) => {
             values.recurrenceFrequency
           ),
         }),
-    };
+      ...(values.isBill && values.dueDate && { isPaid: Boolean(values.isPaid) }),
+    });
 
     if (props.transactionId) {
       // Update existing transaction
@@ -161,6 +167,14 @@ const onSubmit = handleSubmit(async (values) => {
 const isUpdate = computed(() => !!props.transactionId);
 
 const onIsRecurringChange = (event: Event, onUpdateModelValue: (value: boolean) => void) => {
+  onUpdateModelValue((event.target as HTMLInputElement).checked);
+};
+
+const onIsBillChange = (event: Event, onUpdateModelValue: (value: boolean) => void) => {
+  onUpdateModelValue((event.target as HTMLInputElement).checked);
+};
+
+const onIsPaidChange = (event: Event, onUpdateModelValue: (value: boolean) => void) => {
   onUpdateModelValue((event.target as HTMLInputElement).checked);
 };
 </script>
@@ -349,6 +363,57 @@ const onIsRecurringChange = (event: Event, onUpdateModelValue: (value: boolean) 
                   </SelectItem>
                 </SelectContent>
               </Select>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+
+          <FormField v-slot="{ componentField, value }" name="isBill">
+            <FormItem class="flex items-center gap-2">
+              <FormControl>
+                <input
+                  id="isBill"
+                  type="checkbox"
+                  class="h-4 w-4 rounded border-input"
+                  :checked="Boolean(value)"
+                  @change="
+                    (event) => onIsBillChange(event, componentField['onUpdate:modelValue'])
+                  "
+                >
+              </FormControl>
+              <FormLabel for="isBill" class="mb-0">Conta a pagar</FormLabel>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+
+          <FormField v-if="values.isBill" v-slot="{ componentField }" name="dueDate">
+            <FormItem class="flex flex-col">
+              <FormLabel>Data de vencimento</FormLabel>
+              <FormControl>
+                <DatePicker
+                  :model-value="componentField.modelValue || new Date()"
+                  @update:model-value="
+                    (value) => componentField['onUpdate:modelValue'](value || new Date())
+                  "
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+
+          <FormField v-if="values.isBill" v-slot="{ componentField, value }" name="isPaid">
+            <FormItem class="flex items-center gap-2">
+              <FormControl>
+                <input
+                  id="isPaid"
+                  type="checkbox"
+                  class="h-4 w-4 rounded border-input"
+                  :checked="Boolean(value)"
+                  @change="
+                    (event) => onIsPaidChange(event, componentField['onUpdate:modelValue'])
+                  "
+                >
+              </FormControl>
+              <FormLabel for="isPaid" class="mb-0">Já paga</FormLabel>
               <FormMessage />
             </FormItem>
           </FormField>

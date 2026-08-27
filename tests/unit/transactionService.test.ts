@@ -13,6 +13,8 @@ import {
   getRecurringTransactions,
   confirmRecurringOccurrence,
   skipRecurringOccurrence,
+  getUpcomingBills,
+  markBillAsPaid,
 } from "~/service/transactionService";
 import type { Transaction } from "~/constants/transactions";
 
@@ -389,6 +391,72 @@ describe("transactionService", () => {
           nextOccurrenceDate: undefined,
         })
       ).rejects.toThrow("Transação recorrente inválida");
+    });
+  });
+
+  describe("getUpcomingBills", () => {
+    it("queries transactions where isBill is true and maps dueDate", async () => {
+      const dueDate = new Date(2026, 0, 15);
+      const date = new Date(2026, 0, 1);
+      getDocsMock.mockResolvedValue({
+        docs: [
+          {
+            id: "tx-1",
+            data: () => ({
+              name: "Internet",
+              amount: 120,
+              type: TransactionType.EXPENSE,
+              category: TransactionCategory.UTILITY,
+              paymentMethod: TransactionPaymentMethod.BANK_SLIP,
+              date: FakeTimestamp.fromDate(date),
+              createdAt: FakeTimestamp.fromDate(date),
+              updatedAt: FakeTimestamp.fromDate(date),
+              isBill: true,
+              isPaid: false,
+              dueDate: FakeTimestamp.fromDate(dueDate),
+            }),
+          },
+        ],
+      });
+
+      const bills = await getUpcomingBills("user-1");
+
+      expect(whereMock).toHaveBeenCalledWith("isBill", "==", true);
+      expect(bills).toHaveLength(1);
+      expect(bills[0].dueDate).toEqual(dueDate);
+      expect(bills[0].isPaid).toBe(false);
+    });
+
+    it("returns an empty array when there are no bills", async () => {
+      getDocsMock.mockResolvedValue({ docs: [] });
+      const bills = await getUpcomingBills("user-1");
+      expect(bills).toEqual([]);
+    });
+
+    it("throws a friendly error when Firestore fails", async () => {
+      getDocsMock.mockRejectedValue(new Error("network error"));
+
+      await expect(getUpcomingBills("user-1")).rejects.toThrow(
+        "Erro ao buscar contas a pagar do Firebase"
+      );
+    });
+  });
+
+  describe("markBillAsPaid", () => {
+    it("updates the transaction setting isPaid to true", async () => {
+      updateDocMock.mockResolvedValue(undefined);
+
+      await markBillAsPaid("user-1", "tx-1");
+
+      expect(docMock).toHaveBeenCalledWith(
+        mockDb,
+        "users",
+        "user-1",
+        "transactions",
+        "tx-1"
+      );
+      const [, updateData] = updateDocMock.mock.calls[0];
+      expect(updateData.isPaid).toBe(true);
     });
   });
 });

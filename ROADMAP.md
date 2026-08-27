@@ -39,7 +39,7 @@ implemented and committed individually on the `feat/adding-new-features` branch.
 - ✅ Auto-generate future occurrences / remind user to confirm them — [lib/recurrence.ts](lib/recurrence.ts), [stores/recurringTransactions.ts](stores/recurringTransactions.ts), [components/RecurringTransactionReminders.vue](components/RecurringTransactionReminders.vue), [pages/(home)/index.vue](pages/(home)/index.vue)
 
 ## 7. Bill Reminders / Notifications
-- ⬜ Upcoming bill due-date reminders (in-app + optional browser notification)
+- ✅ Upcoming bill due-date reminders (in-app + optional browser notification) — [constants/transactions.ts](constants/transactions.ts), [lib/billReminders.ts](lib/billReminders.ts), [service/transactionService.ts](service/transactionService.ts), [stores/bills.ts](stores/bills.ts), [components/UpsertTransactionDialog.vue](components/UpsertTransactionDialog.vue), [components/BillReminders.vue](components/BillReminders.vue), [pages/(home)/index.vue](pages/(home)/index.vue)
 
 ## 8. Multi-account / Wallet Support
 - ⬜ Split transactions across accounts (checking, credit card, cash)

@@ -25,6 +25,9 @@ export interface TransactionInput {
   isRecurring?: boolean;
   recurrenceFrequency?: RecurrenceFrequency;
   nextOccurrenceDate?: Date;
+  isBill?: boolean;
+  dueDate?: Date;
+  isPaid?: boolean;
 }
 
 /**
@@ -40,6 +43,9 @@ export const addTransaction = async (
       date: Timestamp.fromDate(transactionData.date),
       ...(transactionData.nextOccurrenceDate && {
         nextOccurrenceDate: Timestamp.fromDate(transactionData.nextOccurrenceDate),
+      }),
+      ...(transactionData.dueDate && {
+        dueDate: Timestamp.fromDate(transactionData.dueDate),
       }),
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
@@ -82,6 +88,10 @@ export const updateTransaction = async (
       updateData.nextOccurrenceDate = Timestamp.fromDate(
         transactionData.nextOccurrenceDate
       );
+    }
+
+    if (transactionData.dueDate) {
+      updateData.dueDate = Timestamp.fromDate(transactionData.dueDate);
     }
 
     const transactionRef = doc(
@@ -161,6 +171,9 @@ export const getTransactions = async (
         updatedAt: data.updatedAt?.toDate() || new Date(),
         ...(data.nextOccurrenceDate && {
           nextOccurrenceDate: data.nextOccurrenceDate.toDate(),
+        }),
+        ...(data.dueDate && {
+          dueDate: data.dueDate.toDate(),
         }),
       } as Transaction;
     });
@@ -269,4 +282,45 @@ export const skipRecurringOccurrence = async (
   await updateTransaction(userId, recurringTransaction.id, {
     nextOccurrenceDate,
   });
+};
+
+/**
+ * Busca as contas a pagar do usuário (transações marcadas como `isBill`),
+ * independente do período selecionado no dashboard, para verificar quais
+ * estão próximas do vencimento ou já vencidas.
+ */
+export const getUpcomingBills = async (userId: string): Promise<Transaction[]> => {
+  try {
+    const billsQuery = query(
+      collection(db(), "users", userId, "transactions"),
+      where("isBill", "==", true)
+    );
+
+    const querySnapshot = await getDocs(billsQuery);
+
+    return querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        date: data.date?.toDate() || new Date(),
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+        ...(data.dueDate && { dueDate: data.dueDate.toDate() }),
+      } as Transaction;
+    });
+  } catch (error) {
+    console.error("Erro ao buscar contas a pagar:", error);
+    throw new Error("Erro ao buscar contas a pagar do Firebase");
+  }
+};
+
+/**
+ * Marca uma conta a pagar como paga.
+ */
+export const markBillAsPaid = async (
+  userId: string,
+  transactionId: string
+): Promise<void> => {
+  await updateTransaction(userId, transactionId, { isPaid: true });
 };

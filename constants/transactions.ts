@@ -49,6 +49,9 @@ export interface Transaction {
   isRecurring?: boolean;
   recurrenceFrequency?: RecurrenceFrequency;
   nextOccurrenceDate?: Date;
+  isBill?: boolean;
+  dueDate?: Date;
+  isPaid?: boolean;
 }
 
 export const TRANSACTION_CATEGORY_LABELS: Record<TransactionCategory, string> =
