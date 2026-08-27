@@ -1,7 +1,5 @@
 import type { GenerateAiReportSchema } from './schema.ts';
 import { generateAiReportSchema } from './schema.js';
-import { generateText } from 'ai';
-import { createOpenAI as createGroq } from '@ai-sdk/openai';
 import { useCurrentUser } from 'vuefire';
 import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -11,13 +9,10 @@ import {
   type TransactionCategory,
 } from '~/constants/transactions.js';
 import type { Transaction } from '@/constants/transactions';
+import { buildGeminiRequestBody, callGemini, extractGeminiText } from '~/lib/gemini.js';
+import type { ChatMessage } from '~/lib/aiChat.js';
 
 const generateAiReport = async ({ startDate, endDate }: GenerateAiReportSchema) => {
-  const groq = createGroq({
-    baseURL: 'https://api.groq.com/openai/v1',
-    apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-  });
-
   const validatedData = generateAiReportSchema.parse({ startDate, endDate });
 
   if (!validatedData.startDate || !validatedData.endDate) {
@@ -67,22 +62,22 @@ const generateAiReport = async ({ startDate, endDate }: GenerateAiReportSchema) 
         ';'
       )}. Se você não tiver dados suficientes, apenas escreva "Não tenho dados suficientes para gerar um relatório. Por favor, forneça mais informações."`;
 
-    const { text } = await generateText({
-      model: groq('llama-3.3-70b-versatile'),
-      messages: [
-        {
-          role: 'system',
-          content:
-            'Você é um especialista em gestão e organização de finanças pessoais. Você ajuda as pessoas a organizarem melhor as suas finanças.',
-        },
-        {
-          role: 'user',
-          content,
-        },
-      ],
-    });
+    const messages: ChatMessage[] = [
+      {
+        role: 'system',
+        content:
+          'Você é um especialista em gestão e organização de finanças pessoais. Você ajuda as pessoas a organizarem melhor as suas finanças.',
+      },
+      {
+        role: 'user',
+        content,
+      },
+    ];
 
-    return text;
+    const requestBody = buildGeminiRequestBody(messages);
+    const response = await callGemini(import.meta.env.VITE_GEMINI_API_KEY, requestBody);
+
+    return extractGeminiText(response);
   } catch (error) {
     console.error('Erro ao gerar relatório:', error);
     throw new Error('A requisição demorou muito tempo ou falhou.');

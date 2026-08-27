@@ -1,21 +1,15 @@
 import type { AiChatSchema } from "./schema.ts";
 import { aiChatSchema } from "./schema.js";
-import { generateText } from "ai";
-import { createOpenAI as createGroq } from "@ai-sdk/openai";
 import { useCurrentUser } from "vuefire";
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import type { Transaction } from "~/constants/transactions.js";
 import { buildTransactionsContext, buildChatMessages } from "~/lib/aiChat.js";
+import { buildGeminiRequestBody, callGemini, extractGeminiText } from "~/lib/gemini.js";
 
 const MAX_TRANSACTIONS_FOR_CONTEXT = 200;
 
 const askAiChat = async ({ message, history }: AiChatSchema): Promise<string> => {
-  const groq = createGroq({
-    baseURL: "https://api.groq.com/openai/v1",
-    apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-  });
-
   const validatedData = aiChatSchema.parse({ message, history });
 
   const user = useCurrentUser();
@@ -51,12 +45,10 @@ const askAiChat = async ({ message, history }: AiChatSchema): Promise<string> =>
       transactionsContext
     );
 
-    const { text } = await generateText({
-      model: groq("llama-3.3-70b-versatile"),
-      messages,
-    });
+    const requestBody = buildGeminiRequestBody(messages);
+    const response = await callGemini(import.meta.env.VITE_GEMINI_API_KEY, requestBody);
 
-    return text;
+    return extractGeminiText(response);
   } catch (error) {
     console.error("Erro ao responder pergunta do chat:", error);
     throw new Error("A requisição demorou muito tempo ou falhou.");
