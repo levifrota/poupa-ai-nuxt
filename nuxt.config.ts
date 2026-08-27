@@ -72,7 +72,7 @@ export default defineNuxtConfig({
     strict: true,
     tsConfig: {
       compilerOptions: {
-        moduleResolution: 'nodenext',
+        moduleResolution: "bundler",
         esModuleInterop: true,
         skipLibCheck: true
       }
