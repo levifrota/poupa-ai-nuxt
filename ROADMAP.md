@@ -21,7 +21,7 @@ implemented and committed individually on the `feat/adding-new-features` branch.
 - ✅ Consistent font-size application app-wide (audited `useFontStore`/`fonts.css`, already applied globally via `documentElement` classes)
 
 ## 2. Transaction Tags
-- ⬜ Free-form tags on transactions (beyond fixed categories) for custom grouping (e.g. "trip-2026", "reimbursable")
+- ✅ Free-form tags on transactions (beyond fixed categories) for custom grouping (e.g. "trip-2026", "reimbursable") — [constants/transactions.ts](constants/transactions.ts), [service/transactionService.ts](service/transactionService.ts), [components/UpsertTransactionDialog.vue](components/UpsertTransactionDialog.vue), [components/transactions/columns.ts](components/transactions/columns.ts)
 
 ## 3. CSV Export
 - ⬜ Export filtered transactions (current date range) to CSV for spreadsheets/accountants

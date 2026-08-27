@@ -77,6 +77,7 @@ const validationSchema = z.object({
   date: z.date({
     required_error: "A data é obrigatória.",
   }),
+  tags: z.string().optional(),
 });
 
 type FormSchema = z.infer<typeof validationSchema>;
@@ -97,7 +98,7 @@ watchEffect(() => {
       (t) => t.id === props.transactionId
     );
     if (transaction) {
-      setValues(transaction);
+      setValues({ ...transaction, tags: (transaction.tags ?? []).join(", ") });
     }
   } else if (props.defaultValues) {
     setValues(props.defaultValues);
@@ -115,15 +116,21 @@ const onSubmit = handleSubmit(async (values) => {
 
     const userId = user.value.uid;
 
+    const tags = (values.tags ?? "")
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+    const dataToSave = { ...values, tags };
+
     if (props.transactionId) {
       // Update existing transaction
-      await updateTransaction(userId, props.transactionId, values);
+      await updateTransaction(userId, props.transactionId, dataToSave);
     } else {
       // Add new transaction
-      await addTransaction(userId, values);
+      await addTransaction(userId, dataToSave);
     }
 
-    emits("submit", { ...values, id: props.transactionId });
+    emits("submit", { ...dataToSave, id: props.transactionId });
     emits("update:isOpen", false);
     resetForm();
   } catch (error) {
@@ -258,6 +265,24 @@ const isUpdate = computed(() => !!props.transactionId);
                   "
                 />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+
+          <FormField v-slot="{ componentField }" name="tags">
+            <FormItem>
+              <FormLabel>Tags</FormLabel>
+              <FormControl>
+                <Input
+                  class="w-60 sm:w-full"
+                  placeholder="Ex: viagem, mercado, reembolsável"
+                  aria-describedby="tags-hint"
+                  v-bind="componentField"
+                />
+              </FormControl>
+              <p id="tags-hint" class="text-sm text-muted-foreground">
+                Separe as tags por vírgula.
+              </p>
               <FormMessage />
             </FormItem>
           </FormField>

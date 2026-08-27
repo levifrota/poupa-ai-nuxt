@@ -39,6 +39,7 @@ export interface Transaction {
   userId: string;
   createdAt: Date;
   updatedAt: Date;
+  tags?: string[];
 }
 
 export const TRANSACTION_CATEGORY_LABELS: Record<TransactionCategory, string> =
