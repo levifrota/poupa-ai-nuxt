@@ -18,6 +18,8 @@
       <div class="flex flex-col gap-6 sm:overflow-hidden">
         <SummaryCards />
 
+        <RecurringTransactionReminders />
+
         <div
           class="grid grid-cols-1 gap-y-6 sm:h-auto sm:grid-rows-1 sm:gap-y-6 md:grid-cols-3 md:gap-6"
         >
@@ -36,6 +38,7 @@
 // O componente TimeSelect só funciona se for chamado aqui
 import TimeSelect from "@/components/TimeSelect.vue";
 import SavingsGoals from "@/components/SavingsGoals.vue";
+import RecurringTransactionReminders from "@/components/RecurringTransactionReminders.vue";
 import type { DateRange } from "reka-ui";
 import { toDate } from "reka-ui/date";
 

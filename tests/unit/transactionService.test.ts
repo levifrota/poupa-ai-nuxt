@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
+  RecurrenceFrequency,
   TransactionCategory,
   TransactionPaymentMethod,
   TransactionType,
@@ -9,7 +10,11 @@ import {
   updateTransaction,
   deleteTransaction,
   getTransactions,
+  getRecurringTransactions,
+  confirmRecurringOccurrence,
+  skipRecurringOccurrence,
 } from "~/service/transactionService";
+import type { Transaction } from "~/constants/transactions";
 
 const mockDb = { __brand: "mock-db" };
 
@@ -256,6 +261,134 @@ describe("transactionService", () => {
       await expect(getTransactions("user-1")).rejects.toThrow(
         "Erro ao buscar transações do Firebase"
       );
+    });
+  });
+
+  describe("getRecurringTransactions", () => {
+    it("queries transactions where isRecurring is true and maps nextOccurrenceDate", async () => {
+      const nextOccurrenceDate = new Date(2026, 1, 1);
+      const date = new Date(2026, 0, 1);
+      getDocsMock.mockResolvedValue({
+        docs: [
+          {
+            id: "tx-1",
+            data: () => ({
+              name: "Aluguel",
+              amount: 1500,
+              type: TransactionType.EXPENSE,
+              category: TransactionCategory.HOUSING,
+              paymentMethod: TransactionPaymentMethod.BANK_TRANSFER,
+              date: FakeTimestamp.fromDate(date),
+              createdAt: FakeTimestamp.fromDate(date),
+              updatedAt: FakeTimestamp.fromDate(date),
+              isRecurring: true,
+              recurrenceFrequency: RecurrenceFrequency.MONTHLY,
+              nextOccurrenceDate: FakeTimestamp.fromDate(nextOccurrenceDate),
+            }),
+          },
+        ],
+      });
+
+      const transactions = await getRecurringTransactions("user-1");
+
+      expect(whereMock).toHaveBeenCalledWith("isRecurring", "==", true);
+      expect(transactions).toHaveLength(1);
+      expect(transactions[0].nextOccurrenceDate).toEqual(nextOccurrenceDate);
+      expect(transactions[0].recurrenceFrequency).toBe(RecurrenceFrequency.MONTHLY);
+    });
+
+    it("returns an empty array when there are no recurring transactions", async () => {
+      getDocsMock.mockResolvedValue({ docs: [] });
+      const transactions = await getRecurringTransactions("user-1");
+      expect(transactions).toEqual([]);
+    });
+
+    it("throws a friendly error when Firestore fails", async () => {
+      getDocsMock.mockRejectedValue(new Error("network error"));
+
+      await expect(getRecurringTransactions("user-1")).rejects.toThrow(
+        "Erro ao buscar transações recorrentes do Firebase"
+      );
+    });
+  });
+
+  describe("confirmRecurringOccurrence", () => {
+    const baseRecurringTransaction: Transaction = {
+      id: "tx-1",
+      name: "Aluguel",
+      amount: 1500,
+      type: TransactionType.EXPENSE,
+      category: TransactionCategory.HOUSING,
+      paymentMethod: TransactionPaymentMethod.BANK_TRANSFER,
+      date: new Date(2026, 0, 1),
+      userId: "user-1",
+      createdAt: new Date(2026, 0, 1),
+      updatedAt: new Date(2026, 0, 1),
+      isRecurring: true,
+      recurrenceFrequency: RecurrenceFrequency.MONTHLY,
+      nextOccurrenceDate: new Date(2026, 1, 1),
+    };
+
+    it("creates a new non-recurring transaction on the occurrence date and advances nextOccurrenceDate", async () => {
+      addDocMock.mockResolvedValue({ id: "new-tx-id" });
+      updateDocMock.mockResolvedValue(undefined);
+
+      const newId = await confirmRecurringOccurrence("user-1", baseRecurringTransaction);
+
+      expect(newId).toBe("new-tx-id");
+
+      const [, savedData] = addDocMock.mock.calls[0];
+      expect(savedData.name).toBe("Aluguel");
+      expect(savedData.date).toEqual(FakeTimestamp.fromDate(new Date(2026, 1, 1)));
+
+      const [, updateData] = updateDocMock.mock.calls[0];
+      expect(updateData.nextOccurrenceDate.date).toEqual(new Date(2026, 2, 1));
+    });
+
+    it("throws when the recurring transaction is missing recurrence data", async () => {
+      await expect(
+        confirmRecurringOccurrence("user-1", {
+          ...baseRecurringTransaction,
+          recurrenceFrequency: undefined,
+        })
+      ).rejects.toThrow("Transação recorrente inválida");
+    });
+  });
+
+  describe("skipRecurringOccurrence", () => {
+    const baseRecurringTransaction: Transaction = {
+      id: "tx-1",
+      name: "Aluguel",
+      amount: 1500,
+      type: TransactionType.EXPENSE,
+      category: TransactionCategory.HOUSING,
+      paymentMethod: TransactionPaymentMethod.BANK_TRANSFER,
+      date: new Date(2026, 0, 1),
+      userId: "user-1",
+      createdAt: new Date(2026, 0, 1),
+      updatedAt: new Date(2026, 0, 1),
+      isRecurring: true,
+      recurrenceFrequency: RecurrenceFrequency.MONTHLY,
+      nextOccurrenceDate: new Date(2026, 1, 1),
+    };
+
+    it("advances nextOccurrenceDate without creating a new transaction", async () => {
+      updateDocMock.mockResolvedValue(undefined);
+
+      await skipRecurringOccurrence("user-1", baseRecurringTransaction);
+
+      expect(addDocMock).not.toHaveBeenCalled();
+      const [, updateData] = updateDocMock.mock.calls[0];
+      expect(updateData.nextOccurrenceDate.date).toEqual(new Date(2026, 2, 1));
+    });
+
+    it("throws when the recurring transaction is missing recurrence data", async () => {
+      await expect(
+        skipRecurringOccurrence("user-1", {
+          ...baseRecurringTransaction,
+          nextOccurrenceDate: undefined,
+        })
+      ).rejects.toThrow("Transação recorrente inválida");
     });
   });
 });

@@ -35,8 +35,8 @@ implemented and committed individually on the `feat/adding-new-features` branch.
 - ✅ Track progress with a progress bar (reusing pattern from `ExpensesPerCategory.vue`) — [components/SavingsGoals.vue](components/SavingsGoals.vue), [pages/(home)/index.vue](pages/(home)/index.vue)
 
 ## 6. Recurring Transactions
-- ⬜ Mark a transaction as recurring (weekly/monthly/yearly)
-- ⬜ Auto-generate future occurrences / remind user to confirm them
+- ✅ Mark a transaction as recurring (weekly/monthly/yearly) — [constants/transactions.ts](constants/transactions.ts), [service/transactionService.ts](service/transactionService.ts), [components/UpsertTransactionDialog.vue](components/UpsertTransactionDialog.vue)
+- ✅ Auto-generate future occurrences / remind user to confirm them — [lib/recurrence.ts](lib/recurrence.ts), [stores/recurringTransactions.ts](stores/recurringTransactions.ts), [components/RecurringTransactionReminders.vue](components/RecurringTransactionReminders.vue), [pages/(home)/index.vue](pages/(home)/index.vue)
 
 ## 7. Bill Reminders / Notifications
 - ⬜ Upcoming bill due-date reminders (in-app + optional browser notification)
@@ -57,3 +57,12 @@ implemented and committed individually on the `feat/adding-new-features` branch.
 
 ## 12. Family/Shared Budgets
 - ⬜ Invite other users to a shared budget with permissions
+
+## 13. Read transactions notifications on smartphone mode
+- ⬜ Track transactions by reading notifications and adding them automatically to the app (e.g. bank notifications, credit card notifications, etc.)
+
+## 14. Notify users when they are about to exceed their budget or savings goal
+- ⬜ Notify users when they are about to exceed their budget or savings goal (e.g. via push notifications, email, or in-app alerts)
+
+## 15. Implement subscription page for premium features
+- ⬜ Implement subscription page for premium features (e.g. AI report, multi-account, etc.) with pricing and payment options. NOTE: do not implement the actual payment processing, just the UI and flow for subscribing. This feature will be available only in the future. For now, all features will be free to use. Hide the page for now.

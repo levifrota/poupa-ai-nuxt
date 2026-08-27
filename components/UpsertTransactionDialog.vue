@@ -30,9 +30,11 @@ import {
   TRANSACTION_CATEGORY_OPTIONS,
   TRANSACTION_PAYMENT_METHOD_OPTIONS,
   TRANSACTION_TYPE_OPTIONS,
+  RECURRENCE_FREQUENCY_OPTIONS,
   TransactionCategory,
   TransactionPaymentMethod,
   TransactionType,
+  RecurrenceFrequency,
 } from "~/constants/transactions.js";
 import { DatePicker } from "~/components/ui/date-picker/index.js";
 import { useForm } from "vee-validate";
@@ -41,6 +43,7 @@ import * as z from "zod";
 import { watchEffect, ref } from "vue";
 import { useTransactionsStore } from "~/stores/transactions.js";
 import { addTransaction, updateTransaction } from "~/service/transactionService.js";
+import { calculateNextOccurrenceDate } from "~/lib/recurrence.js";
 import { useCurrentUser } from "vuefire";
 
 const transactionsStore = useTransactionsStore();
@@ -78,15 +81,18 @@ const validationSchema = z.object({
     required_error: "A data é obrigatória.",
   }),
   tags: z.string().optional(),
+  isRecurring: z.boolean().optional(),
+  recurrenceFrequency: z.nativeEnum(RecurrenceFrequency).optional(),
 });
 
 type FormSchema = z.infer<typeof validationSchema>;
 
-const { handleSubmit, resetForm, setValues } = useForm({
+const { handleSubmit, resetForm, setValues, values } = useForm({
   validationSchema: toTypedSchema(validationSchema),
   initialValues: {
     amount: 0,
     date: new Date(),
+    isRecurring: false,
   },
 });
 
@@ -120,7 +126,17 @@ const onSubmit = handleSubmit(async (values) => {
       .split(",")
       .map((tag) => tag.trim())
       .filter(Boolean);
-    const dataToSave = { ...values, tags };
+    const dataToSave = {
+      ...values,
+      tags,
+      ...(values.isRecurring &&
+        values.recurrenceFrequency && {
+          nextOccurrenceDate: calculateNextOccurrenceDate(
+            values.date,
+            values.recurrenceFrequency
+          ),
+        }),
+    };
 
     if (props.transactionId) {
       // Update existing transaction
@@ -143,6 +159,10 @@ const onSubmit = handleSubmit(async (values) => {
 });
 
 const isUpdate = computed(() => !!props.transactionId);
+
+const onIsRecurringChange = (event: Event, onUpdateModelValue: (value: boolean) => void) => {
+  onUpdateModelValue((event.target as HTMLInputElement).checked);
+};
 </script>
 
 <template>
@@ -283,6 +303,52 @@ const isUpdate = computed(() => !!props.transactionId);
               <p id="tags-hint" class="text-sm text-muted-foreground">
                 Separe as tags por vírgula.
               </p>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+
+          <FormField v-slot="{ componentField, value }" name="isRecurring">
+            <FormItem class="flex items-center gap-2">
+              <FormControl>
+                <input
+                  id="isRecurring"
+                  type="checkbox"
+                  class="h-4 w-4 rounded border-input"
+                  :checked="Boolean(value)"
+                  @change="
+                    (event) =>
+                      onIsRecurringChange(event, componentField['onUpdate:modelValue'])
+                  "
+                >
+              </FormControl>
+              <FormLabel for="isRecurring" class="mb-0">Transação recorrente</FormLabel>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+
+          <FormField
+            v-if="values.isRecurring"
+            v-slot="{ componentField }"
+            name="recurrenceFrequency"
+          >
+            <FormItem>
+              <FormLabel>Frequência</FormLabel>
+              <Select v-bind="componentField">
+                <FormControl>
+                  <SelectTrigger class="w-60 sm:w-auto">
+                    <SelectValue placeholder="Frequência da recorrência" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem
+                    v-for="option in RECURRENCE_FREQUENCY_OPTIONS"
+                    :key="option.value"
+                    :value="option.value"
+                  >
+                    {{ option.label }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           </FormField>
