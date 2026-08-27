@@ -24,7 +24,7 @@ implemented and committed individually on the `feat/adding-new-features` branch.
 - ✅ Free-form tags on transactions (beyond fixed categories) for custom grouping (e.g. "trip-2026", "reimbursable") — [constants/transactions.ts](constants/transactions.ts), [service/transactionService.ts](service/transactionService.ts), [components/UpsertTransactionDialog.vue](components/UpsertTransactionDialog.vue), [components/transactions/columns.ts](components/transactions/columns.ts)
 
 ## 3. CSV Export
-- ⬜ Export filtered transactions (current date range) to CSV for spreadsheets/accountants
+- ✅ Export filtered transactions (current date range) to CSV for spreadsheets/accountants — [lib/exportTransactions.ts](lib/exportTransactions.ts), [pages/transactions/index.vue](pages/transactions/index.vue)
 
 ## 4. Budgets per Category
 - ⬜ Monthly limit per `TransactionCategory`

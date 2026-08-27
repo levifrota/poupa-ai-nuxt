@@ -2,17 +2,27 @@
   <div class="container mx-auto p-4">
     <div class="flex items-center justify-between flex-col sm:flex-row">
       <h1 class="mb-4 text-2xl font-bold">Transações</h1>
-      <UpsertTransactionDialog
-        :is-open="isUpsertTransactionDialogOpen"
-        :default-values="selectedTransaction"
-        :transaction-id="selectedTransaction?.id"
-        @update:is-open="handleDialogClose"
-        @submit="handleSubmit"
-      >
-        <DialogTrigger as-child>
-          <Button>Adicionar transação</Button>
-        </DialogTrigger>
-      </UpsertTransactionDialog>
+      <div class="flex flex-col gap-2 sm:flex-row">
+        <Button
+          variant="outline"
+          aria-label="Exportar transações para CSV"
+          :disabled="formattedTransactions.length === 0"
+          @click="handleExportCsv"
+        >
+          Exportar CSV
+        </Button>
+        <UpsertTransactionDialog
+          :is-open="isUpsertTransactionDialogOpen"
+          :default-values="selectedTransaction"
+          :transaction-id="selectedTransaction?.id"
+          @update:is-open="handleDialogClose"
+          @submit="handleSubmit"
+        >
+          <DialogTrigger as-child>
+            <Button>Adicionar transação</Button>
+          </DialogTrigger>
+        </UpsertTransactionDialog>
+      </div>
     </div>
     <div v-if="isLoading" class="flex justify-center items-center h-40">
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
@@ -36,6 +46,7 @@ import { useTransactionsStore } from '~/stores/transactions.js';
 import { TRANSACTION_CATEGORY_LABELS, type TransactionCategory } from '~/constants/transactions.js';
 import { deleteTransaction, getTransactions } from '~/service/transactionService.js';
 import { useCurrentUser } from 'vuefire';
+import { downloadTransactionsCsv } from '~/lib/exportTransactions.js';
 
 const isUpsertTransactionDialogOpen = ref(false);
 const selectedTransaction = ref<Transaction | null>(null);
@@ -138,8 +149,13 @@ const formattedTransactions = computed<Transaction[]>(() => {
     category: TRANSACTION_CATEGORY_LABELS[item.category as TransactionCategory] || item.category,
     paymentMethod: item.paymentMethod,
     amount: item.type === 'EXPENSE' ? -Math.abs(item.amount) : Math.abs(item.amount),
+    tags: item.tags,
   }));
 });
+
+function handleExportCsv() {
+  downloadTransactionsCsv(transactionStore.transactions);
+}
 </script>
 
 <style scoped>
