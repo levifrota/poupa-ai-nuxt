@@ -3,6 +3,7 @@ import SummaryCard from "~/components/SummaryCard.vue";
 import { useTransactionsStore } from "@/stores/transactions";
 import { ref, computed } from "vue";
 import UpsertTransactionDialog from "~/components/UpsertTransactionDialog.vue";
+import VoiceTransactionButton from "~/components/VoiceTransactionButton.vue";
 import { Button } from "~/components/ui/button";
 import { DialogTrigger } from "~/components/ui/dialog";
 import { useMoney } from "~/composables/useMoney";
@@ -74,19 +75,23 @@ const summaryList = computed(() => [
       :icon="balanceObj.icon"
     >
       <template #action>
-        <UpsertTransactionDialog
-          :is-open="isUpsertTransactionDialogOpen"
-          class="h[20%] sm:h-auto relative sm:absolute right-0 sm:right-4 justify-center"
-          @update:is-open="isUpsertTransactionDialogOpen = $event"
-          @submit="handleSubmit"
+        <div
+          class="h[20%] sm:h-auto relative sm:absolute right-0 sm:right-4 flex items-center gap-2 justify-center"
         >
-          <DialogTrigger as-child class="w-full">
-            <Button class="cursor-pointer" aria-label="Adicionar transação">
-              <span>Adicionar Transação</span>
-              <Icon name="lucide:plus" class="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
-        </UpsertTransactionDialog>
+          <VoiceTransactionButton />
+          <UpsertTransactionDialog
+            :is-open="isUpsertTransactionDialogOpen"
+            @update:is-open="isUpsertTransactionDialogOpen = $event"
+            @submit="handleSubmit"
+          >
+            <DialogTrigger as-child class="w-full">
+              <Button class="cursor-pointer" aria-label="Adicionar transação">
+                <span>Adicionar Transação</span>
+                <Icon name="lucide:plus" class="h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+          </UpsertTransactionDialog>
+        </div>
       </template>
     </SummaryCard>
   </div>

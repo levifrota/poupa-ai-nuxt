@@ -46,11 +46,11 @@ implemented and committed individually on the `feat/adding-new-features` branch.
 - ✅ Per-account balances in addition to the global balance — [lib/accountBalance.ts](lib/accountBalance.ts), [components/AccountsSummary.vue](components/AccountsSummary.vue), [pages/(home)/index.vue](pages/(home)/index.vue)
 
 ## 9. AI Chat ("ask your finances")
-- ✅ Conversational Q&A over the user's transaction history, extending the existing Groq-based AI report feature — [lib/aiChat.ts](lib/aiChat.ts), [app/_actions/ai-chat/index.ts](app/_actions/ai-chat/index.ts), [stores/aiChat.ts](stores/aiChat.ts), [components/AiChatButton.vue](components/AiChatButton.vue), [pages/(home)/index.vue](pages/(home)/index.vue)
+- ✅ Conversational Q&A over the user's transaction history, extending the existing AI report feature (Gemini-based) — [lib/aiChat.ts](lib/aiChat.ts), [app/_actions/ai-chat/index.ts](app/_actions/ai-chat/index.ts), [stores/aiChat.ts](stores/aiChat.ts), [components/AiChatButton.vue](components/AiChatButton.vue), [pages/(home)/index.vue](pages/(home)/index.vue)
 
 ## 10. Voice Input & Text-to-Speech (Accessibility)
-- ⬜ Voice-based transaction entry ("gastei 50 reais em mercado")
-- ⬜ Read the AI financial report aloud (Web Speech API)
+- ✅ Voice-based transaction entry ("gastei 50 reais em mercado") — [lib/parseVoiceTransaction.ts](lib/parseVoiceTransaction.ts), [composables/useSpeechRecognition.ts](composables/useSpeechRecognition.ts), [components/VoiceTransactionButton.vue](components/VoiceTransactionButton.vue), [components/SummaryCards.vue](components/SummaryCards.vue)
+- ✅ Read the AI financial report aloud (Web Speech API) — [composables/useSpeechSynthesis.ts](composables/useSpeechSynthesis.ts), [components/AiReportButton.vue](components/AiReportButton.vue)
 
 ## 11. Subscription / Paywall
 - ⬜ Implement plan tiers and gate premium features (AI report, multi-account, etc.)
