@@ -109,8 +109,6 @@ const chartData = computed(() => {
 
 type ChartRow = (typeof chartData.value)[number];
 
-const totalValue = computed(() => chartData.value.reduce((sum, item) => sum + item.rawValue, 0));
-
 const legendItems = computed(() =>
   chartData.value.map((item) => ({
     name: item.label,
@@ -134,6 +132,7 @@ const donutColor = (d: ChartRow) => chartConfig.value[d.originalType]?.color ?? 
 const tooltipTriggers = computed(() => ({
   [Donut.selectors.segment]: componentToString(chartConfig.value, ChartTooltipContent, {
     hideLabel: true,
+    class: "gap-x-4 min-w-[10rem] px-3 py-2",
   }) as (data: unknown, x: number | Date) => string,
 }));
 </script>
@@ -151,7 +150,6 @@ const tooltipTriggers = computed(() => ({
                 :arc-width="20"
                 :radius="60"
                 :show-background="false"
-                :central-label="formatValue(totalValue)"
               />
               <ChartTooltip :triggers="tooltipTriggers" />
             </VisSingleContainer>
