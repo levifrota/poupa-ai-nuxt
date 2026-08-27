@@ -11,6 +11,7 @@
       >
         <TimeSelect @update:date-range="handleDateRangeUpdate" />
         <AiReportButton :start-date="selectedStartDate" :end-date="selectedEndDate" />
+        <AiChatButton />
       </div>
     </div>
 
