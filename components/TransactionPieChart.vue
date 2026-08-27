@@ -77,7 +77,9 @@ const colorPalettes: Record<Theme, Record<TransactionType, string>> = {
 };
 
 // Função para obter a paleta de cores atual com base no tema
-const currentColorPalette = computed(() => colorPalettes[theme.value] ?? colorPalettes.light);
+const currentColorPalette = computed(
+  () => colorPalettes[theme.value] ?? colorPalettes.light
+);
 
 // Configuração do gráfico no formato exigido pelo componente Chart do shadcn-vue,
 // já refletindo a paleta de cores do tema atual (incluindo os temas de acessibilidade
@@ -107,7 +109,7 @@ const chartData = computed(() => {
   });
 });
 
-type ChartRow = (typeof chartData.value)[number];
+type ChartRow = typeof chartData.value[number];
 
 const legendItems = computed(() =>
   chartData.value.map((item) => ({
@@ -142,13 +144,17 @@ const tooltipTriggers = computed(() => ({
     <CardContent class="flex-1 overflow-hidden p-0 pb-0">
       <div class="flex flex-col items-center">
         <figure :aria-label="chartSummary">
-          <ChartContainer :config="chartConfig" class="aspect-square w-[160px]" aria-hidden="true">
+          <ChartContainer
+            :config="chartConfig"
+            class="aspect-square w-[160px]"
+            aria-hidden="true"
+          >
             <VisSingleContainer :data="chartData" :margin="{ top: 10, bottom: 10 }">
               <VisDonut
                 :value="donutValue"
                 :color="donutColor"
                 :arc-width="20"
-                :radius="60"
+                :radius="80"
                 :show-background="false"
               />
               <ChartTooltip :triggers="tooltipTriggers" />
