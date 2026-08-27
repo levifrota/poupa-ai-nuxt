@@ -366,6 +366,7 @@ const checkIsMobile = () => {
 };
 
 const navigateToStepRoute = async () => {
+  if (!onboardingStore.isOnboardingActive) return;
   const step = currentStepConfig.value;
   if (step && router.currentRoute.value.path !== step.route) {
     await router.push(step.route);
