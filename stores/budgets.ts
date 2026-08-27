@@ -18,7 +18,7 @@ export const useBudgetsStore = defineStore("budgets", () => {
 
   function removeBudget(category: string) {
     const updated = { ...budgets.value };
-    delete updated[category];
+    Reflect.deleteProperty(updated, category);
     budgets.value = updated;
   }
 
