@@ -6,7 +6,7 @@ export default defineNuxtConfig({
     head: {
       title: "Poupa.ai",
       htmlAttrs: {
-        lang: "pt-br",
+        lang: "pt-BR",
       },
       meta: [{ name: "description", content: "Poupa.ai" }],
       link: [{ rel: "icon", type: "image/x-icon", href: "/icon.png" }],

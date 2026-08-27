@@ -5,6 +5,7 @@ import { ref, computed } from "vue";
 import UpsertTransactionDialog from "~/components/UpsertTransactionDialog.vue";
 import { Button } from "~/components/ui/button";
 import { DialogTrigger } from "~/components/ui/dialog";
+import { useMoney } from "~/composables/useMoney";
 
 // Usar a store de transações para obter os valores calculados
 const transactionsStore = useTransactionsStore();
@@ -27,10 +28,17 @@ const formatCurrency = (value) => {
   }).format(value);
 };
 
+// Descrições por extenso para leitores de tela
+const balanceMoney = useMoney(computed(() => transactionsStore.balance));
+const depositsMoney = useMoney(computed(() => transactionsStore.depositsTotal));
+const investmentsMoney = useMoney(computed(() => transactionsStore.investmentsTotal));
+const expensesMoney = useMoney(computed(() => transactionsStore.expensesTotal));
+
 // Objeto para o card de saldo
 const balanceObj = computed(() => ({
   title: "Saldo",
   value: formatCurrency(transactionsStore.balance),
+  ariaValue: balanceMoney.ariaLabel.value,
   icon: "lucide:wallet",
 }));
 
@@ -39,16 +47,19 @@ const summaryList = computed(() => [
   {
     title: "Receita",
     value: formatCurrency(transactionsStore.depositsTotal),
+    ariaValue: depositsMoney.ariaLabel.value,
     icon: "lucide:piggy-bank",
   },
   {
     title: "Investido",
     value: formatCurrency(transactionsStore.investmentsTotal),
+    ariaValue: investmentsMoney.ariaLabel.value,
     icon: "lucide:trending-up",
   },
   {
     title: "Despesas",
     value: formatCurrency(transactionsStore.expensesTotal),
+    ariaValue: expensesMoney.ariaLabel.value,
     icon: "lucide:trending-down",
   },
 ]);
@@ -59,6 +70,7 @@ const summaryList = computed(() => [
     <SummaryCard
       :title="balanceObj.title"
       :value="balanceObj.value"
+      :aria-value="balanceObj.ariaValue"
       :icon="balanceObj.icon"
     >
       <template #action>
@@ -87,6 +99,7 @@ const summaryList = computed(() => [
       :key="item.title"
       :title="item.title"
       :value="item.value"
+      :aria-value="item.ariaValue"
       :icon="item.icon"
     />
   </div>
