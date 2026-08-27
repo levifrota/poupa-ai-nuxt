@@ -40,15 +40,30 @@ import { DatePicker } from "~/components/ui/date-picker/index.js";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
-import { watchEffect, ref } from "vue";
+import { watchEffect, ref, onMounted } from "vue";
 import { useTransactionsStore } from "~/stores/transactions.js";
+import { useAccountsStore } from "~/stores/accounts.js";
+import { getAccounts } from "~/service/accountService.js";
 import { addTransaction, updateTransaction } from "~/service/transactionService.js";
 import { calculateNextOccurrenceDate } from "~/lib/recurrence.js";
 import { removeUndefined } from "~/lib/utils.js";
 import { useCurrentUser } from "vuefire";
 
 const transactionsStore = useTransactionsStore();
+const accountsStore = useAccountsStore();
 const user = useCurrentUser();
+
+async function fetchAccounts() {
+  if (!user.value?.uid) return;
+  try {
+    const accounts = await getAccounts(user.value.uid);
+    accountsStore.setAccounts(accounts);
+  } catch (error) {
+    console.error("Erro ao carregar contas:", error);
+  }
+}
+
+onMounted(fetchAccounts);
 
 const props = defineProps<{
   isOpen: boolean;
@@ -87,6 +102,7 @@ const validationSchema = z.object({
   isBill: z.boolean().optional(),
   dueDate: z.date().optional(),
   isPaid: z.boolean().optional(),
+  accountId: z.string().optional(),
 });
 
 type FormSchema = z.infer<typeof validationSchema>;
@@ -281,6 +297,33 @@ const onIsPaidChange = (event: Event, onUpdateModelValue: (value: boolean) => vo
                     :value="option.value"
                   >
                     {{ option.label }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          </FormField>
+
+          <FormField
+            v-if="accountsStore.accounts.length > 0"
+            v-slot="{ componentField }"
+            name="accountId"
+          >
+            <FormItem>
+              <FormLabel>Conta</FormLabel>
+              <Select v-bind="componentField">
+                <FormControl>
+                  <SelectTrigger class="w-60 sm:w-auto">
+                    <SelectValue placeholder="Conta (opcional)" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem
+                    v-for="account in accountsStore.accounts"
+                    :key="account.id"
+                    :value="account.id"
+                  >
+                    {{ account.name }}
                   </SelectItem>
                 </SelectContent>
               </Select>

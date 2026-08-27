@@ -42,8 +42,8 @@ implemented and committed individually on the `feat/adding-new-features` branch.
 - ✅ Upcoming bill due-date reminders (in-app + optional browser notification) — [constants/transactions.ts](constants/transactions.ts), [lib/billReminders.ts](lib/billReminders.ts), [service/transactionService.ts](service/transactionService.ts), [stores/bills.ts](stores/bills.ts), [components/UpsertTransactionDialog.vue](components/UpsertTransactionDialog.vue), [components/BillReminders.vue](components/BillReminders.vue), [pages/(home)/index.vue](pages/(home)/index.vue)
 
 ## 8. Multi-account / Wallet Support
-- ⬜ Split transactions across accounts (checking, credit card, cash)
-- ⬜ Per-account balances in addition to the global balance
+- ✅ Split transactions across accounts (checking, credit card, cash) — [constants/accounts.ts](constants/accounts.ts), [service/accountService.ts](service/accountService.ts), [stores/accounts.ts](stores/accounts.ts), [components/UpsertAccountDialog.vue](components/UpsertAccountDialog.vue), [components/UpsertTransactionDialog.vue](components/UpsertTransactionDialog.vue)
+- ✅ Per-account balances in addition to the global balance — [lib/accountBalance.ts](lib/accountBalance.ts), [components/AccountsSummary.vue](components/AccountsSummary.vue), [pages/(home)/index.vue](pages/(home)/index.vue)
 
 ## 9. AI Chat ("ask your finances")
 - ⬜ Conversational Q&A over the user's transaction history, extending the existing Groq-based AI report feature
@@ -66,3 +66,6 @@ implemented and committed individually on the `feat/adding-new-features` branch.
 
 ## 15. Implement subscription page for premium features
 - ⬜ Implement subscription page for premium features (e.g. AI report, multi-account, etc.) with pricing and payment options. NOTE: do not implement the actual payment processing, just the UI and flow for subscribing. This feature will be available only in the future. For now, all features will be free to use. Hide the page for now.
+
+## 16. Implement other currencies
+- ⬜ Implement other currencies (e.g. USD, EUR, GBP, etc.) with exchange rates and currency conversion.

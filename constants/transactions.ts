@@ -52,6 +52,7 @@ export interface Transaction {
   isBill?: boolean;
   dueDate?: Date;
   isPaid?: boolean;
+  accountId?: string;
 }
 
 export const TRANSACTION_CATEGORY_LABELS: Record<TransactionCategory, string> =
