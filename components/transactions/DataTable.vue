@@ -1,56 +1,44 @@
 <script setup lang="ts" generic="TData, TValue">
-import type { ColumnDef, SortingState } from "@tanstack/vue-table";
-import {
-  FlexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  getFilteredRowModel, // Importar para funcionalidade de filtro/busca
-  useVueTable,
-} from "@tanstack/vue-table";
+import { computed, ref } from "vue";
+import { useWindowSize } from "@vueuse/core";
+import type { ColumnDef } from "@tanstack/vue-table";
+import type { Transaction } from "~/components/transactions/columns";
 
 const props = defineProps<{
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  searchKey?: string; // Chave para buscar (ex: 'description')
 }>();
 
-const sorting = ref<SortingState>([{ id: "date", desc: true }]); // Ordenar por data, mais novas primeiro
-const globalFilter = ref(""); // Para a funcionalidade de busca global
+const search = ref("");
 
-const table = useVueTable({
-  get data() {
-    return props.data;
-  },
-  get columns() {
-    return props.columns;
-  },
-  getCoreRowModel: getCoreRowModel(),
-  getSortedRowModel: getSortedRowModel(),
-  getFilteredRowModel: getFilteredRowModel(), // Habilitar filtro
-  state: {
-    get sorting() {
-      return sorting.value;
-    },
-    get globalFilter() {
-      return globalFilter.value;
-    },
-  },
-  onSortingChange: (updaterOrValue) => {
-    sorting.value =
-      typeof updaterOrValue === "function"
-        ? updaterOrValue(sorting.value)
-        : updaterOrValue;
-  },
-  onGlobalFilterChange: (updaterOrValue) => {
-    globalFilter.value =
-      typeof updaterOrValue === "function"
-        ? updaterOrValue(globalFilter.value)
-        : updaterOrValue;
-  },
-  // Configuração para busca global (se searchKey não for especificado, busca em todas as colunas)
-  // Se props.searchKey for fornecido, podemos configurar o filtro para uma coluna específica
-  // globalFilterFn: // Pode ser customizado se necessário
-});
+// Breakpoint alinhado ao "lg" do Tailwind (1024px): abaixo disso exibimos
+// os cards otimizados para toque em vez da tabela.
+const { width } = useWindowSize();
+const isMobile = computed(() => width.value < 1024);
+
+function matchesSearch(item: TData, term: string): boolean {
+  if (!term) return true;
+  const normalizedTerm = term.toLowerCase();
+
+  return Object.values(item as Record<string, unknown>).some((value) => {
+    if (value === null || value === undefined) return false;
+    if (value instanceof Date) {
+      return value.toLocaleDateString("pt-BR").includes(normalizedTerm);
+    }
+    if (Array.isArray(value)) {
+      return value.some((entry) => String(entry).toLowerCase().includes(normalizedTerm));
+    }
+    return String(value).toLowerCase().includes(normalizedTerm);
+  });
+}
+
+// Filtro compartilhado entre a tabela (desktop) e os cards (mobile), para
+// que ambas as visualizações mostrem sempre o mesmo resultado de busca.
+const filteredData = computed(() => props.data.filter((item) => matchesSearch(item, search.value)));
+
+// A visualização em cards é usada apenas com o formato de Transaction
+// definido em columns.ts (único consumidor deste componente).
+const mobileTransactions = computed(() => filteredData.value as unknown as Transaction[]);
 </script>
 
 <template>
@@ -60,53 +48,33 @@ const table = useVueTable({
       <label for="search-transactions" class="sr-only">Buscar transações</label>
       <Input
         id="search-transactions"
+        v-model="search"
         class="max-w-sm"
         placeholder="Buscar transações..."
-        :model-value="globalFilter"
-        @update:model-value="table.setGlobalFilter($event)"
       />
     </div>
-    <!-- Tabela -->
-    <div class="border rounded-md">
-      <Table>
-        <caption class="sr-only">
-          Tabela de Transações
-        </caption>
-        <TableHeader>
-          <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-            <TableHead v-for="header in headerGroup.headers" :key="header.id" scope="col">
-              <FlexRender
-                v-if="!header.isPlaceholder"
-                :render="header.column.columnDef.header"
-                :props="header.getContext()"
-              />
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <template v-if="table.getRowModel().rows?.length">
-            <TableRow
-              v-for="row in table.getRowModel().rows"
-              :key="row.id"
-              :data-state="row.getIsSelected() && 'selected'"
-            >
-              <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
-                <FlexRender
-                  :render="cell.column.columnDef.cell"
-                  :props="cell.getContext()"
-                />
-              </TableCell>
-            </TableRow>
-          </template>
-          <template v-else>
-            <TableRow>
-              <TableCell :colspan="columns.length" class="h-24 text-center">
-                Nenhum resultado encontrado.
-              </TableCell>
-            </TableRow>
-          </template>
-        </TableBody>
-      </Table>
+
+    <!-- Tabela (desktop) -->
+    <TransactionsTable
+      v-if="!isMobile"
+      :columns="columns"
+      :data="filteredData"
+    />
+
+    <!-- Cards (mobile) -->
+    <div
+      v-else
+      role="list"
+      aria-label="Lista de transações"
+    >
+      <TransactionCard
+        v-for="transaction in mobileTransactions"
+        :key="transaction.id"
+        :transaction="transaction"
+      />
+      <p v-if="!mobileTransactions.length" role="status" class="py-8 text-sm text-center text-muted-foreground">
+        Nenhuma transação encontrada.
+      </p>
     </div>
   </div>
 </template>
