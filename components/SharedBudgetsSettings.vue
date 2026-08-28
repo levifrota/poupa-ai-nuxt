@@ -171,7 +171,12 @@ const sharedBudgets = computed(() => sharedBudgetsStore.sharedBudgets);
 
     <div v-if="fetchError" role="alert" class="text-red-500 mb-2">{{ fetchError }}</div>
 
-    <div v-if="isLoading" class="flex items-center gap-2" role="status" aria-live="polite">
+    <div
+      v-if="isLoading"
+      class="flex items-center gap-2"
+      role="status"
+      aria-live="polite"
+    >
       <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary" />
       <span>Carregando orçamentos compartilhados...</span>
     </div>
@@ -268,7 +273,11 @@ const sharedBudgets = computed(() => sharedBudgetsStore.sharedBudgets);
               {{ invitingBudgetId === budget.id ? "Enviando..." : "Convidar" }}
             </Button>
           </div>
-          <p v-if="inviteErrorByBudgetId[budget.id]" role="alert" class="text-sm text-red-500 mt-1">
+          <p
+            v-if="inviteErrorByBudgetId[budget.id]"
+            role="alert"
+            class="text-sm text-red-500 mt-1"
+          >
             {{ inviteErrorByBudgetId[budget.id] }}
           </p>
         </div>
@@ -288,9 +297,13 @@ const sharedBudgets = computed(() => sharedBudgetsStore.sharedBudgets);
                 <MoneyInput
                   :id="`shared-budget-${budget.id}-${option.value}`"
                   class="w-40"
-                  :model-value="sharedBudgetsStore.getCategoryBudgetsFor(budget.id)[option.value] ?? 0"
+                  :model-value="
+                    sharedBudgetsStore.getCategoryBudgetsFor(budget.id)[option.value] ?? 0
+                  "
                   :aria-label="`Limite mensal para ${option.label} em ${budget.name}`"
-                  @update:model-value="(value) => handleCategoryBudgetChange(budget.id, option.value, value)"
+                  @update:model-value="
+                    (value) => handleCategoryBudgetChange(budget.id, option.value, value)
+                  "
                 />
                 <span
                   v-if="savingCategoryKey === `${budget.id}:${option.value}`"
