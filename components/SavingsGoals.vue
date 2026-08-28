@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useCurrentUser } from "vuefire";
 import { Button } from "~/components/ui/button/index.js";
 import { ScrollArea } from "~/components/ui/scroll-area/index.js";
 import UpsertSavingsGoalDialog from "~/components/UpsertSavingsGoalDialog.vue";
 import { useSavingsGoalsStore } from "~/stores/savingsGoals.js";
 import { getSavingsGoals, deleteSavingsGoal } from "~/service/savingsGoalService.js";
+import { isSavingsGoalNearingDeadline } from "~/lib/thresholdAlerts";
 
 const user = useCurrentUser();
 const savingsGoalsStore = useSavingsGoalsStore();
@@ -61,6 +62,7 @@ const goals = computed(() => {
       (goal.deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
     );
     const isOverdue = !isCompleted && daysRemaining < 0;
+    const isNearingDeadline = isSavingsGoalNearingDeadline(goal.deadline, isCompleted);
 
     return {
       ...goal,
@@ -68,6 +70,7 @@ const goals = computed(() => {
       isCompleted,
       daysRemaining,
       isOverdue,
+      isNearingDeadline,
     };
   });
 });
@@ -84,6 +87,32 @@ const formatCurrency = (value: number): string => {
 const formatDate = (date: Date): string => {
   return date.toLocaleDateString("pt-BR");
 };
+
+const notifiedGoals = new Set<string>();
+
+async function notifyGoalDeadlines() {
+  if (typeof window === "undefined" || !("Notification" in window)) return;
+
+  const goalsToNotify = goals.value.filter(
+    (goal) => goal.isNearingDeadline && !notifiedGoals.has(goal.id)
+  );
+  if (goalsToNotify.length === 0) return;
+
+  let permission = Notification.permission;
+  if (permission === "default") {
+    permission = await Notification.requestPermission();
+  }
+  if (permission !== "granted") return;
+
+  goalsToNotify.forEach((goal) => {
+    notifiedGoals.add(goal.id);
+    new Notification("Meta de economia", {
+      body: `O prazo da meta "${goal.name}" está se aproximando (${formatDate(goal.deadline)}) e você atingiu ${goal.percentage}% do valor.`,
+    });
+  });
+}
+
+watch(goals, notifyGoalDeadlines, { deep: true });
 </script>
 
 <template>
@@ -122,7 +151,9 @@ const formatDate = (date: Date): string => {
           goal.targetAmount
         )} (${goal.percentage}%), prazo em ${formatDate(goal.deadline)}${
           goal.isCompleted ? ', meta concluída' : ''
-        }${goal.isOverdue ? ', prazo vencido' : ''}`"
+        }${goal.isOverdue ? ', prazo vencido' : ''}${
+          goal.isNearingDeadline ? ', prazo se aproximando' : ''
+        }`"
       >
         <div class="flex justify-between items-center">
           <span class="text-sm font-medium dark:text-white">{{ goal.name }}</span>
@@ -178,6 +209,12 @@ const formatDate = (date: Date): string => {
           role="alert"
         >
           Prazo vencido
+        </p>
+        <p
+          v-else-if="goal.isNearingDeadline"
+          class="text-xs text-amber-600 dark:text-amber-400 font-semibold"
+        >
+          Prazo se aproximando ({{ goal.daysRemaining }} dia(s) restante(s))
         </p>
       </div>
     </div>

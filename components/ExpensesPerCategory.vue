@@ -32,8 +32,8 @@
         :aria-label="`${expense.category}: ${formatCurrency(expense.amount)} (${
           expense.percentage
         }%)${expense.budget ? `, orçamento de ${formatCurrency(expense.budget)}` : ''}${
-          expense.isOverBudget ? ', orçamento excedido' : ''
-        }`"
+          expense.alertLevel === 'exceeded' ? ', orçamento excedido' : ''
+        }${expense.alertLevel === 'warning' ? ', orçamento quase no limite' : ''}`"
       >
         <div class="flex justify-between items-center">
           <div class="flex items-center gap-2">
@@ -73,12 +73,17 @@
         <p
           v-if="expense.budget"
           class="text-xs"
-          :class="expense.isOverBudget ? 'text-red-600 dark:text-red-400 font-semibold' : 'text-gray-500 dark:text-gray-400'"
-          :role="expense.isOverBudget ? 'alert' : undefined"
+          :class="{
+            'text-red-600 dark:text-red-400 font-semibold': expense.alertLevel === 'exceeded',
+            'text-amber-600 dark:text-amber-400 font-semibold': expense.alertLevel === 'warning',
+            'text-gray-500 dark:text-gray-400': expense.alertLevel === 'ok',
+          }"
+          :role="expense.alertLevel === 'exceeded' ? 'alert' : undefined"
         >
           {{ formatCurrency(expense.amount) }} de {{ formatCurrency(expense.budget) }} do
           orçamento mensal ({{ expense.budgetPercentage }}%)
-          <span v-if="expense.isOverBudget"> — orçamento excedido</span>
+          <span v-if="expense.alertLevel === 'exceeded'"> — orçamento excedido</span>
+          <span v-else-if="expense.alertLevel === 'warning'"> — perto do limite</span>
         </p>
       </div>
     </div>
@@ -86,12 +91,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted } from "vue";
+import { computed, onMounted, watch } from "vue";
 import { useCurrentUser } from "vuefire";
 import { useTransactionsStore } from "@/stores/transactions.js";
 import { useBudgetsStore } from "@/stores/budgets.js";
 import { getBudgets } from "@/service/budgetService.js";
 import { storeToRefs } from "pinia";
+import { getBudgetAlertLevel } from "~/lib/thresholdAlerts";
 
 const transactionsStore = useTransactionsStore();
 const budgetsStore = useBudgetsStore();
@@ -108,6 +114,33 @@ onMounted(async () => {
     console.error("Erro ao carregar orçamentos:", error);
   }
 });
+
+const notifiedCategories = new Set<string>();
+
+async function notifyBudgetAlerts() {
+  if (typeof window === "undefined" || !("Notification" in window)) return;
+
+  const categoriesToNotify = expenses.value.filter(
+    (expense) => expense.alertLevel !== "ok" && !notifiedCategories.has(expense.category)
+  );
+  if (categoriesToNotify.length === 0) return;
+
+  let permission = Notification.permission;
+  if (permission === "default") {
+    permission = await Notification.requestPermission();
+  }
+  if (permission !== "granted") return;
+
+  categoriesToNotify.forEach((expense) => {
+    notifiedCategories.add(expense.category);
+    new Notification("Orçamento", {
+      body:
+        expense.alertLevel === "exceeded"
+          ? `Você já excedeu o orçamento de ${expense.category} (${formatCurrency(expense.amount)} de ${formatCurrency(expense.budget!)}).`
+          : `Você está perto do limite de orçamento de ${expense.category} (${expense.budgetPercentage}% usado).`,
+    });
+  });
+}
 
 // Mapeamento de categorias em inglês para português
 const categoryTranslations = {
@@ -216,7 +249,7 @@ const expenses = computed(() => {
           ] || "#C9CBCF",
         budget,
         budgetPercentage,
-        isOverBudget: !!budget && item.totalAmount > budget,
+        alertLevel: budget ? getBudgetAlertLevel(item.totalAmount, budget) : "ok",
       };
     }
   );
@@ -230,4 +263,6 @@ const formatCurrency = (value: number): string => {
     currency: "BRL",
   }).format(value);
 };
+
+watch(expenses, notifyBudgetAlerts, { deep: true });
 </script>

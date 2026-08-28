@@ -62,7 +62,7 @@ implemented and committed individually on the `feat/adding-new-features` branch.
 - ✅ True silent reading of other apps' notifications is not possible for a web/PWA app (no browser API grants access to the OS notification tray). Implemented the closest standards-compliant equivalent instead: the **Web Share Target API**. The user taps "Share" on a bank/card notification on their phone and selects Poupa.ai; the shared text is parsed and pre-fills a new transaction for the user to review and confirm (never auto-saved) — [nuxt.config.ts](nuxt.config.ts), [lib/parseNotificationTransaction.ts](lib/parseNotificationTransaction.ts), [lib/parseVoiceTransaction.ts](lib/parseVoiceTransaction.ts), [pages/shared-transaction/index.vue](pages/shared-transaction/index.vue)
 
 ## 14. Notify users when they are about to exceed their budget or savings goal
-- ⬜ Notify users when they are about to exceed their budget or savings goal (e.g. via push notifications, email, or in-app alerts)
+- ✅ Category budgets now show a "warning" (amber) state once spending reaches 80% of the monthly limit, in addition to the existing "exceeded" (red) state, with matching in-app browser notifications fired once per category per session. Savings goals show a "nearing deadline" (amber) state once the deadline is within 7 days (and not yet completed), also with a matching browser notification — [lib/thresholdAlerts.ts](lib/thresholdAlerts.ts), [components/ExpensesPerCategory.vue](components/ExpensesPerCategory.vue), [components/SavingsGoals.vue](components/SavingsGoals.vue)
 
 ## 15. Implement other currencies
 - ⬜ Implement other currencies (e.g. USD, EUR, GBP, etc.) with exchange rates and currency conversion.
