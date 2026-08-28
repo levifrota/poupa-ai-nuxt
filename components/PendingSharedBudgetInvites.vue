@@ -15,15 +15,19 @@ const sharedBudgetsStore = useSharedBudgetsStore();
 
 const isLoading = ref(false);
 const processingInviteId = ref<string | null>(null);
+const error = ref<string | null>(null);
 
 async function fetchPendingInvites() {
   if (!user.value?.email) return;
   try {
     isLoading.value = true;
+    error.value = null;
     const invites = await getPendingInvitesForEmail(user.value.email);
     sharedBudgetsStore.setPendingInvites(invites);
-  } catch (error) {
-    console.error("Erro ao carregar convites pendentes:", error);
+  } catch (err) {
+    console.error("Erro ao carregar convites pendentes:", err);
+    error.value =
+      err instanceof Error ? err.message : "Erro ao carregar convites pendentes.";
   } finally {
     isLoading.value = false;
   }
@@ -66,10 +70,12 @@ async function handleDecline(sharedBudgetId: string, inviteId: string) {
 
 <template>
   <div
-    v-if="isLoading || sharedBudgetsStore.pendingInvites.length > 0"
+    v-if="isLoading || error || sharedBudgetsStore.pendingInvites.length > 0"
     class="bg-card rounded-lg p-6 shadow-sm mb-6"
   >
     <h2 class="text-xl font-semibold mb-4">Convites Pendentes</h2>
+
+    <div v-if="error" role="alert" class="text-red-500 mb-2">{{ error }}</div>
 
     <div
       v-if="isLoading"

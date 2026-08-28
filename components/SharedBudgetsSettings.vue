@@ -29,11 +29,13 @@ const invitingBudgetId = ref<string | null>(null);
 const inviteEmailByBudgetId = ref<Record<string, string>>({});
 const inviteErrorByBudgetId = ref<Record<string, string>>({});
 const savingCategoryKey = ref<string | null>(null);
+const fetchError = ref<string | null>(null);
 
 async function fetchSharedBudgets() {
   if (!user.value?.uid) return;
   try {
     isLoading.value = true;
+    fetchError.value = null;
     const budgets = await getSharedBudgetsForUser(user.value.uid);
     sharedBudgetsStore.setSharedBudgets(budgets);
 
@@ -45,6 +47,8 @@ async function fetchSharedBudgets() {
     );
   } catch (error) {
     console.error("Erro ao carregar orçamentos compartilhados:", error);
+    fetchError.value =
+      error instanceof Error ? error.message : "Erro ao carregar orçamentos compartilhados.";
   } finally {
     isLoading.value = false;
   }
@@ -164,6 +168,8 @@ const sharedBudgets = computed(() => sharedBudgetsStore.sharedBudgets);
     <p class="text-sm text-muted-foreground mb-4">
       Convide outras pessoas por e-mail para acompanhar limites de gastos em conjunto.
     </p>
+
+    <div v-if="fetchError" role="alert" class="text-red-500 mb-2">{{ fetchError }}</div>
 
     <div v-if="isLoading" class="flex items-center gap-2" role="status" aria-live="polite">
       <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary" />
