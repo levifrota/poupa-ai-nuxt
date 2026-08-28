@@ -18,3 +18,69 @@ jobs:
         run: npm run build
       - name: Run lint
         run: npx eslint .
+
+  vercel-preview:
+    runs-on: ubuntu-latest
+    needs: build
+    # Vercel's GitHub integration already builds/deploys this push on its own;
+    # this job does NOT trigger a second deployment. It just polls the Vercel
+    # API for the deployment matching this commit and surfaces the preview
+    # URL/status directly in the Actions run summary, so you don't have to
+    # leave GitHub to see it.
+    #
+    # Requires these repo secrets (Settings > Secrets and variables > Actions):
+    #   VERCEL_TOKEN      - Vercel account token (vercel.com/account/tokens)
+    #   VERCEL_PROJECT_ID - found in Vercel project Settings > General
+    steps:
+      - name: Wait for Vercel preview deployment
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${VERCEL_TOKEN:-}" ] || [ -z "${VERCEL_PROJECT_ID:-}" ]; then
+            echo "::warning::VERCEL_TOKEN and/or VERCEL_PROJECT_ID secrets are not set. Skipping preview lookup."
+            exit 0
+          fi
+
+          echo "Looking up Vercel deployment for commit $COMMIT_SHA..."
+
+          deployment=""
+          for i in $(seq 1 30); do
+            response=$(curl -s -H "Authorization: Bearer $VERCEL_TOKEN" \
+              "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&limit=10&sha=$COMMIT_SHA")
+
+            deployment=$(echo "$response" | jq -c '.deployments[0] // empty')
+
+            if [ -n "$deployment" ]; then
+              state=$(echo "$deployment" | jq -r '.readyState // .state // "UNKNOWN"')
+              url=$(echo "$deployment" | jq -r '.url')
+
+              echo "Deployment state: $state"
+
+              if [ "$state" = "READY" ] || [ "$state" = "ERROR" ] || [ "$state" = "CANCELED" ]; then
+                break
+              fi
+            else
+              echo "No deployment found yet for this commit (attempt $i/30)..."
+            fi
+
+            sleep 10
+          done
+
+          {
+            echo "### Vercel Preview Deployment"
+            if [ -z "$deployment" ]; then
+              echo "No Vercel deployment was found for commit \`$COMMIT_SHA\` after waiting."
+            else
+              echo "- **Status:** $state"
+              echo "- **Preview URL:** https://$url"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$state" = "ERROR" ]; then
+            echo "::error::Vercel deployment failed."
+            exit 1
+          fi
