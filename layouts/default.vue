@@ -3,13 +3,13 @@
     <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
     <template v-if="!isAuthPage">
       <NavbarComponent />
-      <main id="main-content" tabindex="-1" class="flex-grow p-4">
+      <main id="main-content" tabindex="-1" class="flex-grow p-4 max-[350px]:p-0">
         <slot />
       </main>
       <FooterComponent />
     </template>
     <template v-else>
-      <main id="main-content" tabindex="-1" class="flex-grow px-4">
+      <main id="main-content" tabindex="-1" class="flex-grow px-4 max-[350px]:p-0">
         <slot />
       </main>
     </template>

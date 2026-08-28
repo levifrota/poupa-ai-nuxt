@@ -71,7 +71,7 @@ const summaryList = computed(() => [
     >
       <template #action>
         <div
-          class="h[20%] sm:h-auto relative sm:absolute right-0 sm:right-4 flex items-center gap-2 justify-center"
+          class="h[20%] sm:h-auto relative sm:absolute right-0 sm:right-4 flex items-center gap-2 justify-center max-[375px]:block"
         >
           <VoiceTransactionButton />
           <UpsertTransactionDialog
@@ -80,7 +80,10 @@ const summaryList = computed(() => [
             @submit="handleSubmit"
           >
             <DialogTrigger as-child class="w-full">
-              <Button class="cursor-pointer" aria-label="Adicionar transação">
+              <Button
+                class="cursor-pointer max-[600px]:w-[85%]"
+                aria-label="Adicionar transação"
+              >
                 <span>Adicionar Transação</span>
                 <Icon name="lucide:plus" class="h-4 w-4" />
               </Button>
