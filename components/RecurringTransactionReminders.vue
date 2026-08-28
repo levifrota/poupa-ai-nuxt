@@ -51,12 +51,7 @@ const dueTransactions = computed(() => {
 
 const isLoading = computed(() => recurringTransactionsStore.isLoading);
 
-const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(value);
-};
+const { formatCurrency } = useFormatCurrency();
 
 const formatDate = (date: Date): string => {
   return date.toLocaleDateString("pt-BR");

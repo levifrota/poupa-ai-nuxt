@@ -123,6 +123,35 @@
       </div>
     </div>
 
+    <div class="bg-card rounded-lg p-6 shadow-sm mb-6">
+      <h2 class="text-xl font-semibold mb-4">Moeda</h2>
+
+      <div class="w-full max-w-xs">
+        <h3 id="currency-label" class="text-sm font-medium mb-3">Moeda de exibição</h3>
+        <Select
+          v-model="currencyStore.selectedCurrency"
+          @update:model-value="currencyStore.setCurrency"
+        >
+          <SelectTrigger class="w-full" aria-labelledby="currency-label">
+            <SelectValue placeholder="Selecione uma moeda" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem
+              v-for="option in CURRENCY_OPTIONS"
+              :key="option.value"
+              :value="option.value"
+            >
+              {{ option.label }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <p class="text-xs text-muted-foreground mt-2">
+        Os valores são convertidos automaticamente para a moeda selecionada usando taxas
+        de câmbio aproximadas; os dados continuam armazenados em reais (BRL).
+      </p>
+    </div>
+
     <BudgetSettings />
 
     <PendingSharedBudgetInvites />
@@ -154,6 +183,7 @@ import { Icon } from "#components";
 import BudgetSettings from "~/components/BudgetSettings.vue";
 import PendingSharedBudgetInvites from "~/components/PendingSharedBudgetInvites.vue";
 import SharedBudgetsSettings from "~/components/SharedBudgetsSettings.vue";
+import { CURRENCY_OPTIONS } from "~/constants/currencies";
 
 definePageMeta({
   middleware: "auth",
@@ -161,6 +191,7 @@ definePageMeta({
 
 const themeStore = useThemeStore();
 const fontStore = useFontStore();
+const currencyStore = useCurrencyStore();
 const onboardingStore = useOnboardingStore();
 const router = useRouter();
 

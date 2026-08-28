@@ -257,12 +257,7 @@ const expenses = computed(() => {
 
 const isLoading = computed(() => transactionsStore.isLoading);
 
-const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(value);
-};
+const { formatCurrency } = useFormatCurrency();
 
 watch(expenses, notifyBudgetAlerts, { deep: true });
 </script>

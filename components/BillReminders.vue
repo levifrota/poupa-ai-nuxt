@@ -15,12 +15,7 @@ const billsStore = useBillsStore();
 
 const processingId = ref<string | undefined>(undefined);
 
-const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(value);
-};
+const { formatCurrency } = useFormatCurrency();
 
 async function notifyDueBills(bills: Bill[]) {
   if (bills.length === 0) return;

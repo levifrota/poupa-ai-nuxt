@@ -30,12 +30,7 @@ type BillingCycle = "monthly" | "yearly";
 const billingCycle = ref<BillingCycle>("monthly");
 const isComingSoonDialogOpen = ref(false);
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(value);
-};
+const { formatCurrency } = useFormatCurrency();
 
 const premiumPlan = PLANS.find((plan) => plan.id === PlanId.PREMIUM);
 const yearlySavingsPercent = computed(() => {

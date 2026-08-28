@@ -1,8 +1,13 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { ref } from "vue";
+import { createPinia, setActivePinia } from "pinia";
 import { useMoney } from "~/composables/useMoney";
 
 describe("useMoney", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
   it("formats a positive amount as BRL currency", () => {
     const { formatted } = useMoney(ref(1234.56));
     expect(formatted.value).toBe("R$\u00A01.234,56");

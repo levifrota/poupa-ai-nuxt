@@ -33,12 +33,7 @@ const getAmountPrefix = (transaction: Transaction) => {
   return "";
 };
 
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(amount);
-};
+const { formatCurrency } = useFormatCurrency();
 </script>
 
 <template>

@@ -24,9 +24,10 @@ const formatDate = (dateInput: Date | string) => {
   });
 };
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-};
+function formatCurrency(value: number) {
+  const { formatCurrency: format } = useFormatCurrency();
+  return format(value);
+}
 
 export const columns: ColumnDef<Transaction>[] = [
   {
