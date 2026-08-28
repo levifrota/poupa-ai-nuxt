@@ -11,7 +11,7 @@ const EXPENSE_KEYWORDS = ["gastei", "paguei", "comprei", "gasto"];
 const DEPOSIT_KEYWORDS = ["recebi", "ganhei", "depositei", "entrou"];
 const INVESTMENT_KEYWORDS = ["investi", "apliquei", "aplicação"];
 
-const CATEGORY_KEYWORDS: Record<TransactionCategory, string[]> = {
+export const CATEGORY_KEYWORDS: Record<TransactionCategory, string[]> = {
   [TransactionCategory.FOOD]: [
     "mercado",
     "supermercado",
@@ -55,7 +55,7 @@ function detectType(normalized: string): TransactionType | undefined {
   return undefined;
 }
 
-function detectCategory(normalized: string): TransactionCategory | undefined {
+export function detectCategory(normalized: string): TransactionCategory | undefined {
   const entries = Object.entries(CATEGORY_KEYWORDS) as [TransactionCategory, string[]][];
   for (const [category, keywords] of entries) {
     if (keywords.some((keyword) => normalized.includes(keyword))) {
@@ -65,7 +65,7 @@ function detectCategory(normalized: string): TransactionCategory | undefined {
   return undefined;
 }
 
-function detectAmount(normalized: string): number | undefined {
+export function detectAmount(normalized: string): number | undefined {
   const match = normalized.match(/(\d+(?:[.,]\d{1,2})?)/);
   if (!match) {
     return undefined;

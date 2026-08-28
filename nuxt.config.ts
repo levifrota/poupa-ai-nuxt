@@ -124,6 +124,18 @@ export default defineNuxtConfig({
       start_url: "/",
       lang: "pt-BR",
       orientation: "portrait-primary",
+      // Permite que o usuário compartilhe uma notificação (ex: de banco ou
+      // cartão de crédito) diretamente para o app, que tenta interpretar o
+      // texto e pré-preencher uma nova transação para confirmação.
+      share_target: {
+        action: "/shared-transaction",
+        method: "GET",
+        params: {
+          title: "title",
+          text: "text",
+          url: "url",
+        },
+      },
       icons: [
         {
           src: "icons/icon144.png",

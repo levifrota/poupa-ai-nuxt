@@ -59,7 +59,7 @@ implemented and committed individually on the `feat/adding-new-features` branch.
 - ✅ Invite other users to a shared budget with permissions (owner-managed members, per-category monthly limits, email-based pending invites) — [service/sharedBudgetService.ts](service/sharedBudgetService.ts), [stores/sharedBudgets.ts](stores/sharedBudgets.ts), [components/UpsertSharedBudgetDialog.vue](components/UpsertSharedBudgetDialog.vue), [components/PendingSharedBudgetInvites.vue](components/PendingSharedBudgetInvites.vue), [components/SharedBudgetsSettings.vue](components/SharedBudgetsSettings.vue), [pages/settings/index.vue](pages/settings/index.vue)
 
 ## 13. Read transactions notifications on smartphone mode
-- ⬜ Track transactions by reading notifications and adding them automatically to the app (e.g. bank notifications, credit card notifications, etc.)
+- ✅ True silent reading of other apps' notifications is not possible for a web/PWA app (no browser API grants access to the OS notification tray). Implemented the closest standards-compliant equivalent instead: the **Web Share Target API**. The user taps "Share" on a bank/card notification on their phone and selects Poupa.ai; the shared text is parsed and pre-fills a new transaction for the user to review and confirm (never auto-saved) — [nuxt.config.ts](nuxt.config.ts), [lib/parseNotificationTransaction.ts](lib/parseNotificationTransaction.ts), [lib/parseVoiceTransaction.ts](lib/parseVoiceTransaction.ts), [pages/shared-transaction/index.vue](pages/shared-transaction/index.vue)
 
 ## 14. Notify users when they are about to exceed their budget or savings goal
 - ⬜ Notify users when they are about to exceed their budget or savings goal (e.g. via push notifications, email, or in-app alerts)
