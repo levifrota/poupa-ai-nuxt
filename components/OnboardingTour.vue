@@ -55,9 +55,11 @@
     <!-- Card de instrução -->
     <div
       v-if="currentStepConfig"
+      ref="cardRef"
       class="absolute bg-card border rounded-lg shadow-2xl p-4 sm:p-6 max-w-[90vw] sm:max-w-md z-10 transition-all duration-300"
       :style="cardStyle"
       role="document"
+      tabindex="-1"
     >
       <div class="space-y-3 sm:space-y-4">
         <!-- Header -->
@@ -252,9 +254,9 @@ const steps: OnboardingStep[] = [
     targetSelector: "body",
     position: "top",
     tips: [
-      "Este tour levará apenas 2 minutos",
       "Você pode pular ou pausar a qualquer momento",
       "Pode refazer o tour nas configurações",
+      "Use as setas do teclado ou Tab para navegar pelos passos",
     ],
   },
   {
@@ -266,8 +268,63 @@ const steps: OnboardingStep[] = [
     position: "right",
     tips: [
       "Registre receitas, despesas e investimentos",
-      "Categorize suas transações",
-      "Escolha o método de pagamento",
+      "Categorize suas transações e adicione tags livres (ex: 'viagem-2026')",
+      "Marque como recorrente ou como conta a pagar, se necessário",
+    ],
+  },
+  {
+    title: "Adicionar por Voz",
+    description:
+      "Registre uma transação apenas falando, sem precisar preencher formulários.",
+    icon: "lucide:mic",
+    route: "/",
+    targetSelector: '[aria-label="Adicionar transação por voz"]',
+    position: "right",
+    tips: [
+      "Diga algo como \"gastei 50 reais em mercado\"",
+      "Revise e confirme antes de salvar",
+      "Recurso de acessibilidade para quem prefere ou precisa usar a voz",
+    ],
+  },
+  {
+    title: "Transações Recorrentes",
+    description:
+      "Marque transações como semanais, mensais ou anuais e confirme as próximas ocorrências por aqui.",
+    icon: "lucide:repeat",
+    route: "/",
+    targetSelector: '[aria-label="Transações recorrentes pendentes"]',
+    position: "bottom",
+    tips: [
+      "Aparece somente quando há ocorrências pendentes de confirmação",
+      "Confirme ou pule cada ocorrência",
+      "Economize tempo com lançamentos que se repetem",
+    ],
+  },
+  {
+    title: "Contas a Pagar",
+    description: "Acompanhe lembretes de contas com vencimento próximo.",
+    icon: "lucide:calendar-clock",
+    route: "/",
+    targetSelector: '[aria-label="Contas a pagar próximas do vencimento"]',
+    position: "bottom",
+    tips: [
+      "Aparece somente quando há contas próximas do vencimento",
+      "Marque como paga diretamente pelo lembrete",
+      "Você também recebe uma notificação do navegador",
+    ],
+  },
+  {
+    title: "Contas e Carteiras",
+    description:
+      "Organize suas finanças em múltiplas contas: conta corrente, cartão de crédito, dinheiro, etc.",
+    icon: "lucide:wallet",
+    route: "/",
+    targetSelector: '[aria-label="Saldo por conta"]',
+    position: "right",
+    tips: [
+      "Veja o saldo individual de cada conta",
+      "Associe transações a uma conta específica",
+      "Some tudo no saldo global do resumo financeiro",
     ],
   },
   {
@@ -281,6 +338,34 @@ const steps: OnboardingStep[] = [
       "Veja seu saldo atual",
       "Acompanhe receitas e despesas",
       "Monitore seus investimentos",
+      "Exiba os valores na moeda de sua preferência (configurável em Configurações)",
+    ],
+  },
+  {
+    title: "Metas de Economia",
+    description: "Crie metas com valor alvo e prazo, e acompanhe o progresso.",
+    icon: "lucide:piggy-bank",
+    route: "/",
+    targetSelector: '[aria-label="Metas de economia"]',
+    position: "left",
+    tips: [
+      "Defina um valor alvo e um prazo",
+      "Acompanhe o progresso com uma barra visual",
+      "Receba um aviso quando o prazo estiver se aproximando",
+    ],
+  },
+  {
+    title: "Orçamentos por Categoria",
+    description:
+      "Veja seus gastos por categoria e o quanto ainda resta do limite mensal definido.",
+    icon: "lucide:bar-chart-3",
+    route: "/",
+    targetSelector: '[aria-label="Gastos e orçamentos por categoria"]',
+    position: "left",
+    tips: [
+      "Defina os limites mensais em Configurações",
+      "Alerta visual quando o gasto se aproxima do limite",
+      "Alerta quando o limite é ultrapassado",
     ],
   },
   {
@@ -297,6 +382,19 @@ const steps: OnboardingStep[] = [
     ],
   },
   {
+    title: "Chat com IA",
+    description: "Converse com a IA e faça perguntas sobre suas próprias finanças.",
+    icon: "lucide:message-circle",
+    route: "/",
+    targetSelector: '[aria-label="Abrir chat com IA sobre suas finanças"]',
+    position: "right",
+    tips: [
+      "Pergunte, por exemplo, \"quanto gastei com mercado este mês?\"",
+      "As respostas usam o histórico das suas transações",
+      "Complementa o relatório de IA com perguntas livres",
+    ],
+  },
+  {
     title: "Lista de Transações",
     description: "Acesse todas as suas transações com filtros e busca.",
     icon: "lucide:arrow-left-right",
@@ -307,6 +405,21 @@ const steps: OnboardingStep[] = [
       "Busque transações específicas",
       "Edite ou exclua registros",
       "Ordene por data, valor ou tipo",
+      "Filtre também por tags",
+    ],
+  },
+  {
+    title: "Exportar para CSV",
+    description:
+      "Exporte as transações do período selecionado para uma planilha (CSV).",
+    icon: "lucide:download",
+    route: "/transactions",
+    targetSelector: '[aria-label="Exportar transações para CSV"]',
+    position: "bottom",
+    tips: [
+      "Útil para levar seus dados a uma planilha ou contador",
+      "Respeita o período de datas selecionado",
+      "Fica desabilitado quando não há transações para exportar",
     ],
   },
   {
@@ -320,21 +433,49 @@ const steps: OnboardingStep[] = [
     tips: [
       "Análise inteligente das suas finanças",
       "Dicas personalizadas de economia",
-      "Exporte em PDF",
+      "Exporte em PDF ou ouça o relatório em voz alta",
     ],
   },
   {
     title: "Configurações",
-    description: "Personalize temas e fontes para melhor acessibilidade.",
+    description:
+      "Personalize temas, fontes, moeda de exibição e gerencie orçamentos compartilhados.",
     icon: "lucide:settings",
     route: "/settings",
     targetSelector: '[aria-label="Navegar para Configurações"]',
     position: "top",
     tips: [
-      "Temas para daltonismo",
-      "Ajuste de tamanho de fonte",
-      "Fonte para dislexia",
-      "Modo alto contraste",
+      "Temas para daltonismo e alto contraste",
+      "Ajuste de tamanho de fonte e fonte para dislexia",
+      "Moeda de exibição e orçamentos compartilhados",
+    ],
+  },
+  {
+    title: "Moeda de Exibição",
+    description:
+      "Escolha em qual moeda os valores devem ser exibidos em todo o aplicativo.",
+    icon: "lucide:coins",
+    route: "/settings",
+    targetSelector: "#currency-label",
+    position: "bottom",
+    tips: [
+      "Disponível em real, dólar, euro e libra",
+      "Os valores são convertidos automaticamente com taxas de câmbio",
+      "Os dados continuam armazenados em reais (BRL)",
+    ],
+  },
+  {
+    title: "Orçamentos Compartilhados",
+    description:
+      "Convide outras pessoas por e-mail para acompanhar um orçamento em conjunto.",
+    icon: "lucide:users",
+    route: "/settings",
+    targetSelector: '[aria-label="Orçamentos compartilhados"]',
+    position: "top",
+    tips: [
+      "Defina limites mensais por categoria para o orçamento compartilhado",
+      "Convites são enviados por e-mail e aceitos pelo convidado",
+      "Aparece somente depois de criar ou aceitar um orçamento compartilhado",
     ],
   },
   {
@@ -359,6 +500,8 @@ const spotlightStyle = ref({});
 const cardStyle = ref({});
 const isMobile = ref(false);
 const showSkipDialog = ref(false);
+const cardRef = ref<HTMLElement | null>(null);
+let previouslyFocusedElement: HTMLElement | null = null;
 
 // Detectar se é mobile
 const checkIsMobile = () => {
@@ -694,11 +837,44 @@ const confirmSkip = () => {
   router.push("/");
 };
 
-// Suporte para navegação por teclado (ESC para fechar)
-const handleKeyDown = (event: KeyboardEvent) => {
-  if (event.key === "Escape" && onboardingStore.isOnboardingActive) {
-    handleSkip();
+// Retorna os elementos focáveis visíveis dentro de um container
+const getFocusableElements = (container: HTMLElement): HTMLElement[] => {
+  return Array.from(
+    container.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+    )
+  ).filter((el) => el.offsetParent !== null);
+};
+
+// Aprisiona o foco (Tab/Shift+Tab) dentro do card do tour enquanto ele está ativo
+const trapFocus = (event: KeyboardEvent) => {
+  if (event.key !== "Tab" || !cardRef.value || showSkipDialog.value) return;
+
+  const focusable = getFocusableElements(cardRef.value);
+  if (focusable.length === 0) return;
+
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
   }
+};
+
+// Suporte para navegação por teclado (ESC para fechar, Tab para aprisionar o foco)
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (!onboardingStore.isOnboardingActive) return;
+
+  if (event.key === "Escape") {
+    handleSkip();
+    return;
+  }
+
+  trapFocus(event);
 };
 
 // Adicionar listener de teclado
@@ -713,6 +889,22 @@ onUnmounted(() => {
   window.removeEventListener("keydown", handleKeyDown);
 });
 
+// Mover o foco para o card ao abrir o tour, e devolvê-lo ao elemento
+// previamente focado (ex.: botão "Refazer tour") ao fechar/concluir.
+watch(
+  () => onboardingStore.isOnboardingActive,
+  async (isActive: boolean) => {
+    if (isActive) {
+      previouslyFocusedElement = document.activeElement as HTMLElement | null;
+      await nextTick();
+      cardRef.value?.focus();
+    } else if (previouslyFocusedElement) {
+      previouslyFocusedElement.focus();
+      previouslyFocusedElement = null;
+    }
+  }
+);
+
 // Atualizar posição do spotlight e card quando mudar de passo
 watch(
   () => onboardingStore.currentStep,
@@ -722,6 +914,10 @@ watch(
     // Aguardar um pouco mais para garantir que a página renderizou
     await new Promise((resolve) => setTimeout(resolve, 100));
     await updatePositions();
+    // Manter o foco no card entre passos, sem interromper o uso do teclado
+    if (onboardingStore.isOnboardingActive && document.activeElement === document.body) {
+      cardRef.value?.focus();
+    }
   },
   { immediate: true }
 );

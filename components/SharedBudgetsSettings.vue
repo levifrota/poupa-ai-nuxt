@@ -160,7 +160,11 @@ const sharedBudgets = computed(() => sharedBudgetsStore.sharedBudgets);
 </script>
 
 <template>
-  <div class="bg-card rounded-lg p-6 shadow-sm mb-6">
+  <div
+    class="bg-card rounded-lg p-6 shadow-sm mb-6"
+    role="region"
+    aria-label="Orçamentos compartilhados"
+  >
     <div class="flex items-center justify-between mb-2">
       <h2 class="text-xl font-semibold">Orçamentos Compartilhados</h2>
       <Button size="sm" @click="isCreateDialogOpen = true">Novo Orçamento</Button>
@@ -190,7 +194,7 @@ const sharedBudgets = computed(() => sharedBudgetsStore.sharedBudgets);
       <p>Nenhum orçamento compartilhado ainda</p>
     </div>
 
-    <div v-else class="space-y-6" role="list" aria-label="Orçamentos compartilhados">
+    <div v-else class="space-y-6" role="list" aria-label="Lista de orçamentos compartilhados">
       <div
         v-for="budget in sharedBudgets"
         :key="budget.id"

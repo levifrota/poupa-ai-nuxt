@@ -23,7 +23,7 @@
       <p>Nenhuma despesa registrada</p>
     </div>
 
-    <div v-else class="space-y-4" role="list">
+    <div v-else class="space-y-4" role="list" aria-label="Gastos e orçamentos por categoria">
       <div
         v-for="expense in expenses"
         :key="expense.category"

@@ -136,7 +136,7 @@ watch(goals, notifyGoalDeadlines, { deep: true });
       <p>Nenhuma meta de economia criada</p>
     </div>
 
-    <div v-else class="space-y-4" role="list">
+    <div v-else class="space-y-4" role="list" aria-label="Metas de economia">
       <div
         v-for="goal in goals"
         :key="goal.id"
