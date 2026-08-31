@@ -12,6 +12,7 @@ export interface Transaction {
   amount: number;
   type: 'DEPOSIT' | 'EXPENSE' | 'INVESTMENT'; 
   paymentMethod: string;
+  tags?: string[];
 }
 
 const formatDate = (dateInput: Date | string) => {
@@ -23,9 +24,10 @@ const formatDate = (dateInput: Date | string) => {
   });
 };
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-};
+function formatCurrency(value: number) {
+  const { formatCurrency: format } = useFormatCurrency();
+  return format(value);
+}
 
 export const columns: ColumnDef<Transaction>[] = [
   {
@@ -74,6 +76,31 @@ export const columns: ColumnDef<Transaction>[] = [
       const paymentMethod = row.getValue('paymentMethod') as TransactionPaymentMethod;
       const label = TRANSACTION_PAYMENT_METHOD_LABELS[paymentMethod] || paymentMethod;
       return h('div', { class: 'text-sm text-muted-foreground' }, label);
+    },
+  },
+  {
+    accessorKey: 'tags',
+    header: () => h('div', {}, 'Tags'),
+    cell: ({ row }) => {
+      const tags = (row.getValue('tags') as string[] | undefined) ?? [];
+      if (tags.length === 0) {
+        return h('div', { class: 'text-sm text-muted-foreground' }, '—');
+      }
+      return h(
+        'div',
+        { class: 'flex flex-wrap gap-1', 'aria-label': `Tags: ${tags.join(', ')}` },
+        tags.map((tag) =>
+          h(
+            'span',
+            {
+              key: tag,
+              class:
+                'rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground',
+            },
+            tag
+          )
+        )
+      );
     },
   },
   {

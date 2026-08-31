@@ -23,7 +23,7 @@
       <p>Nenhuma despesa registrada</p>
     </div>
 
-    <div v-else class="space-y-4" role="list">
+    <div v-else class="space-y-4" role="list" aria-label="Gastos e orçamentos por categoria">
       <div
         v-for="expense in expenses"
         :key="expense.category"
@@ -31,7 +31,9 @@
         role="listitem"
         :aria-label="`${expense.category}: ${formatCurrency(expense.amount)} (${
           expense.percentage
-        }%)`"
+        }%)${expense.budget ? `, orçamento de ${formatCurrency(expense.budget)}` : ''}${
+          expense.alertLevel === 'exceeded' ? ', orçamento excedido' : ''
+        }${expense.alertLevel === 'warning' ? ', orçamento quase no limite' : ''}`"
       >
         <div class="flex justify-between items-center">
           <div class="flex items-center gap-2">
@@ -67,19 +69,78 @@
             :style="{ width: `${expense.percentage}%`, backgroundColor: expense.color }"
           />
         </div>
+
+        <p
+          v-if="expense.budget"
+          class="text-xs"
+          :class="{
+            'text-red-600 dark:text-red-400 font-semibold': expense.alertLevel === 'exceeded',
+            'text-amber-600 dark:text-amber-400 font-semibold': expense.alertLevel === 'warning',
+            'text-gray-500 dark:text-gray-400': expense.alertLevel === 'ok',
+          }"
+          :role="expense.alertLevel === 'exceeded' ? 'alert' : undefined"
+        >
+          {{ formatCurrency(expense.amount) }} de {{ formatCurrency(expense.budget) }} do
+          orçamento mensal ({{ expense.budgetPercentage }}%)
+          <span v-if="expense.alertLevel === 'exceeded'"> — orçamento excedido</span>
+          <span v-else-if="expense.alertLevel === 'warning'"> — perto do limite</span>
+        </p>
       </div>
     </div>
   </ScrollArea>
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, onMounted, watch } from "vue";
+import { useCurrentUser } from "vuefire";
 import { useTransactionsStore } from "@/stores/transactions.js";
+import { useBudgetsStore } from "@/stores/budgets.js";
+import { getBudgets } from "@/service/budgetService.js";
 import { storeToRefs } from "pinia";
+import { getBudgetAlertLevel } from "~/lib/thresholdAlerts";
 
 const transactionsStore = useTransactionsStore();
+const budgetsStore = useBudgetsStore();
 const themeStore = useThemeStore();
 const { theme } = storeToRefs(themeStore);
+const user = useCurrentUser();
+
+onMounted(async () => {
+  if (!user.value?.uid) return;
+  try {
+    const budgets = await getBudgets(user.value.uid);
+    budgetsStore.setBudgets(budgets);
+  } catch (error) {
+    console.error("Erro ao carregar orçamentos:", error);
+  }
+});
+
+const notifiedCategories = new Set<string>();
+
+async function notifyBudgetAlerts() {
+  if (typeof window === "undefined" || !("Notification" in window)) return;
+
+  const categoriesToNotify = expenses.value.filter(
+    (expense) => expense.alertLevel !== "ok" && !notifiedCategories.has(expense.category)
+  );
+  if (categoriesToNotify.length === 0) return;
+
+  let permission = Notification.permission;
+  if (permission === "default") {
+    permission = await Notification.requestPermission();
+  }
+  if (permission !== "granted") return;
+
+  categoriesToNotify.forEach((expense) => {
+    notifiedCategories.add(expense.category);
+    new Notification("Orçamento", {
+      body:
+        expense.alertLevel === "exceeded"
+          ? `Você já excedeu o orçamento de ${expense.category} (${formatCurrency(expense.amount)} de ${formatCurrency(expense.budget!)}).`
+          : `Você está perto do limite de orçamento de ${expense.category} (${expense.budgetPercentage}% usado).`,
+    });
+  });
+}
 
 // Mapeamento de categorias em inglês para português
 const categoryTranslations = {
@@ -172,26 +233,31 @@ const expenses = computed(() => {
   const expensesData = transactionsStore.totalExpensePerCategory || [];
 
   return expensesData.map(
-    (item: { category: string; totalAmount: number; percentageOfTotal: number }) => ({
-      category:
-        categoryTranslations[item.category as keyof typeof categoryTranslations] ||
-        item.category,
-      amount: item.totalAmount,
-      percentage: item.percentageOfTotal,
-      color:
-        currentColorPalette.value[
-          item.category as keyof typeof currentColorPalette.value
-        ] || "#C9CBCF",
-    })
+    (item: { category: string; totalAmount: number; percentageOfTotal: number }) => {
+      const budget = budgetsStore.getBudgetFor(item.category);
+      const budgetPercentage = budget ? Math.round((item.totalAmount / budget) * 100) : 0;
+
+      return {
+        category:
+          categoryTranslations[item.category as keyof typeof categoryTranslations] ||
+          item.category,
+        amount: item.totalAmount,
+        percentage: item.percentageOfTotal,
+        color:
+          currentColorPalette.value[
+            item.category as keyof typeof currentColorPalette.value
+          ] || "#C9CBCF",
+        budget,
+        budgetPercentage,
+        alertLevel: budget ? getBudgetAlertLevel(item.totalAmount, budget) : "ok",
+      };
+    }
   );
 });
 
 const isLoading = computed(() => transactionsStore.isLoading);
 
-const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(value);
-};
+const { formatCurrency } = useFormatCurrency();
+
+watch(expenses, notifyBudgetAlerts, { deep: true });
 </script>

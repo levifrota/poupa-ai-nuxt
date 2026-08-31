@@ -6,7 +6,7 @@ export default defineNuxtConfig({
     head: {
       title: "Poupa.ai",
       htmlAttrs: {
-        lang: "pt-br",
+        lang: "pt-BR",
       },
       meta: [{ name: "description", content: "Poupa.ai" }],
       link: [{ rel: "icon", type: "image/x-icon", href: "/icon.png" }],
@@ -25,6 +25,15 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ["~/app/assets/css/tailwind.css", "~/app/assets/css/fonts.css", "~/app/assets/css/icons.css"],
   runtimeConfig: {
+    // Server-only secrets (never exposed to the client bundle).
+    geminiApiKey: process.env.VITE_GEMINI_API_KEY,
+    telegramBotToken: process.env.NUXT_TELEGRAM_BOT_TOKEN || process.env.TELEGRAM_BOT_TOKEN,
+    telegramWebhookSecret:
+      process.env.NUXT_TELEGRAM_WEBHOOK_SECRET || process.env.TELEGRAM_WEBHOOK_SECRET,
+    firebaseAdminProjectId:
+      process.env.NUXT_FIREBASE_ADMIN_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID,
+    firebaseAdminClientEmail: process.env.NUXT_FIREBASE_ADMIN_CLIENT_EMAIL,
+    firebaseAdminPrivateKey: process.env.NUXT_FIREBASE_ADMIN_PRIVATE_KEY,
     public: {
       firebaseApiKey: process.env.VITE_FIREBASE_API_KEY,
       firebaseAuthDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -33,6 +42,7 @@ export default defineNuxtConfig({
       firebaseMessagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
       firebaseAppId: process.env.VITE_FIREBASE_APP_ID,
       firebaseMeasurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID,
+      telegramBotUsername: process.env.NUXT_PUBLIC_TELEGRAM_BOT_USERNAME,
     },
   },
  
@@ -72,7 +82,7 @@ export default defineNuxtConfig({
     strict: true,
     tsConfig: {
       compilerOptions: {
-        moduleResolution: 'nodenext',
+        moduleResolution: "bundler",
         esModuleInterop: true,
         skipLibCheck: true
       }
@@ -124,6 +134,18 @@ export default defineNuxtConfig({
       start_url: "/",
       lang: "pt-BR",
       orientation: "portrait-primary",
+      // Permite que o usuário compartilhe uma notificação (ex: de banco ou
+      // cartão de crédito) diretamente para o app, que tenta interpretar o
+      // texto e pré-preencher uma nova transação para confirmação.
+      share_target: {
+        action: "/shared-transaction",
+        method: "GET",
+        params: {
+          title: "title",
+          text: "text",
+          url: "url",
+        },
+      },
       icons: [
         {
           src: "icons/icon144.png",

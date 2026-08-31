@@ -3,8 +3,10 @@ import SummaryCard from "~/components/SummaryCard.vue";
 import { useTransactionsStore } from "@/stores/transactions";
 import { ref, computed } from "vue";
 import UpsertTransactionDialog from "~/components/UpsertTransactionDialog.vue";
+import VoiceTransactionButton from "~/components/VoiceTransactionButton.vue";
 import { Button } from "~/components/ui/button";
 import { DialogTrigger } from "~/components/ui/dialog";
+import { useMoney } from "~/composables/useMoney";
 
 // Usar a store de transações para obter os valores calculados
 const transactionsStore = useTransactionsStore();
@@ -20,17 +22,19 @@ function handleSubmit(data) {
 }
 
 // Formatar valores monetários
-const formatCurrency = (value) => {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(value);
-};
+const { formatCurrency } = useFormatCurrency();
+
+// Descrições por extenso para leitores de tela
+const balanceMoney = useMoney(computed(() => transactionsStore.balance));
+const depositsMoney = useMoney(computed(() => transactionsStore.depositsTotal));
+const investmentsMoney = useMoney(computed(() => transactionsStore.investmentsTotal));
+const expensesMoney = useMoney(computed(() => transactionsStore.expensesTotal));
 
 // Objeto para o card de saldo
 const balanceObj = computed(() => ({
   title: "Saldo",
   value: formatCurrency(transactionsStore.balance),
+  ariaValue: balanceMoney.ariaLabel.value,
   icon: "lucide:wallet",
 }));
 
@@ -39,16 +43,19 @@ const summaryList = computed(() => [
   {
     title: "Receita",
     value: formatCurrency(transactionsStore.depositsTotal),
+    ariaValue: depositsMoney.ariaLabel.value,
     icon: "lucide:piggy-bank",
   },
   {
     title: "Investido",
     value: formatCurrency(transactionsStore.investmentsTotal),
+    ariaValue: investmentsMoney.ariaLabel.value,
     icon: "lucide:trending-up",
   },
   {
     title: "Despesas",
     value: formatCurrency(transactionsStore.expensesTotal),
+    ariaValue: expensesMoney.ariaLabel.value,
     icon: "lucide:trending-down",
   },
 ]);
@@ -59,22 +66,30 @@ const summaryList = computed(() => [
     <SummaryCard
       :title="balanceObj.title"
       :value="balanceObj.value"
+      :aria-value="balanceObj.ariaValue"
       :icon="balanceObj.icon"
     >
       <template #action>
-        <UpsertTransactionDialog
-          :is-open="isUpsertTransactionDialogOpen"
-          class="h[20%] sm:h-auto relative sm:absolute right-0 sm:right-4 justify-center"
-          @update:is-open="isUpsertTransactionDialogOpen = $event"
-          @submit="handleSubmit"
+        <div
+          class="h[20%] sm:h-auto relative sm:absolute right-0 sm:right-4 flex items-center gap-2 justify-center max-[375px]:block"
         >
-          <DialogTrigger as-child class="w-full">
-            <Button class="cursor-pointer" aria-label="Adicionar transação">
-              <span>Adicionar Transação</span>
-              <Icon name="lucide:plus" class="h-4 w-4" />
-            </Button>
-          </DialogTrigger>
-        </UpsertTransactionDialog>
+          <VoiceTransactionButton />
+          <UpsertTransactionDialog
+            :is-open="isUpsertTransactionDialogOpen"
+            @update:is-open="isUpsertTransactionDialogOpen = $event"
+            @submit="handleSubmit"
+          >
+            <DialogTrigger as-child class="w-full">
+              <Button
+                class="cursor-pointer max-[600px]:w-[85%]"
+                aria-label="Adicionar transação"
+              >
+                <span>Adicionar Transação</span>
+                <Icon name="lucide:plus" class="h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+          </UpsertTransactionDialog>
+        </div>
       </template>
     </SummaryCard>
   </div>
@@ -87,6 +102,7 @@ const summaryList = computed(() => [
       :key="item.title"
       :title="item.title"
       :value="item.value"
+      :aria-value="item.ariaValue"
       :icon="item.icon"
     />
   </div>

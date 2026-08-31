@@ -1,8 +1,18 @@
 <script setup lang="ts">
+import type { ChartConfig } from "@/components/ui/chart";
+import type { Theme } from "@/composables/useThemeStore";
 import { useTransactionsStore } from "@/stores/transactions.js";
+import { Donut } from "@unovis/ts";
+import { VisDonut, VisSingleContainer } from "@unovis/vue";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
-import CustomLegend from "@/components/ui/chart-donut/CustomLegend.vue";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  componentToString,
+} from "@/components/ui/chart";
+import CustomLegend from "@/components/PieChartLegend.vue";
 
 // Store para obter os dados das transações
 const transactionsStore = useTransactionsStore();
@@ -14,21 +24,14 @@ const typeMapping = {
   DEPOSIT: "Receita",
   INVESTMENT: "Investido",
   EXPENSE: "Despesas",
-};
+} as const;
 
-// Transformar os dados para usar as legendas em português
-const chartData = computed(() => {
-  return Object.entries(transactionsStore.typesPercentage).map(([type, value]) => ({
-    type: typeMapping[type as keyof typeof typeMapping] || type,
-    value,
-    originalType: type,
-  }));
-});
+type TransactionType = keyof typeof typeMapping;
 
 const formatValue = (value: number): string => `${value}%`;
 
 // Paletas de cores para diferentes temas
-const colorPalettes = {
+const colorPalettes: Record<Theme, Record<TransactionType, string>> = {
   // Tema claro padrão
   light: {
     DEPOSIT: "#4CAF50", // Verde
@@ -74,60 +77,90 @@ const colorPalettes = {
 };
 
 // Função para obter a paleta de cores atual com base no tema
-const currentColorPalette = computed(() => {
-  if (theme.value === "deuteranopia") {
-    return colorPalettes.deuteranopia;
-  } else if (theme.value === "protanopia") {
-    return colorPalettes.protanopia;
-  } else if (theme.value === "tritanopia") {
-    return colorPalettes.tritanopia;
-  } else if (theme.value === "colorblind") {
-    return colorPalettes.colorblind;
-  } else if (theme.value === "high-contrast") {
-    return colorPalettes["high-contrast"];
-  } else {
-    return theme.value === "dark" ? colorPalettes.dark : colorPalettes.light;
-  }
+const currentColorPalette = computed(
+  () => colorPalettes[theme.value] ?? colorPalettes.light
+);
+
+// Configuração do gráfico no formato exigido pelo componente Chart do shadcn-vue,
+// já refletindo a paleta de cores do tema atual (incluindo os temas de acessibilidade
+// para daltonismo e alto contraste).
+const chartConfig = computed<ChartConfig>(() => {
+  const palette = currentColorPalette.value;
+  return {
+    DEPOSIT: { label: typeMapping.DEPOSIT, color: palette.DEPOSIT },
+    INVESTMENT: { label: typeMapping.INVESTMENT, color: palette.INVESTMENT },
+    EXPENSE: { label: typeMapping.EXPENSE, color: palette.EXPENSE },
+  };
 });
 
-// Cores dinâmicas baseadas no tema
-const colors = computed(() => {
-  return chartData.value.map(
-    (item) =>
-      currentColorPalette.value[
-        item.originalType as keyof typeof currentColorPalette.value
-      ] || "#C9CBCF"
-  );
+// Dados do gráfico: cada linha carrega a própria chave de categoria (ex.: "DEPOSIT")
+// com o valor já formatado, para que o tooltip do shadcn-vue consiga casar o dado
+// com a entrada correspondente em `chartConfig`.
+const chartData = computed(() => {
+  return Object.entries(transactionsStore.typesPercentage).map(([type, value]) => {
+    const originalType = type as TransactionType;
+    const rawValue = Number(value);
+    return {
+      originalType,
+      label: typeMapping[originalType] ?? type,
+      rawValue,
+      [originalType]: formatValue(rawValue),
+    };
+  });
 });
+
+type ChartRow = typeof chartData.value[number];
 
 const legendItems = computed(() =>
-  chartData.value.map((item, i) => ({
-    name: item.type,
-    color: colors.value[i],
-    value: formatValue(Number(item.value)),
+  chartData.value.map((item) => ({
+    name: item.label,
+    color: chartConfig.value[item.originalType]?.color ?? "#C9CBCF",
+    value: formatValue(item.rawValue),
     inactive: false,
   }))
 );
+
+// Resumo textual usado como alternativa não visual ao gráfico (WCAG 1.1.1).
+const chartSummary = computed(
+  () =>
+    `Gráfico de pizza da distribuição de transações: ${chartData.value
+      .map((item) => `${item.label} ${formatValue(item.rawValue)}`)
+      .join(", ")}`
+);
+
+const donutValue = (d: ChartRow) => d.rawValue;
+const donutColor = (d: ChartRow) => chartConfig.value[d.originalType]?.color ?? "#C9CBCF";
+
+const tooltipTriggers = computed(() => ({
+  [Donut.selectors.segment]: componentToString(chartConfig.value, ChartTooltipContent, {
+    hideLabel: true,
+    class: "gap-x-4 min-w-[10rem] px-3 py-2",
+  }) as (data: unknown, x: number | Date) => string,
+}));
 </script>
 
 <template>
-  <Card
-    class="flex min-w-[210px] flex-col p-3"
-    aria-label="Gráfico de pizza da distribuição de transações"
-  >
+  <Card class="flex min-w-[210px] flex-col p-3">
     <CardContent class="flex-1 overflow-hidden p-0 pb-0">
       <div class="flex flex-col items-center">
-        <DonutChart
-          :data="chartData"
-          index="type"
-          category="value"
-          radius="60"
-          :value-formatter="formatValue"
-          :show-legend="false"
-          :colors="colors"
-          type="donut"
-          aria-label="Gráfico de pizza mostrando a porcentagem de cada tipo de transação"
-        />
+        <figure :aria-label="chartSummary">
+          <ChartContainer
+            :config="chartConfig"
+            class="aspect-square w-[160px]"
+            aria-hidden="true"
+          >
+            <VisSingleContainer :data="chartData" :margin="{ top: 10, bottom: 10 }">
+              <VisDonut
+                :value="donutValue"
+                :color="donutColor"
+                :arc-width="20"
+                :radius="80"
+                :show-background="false"
+              />
+              <ChartTooltip :triggers="tooltipTriggers" />
+            </VisSingleContainer>
+          </ChartContainer>
+        </figure>
         <div class="mt-4">
           <CustomLegend :items="legendItems" />
         </div>

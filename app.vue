@@ -5,6 +5,11 @@ import { useCurrentUser } from "vuefire";
 useThemeStore();
 useFontStore();
 
+const currencyStore = useCurrencyStore();
+if (import.meta.client) {
+  currencyStore.loadRates();
+}
+
 const onboardingStore = useOnboardingStore();
 const user = useCurrentUser();
 

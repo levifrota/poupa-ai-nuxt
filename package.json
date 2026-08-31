@@ -7,11 +7,13 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^1.3.16",
     "@firebase/app-types": "^0.9.3",
+    "@lucide/vue": "^1.34.0",
     "@nuxt/content": "^3.4.0",
     "@nuxt/eslint": "^1.3.0",
     "@nuxt/fonts": "^0.11.1",
@@ -23,12 +25,12 @@
     "@tanstack/vue-table": "^8.21.3",
     "@types/jspdf": "^1.3.3",
     "@unhead/vue": "^2.0.5",
-    "@unovis/ts": "^1.6.1",
-    "@unovis/vue": "^1.6.1",
+    "@unovis/ts": "^1.6.7",
+    "@unovis/vue": "^1.6.7",
     "@vee-validate/zod": "^4.15.1",
     "@vite-pwa/nuxt": "^1.0.0",
-    "@vueuse/core": "^13.2.0",
-    "ai": "^4.3.9",
+    "@vueuse/core": "^13.9.0",
+    "better-sqlite3": "^12.11.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -44,8 +46,8 @@
     "nuxt-vuefire": "^1.0.5",
     "pinia": "^3.0.2",
     "radix-vue": "^1.9.17",
-    "reka-ui": "^2.2.1",
-    "shadcn-nuxt": "^2.0.1",
+    "reka-ui": "^2.10.4",
+    "shadcn-nuxt": "^2.8.2",
     "tailwind-merge": "^3.2.0",
     "tailwindcss": "^4.1.3",
     "tw-animate-css": "^1.2.5",
@@ -55,9 +57,12 @@
     "vuefire": "^3.2.1"
   },
   "devDependencies": {
+    "@vue/test-utils": "^2.4.11",
     "eslint-import-resolver-node": "^0.3.9",
     "firebase": "^11.6.0",
+    "happy-dom": "^20.11.10",
     "prettier": "^3.5.3",
-    "prettier-plugin-tailwindcss": "^0.6.11"
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "vitest": "^4.1.11"
   }
 }

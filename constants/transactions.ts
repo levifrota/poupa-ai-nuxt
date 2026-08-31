@@ -28,6 +28,12 @@ export enum TransactionPaymentMethod {
   OTHER = "OTHER",
 }
 
+export enum RecurrenceFrequency {
+  WEEKLY = "WEEKLY",
+  MONTHLY = "MONTHLY",
+  YEARLY = "YEARLY",
+}
+
 export interface Transaction {
   id: string;
   name: string;
@@ -39,6 +45,14 @@ export interface Transaction {
   userId: string;
   createdAt: Date;
   updatedAt: Date;
+  tags?: string[];
+  isRecurring?: boolean;
+  recurrenceFrequency?: RecurrenceFrequency;
+  nextOccurrenceDate?: Date;
+  isBill?: boolean;
+  dueDate?: Date;
+  isPaid?: boolean;
+  accountId?: string;
 }
 
 export const TRANSACTION_CATEGORY_LABELS: Record<TransactionCategory, string> =
@@ -68,6 +82,27 @@ export const TRANSACTION_PAYMENT_METHOD_ICONS: Record<
   MEAL_TICKET: "fluent:food-24-regular",
   OTHER: "flowbite:dots-horizontal-outline",
 };
+
+export const RECURRENCE_FREQUENCY_LABELS: Record<RecurrenceFrequency, string> = {
+  WEEKLY: "Semanal",
+  MONTHLY: "Mensal",
+  YEARLY: "Anual",
+};
+
+export const RECURRENCE_FREQUENCY_OPTIONS = [
+  {
+    label: RECURRENCE_FREQUENCY_LABELS["WEEKLY"],
+    value: "WEEKLY" as RecurrenceFrequency,
+  },
+  {
+    label: RECURRENCE_FREQUENCY_LABELS["MONTHLY"],
+    value: "MONTHLY" as RecurrenceFrequency,
+  },
+  {
+    label: RECURRENCE_FREQUENCY_LABELS["YEARLY"],
+    value: "YEARLY" as RecurrenceFrequency,
+  },
+];
 
 export const TRANSACTION_PAYMENT_METHOD_LABELS: Record<
   TransactionPaymentMethod,

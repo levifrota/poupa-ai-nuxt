@@ -11,7 +11,8 @@ import {
   orderBy,
   Timestamp,
 } from "firebase/firestore";
-import type { Transaction } from "~/constants/transactions.js";
+import type { RecurrenceFrequency, Transaction } from "~/constants/transactions.js";
+import { calculateNextOccurrenceDate } from "~/lib/recurrence.js";
 
 export interface TransactionInput {
   name: string;
@@ -20,6 +21,13 @@ export interface TransactionInput {
   category: string;
   paymentMethod: string;
   date: Date;
+  tags?: string[];
+  isRecurring?: boolean;
+  recurrenceFrequency?: RecurrenceFrequency;
+  nextOccurrenceDate?: Date;
+  isBill?: boolean;
+  dueDate?: Date;
+  isPaid?: boolean;
 }
 
 /**
@@ -33,6 +41,12 @@ export const addTransaction = async (
     const transactionToSave = {
       ...transactionData,
       date: Timestamp.fromDate(transactionData.date),
+      ...(transactionData.nextOccurrenceDate && {
+        nextOccurrenceDate: Timestamp.fromDate(transactionData.nextOccurrenceDate),
+      }),
+      ...(transactionData.dueDate && {
+        dueDate: Timestamp.fromDate(transactionData.dueDate),
+      }),
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     };
@@ -58,7 +72,9 @@ export const updateTransaction = async (
   transactionData: Partial<TransactionInput>
 ): Promise<void> => {
   try {
-    const updateData: { [key: string]: string | number | Date | Timestamp } = {
+    const updateData: {
+      [key: string]: string | number | boolean | Date | Timestamp | string[] | undefined;
+    } = {
       ...transactionData,
       updatedAt: Timestamp.now(),
     };
@@ -66,6 +82,16 @@ export const updateTransaction = async (
     // Converter data para Timestamp se fornecida
     if (transactionData.date) {
       updateData.date = Timestamp.fromDate(transactionData.date);
+    }
+
+    if (transactionData.nextOccurrenceDate) {
+      updateData.nextOccurrenceDate = Timestamp.fromDate(
+        transactionData.nextOccurrenceDate
+      );
+    }
+
+    if (transactionData.dueDate) {
+      updateData.dueDate = Timestamp.fromDate(transactionData.dueDate);
     }
 
     const transactionRef = doc(
@@ -143,6 +169,12 @@ export const getTransactions = async (
         date: data.date?.toDate() || new Date(),
         createdAt: data.createdAt?.toDate() || new Date(),
         updatedAt: data.updatedAt?.toDate() || new Date(),
+        ...(data.nextOccurrenceDate && {
+          nextOccurrenceDate: data.nextOccurrenceDate.toDate(),
+        }),
+        ...(data.dueDate && {
+          dueDate: data.dueDate.toDate(),
+        }),
       } as Transaction;
     });
 
@@ -151,4 +183,144 @@ export const getTransactions = async (
     console.error("Erro ao buscar transações:", error);
     throw new Error("Erro ao buscar transações do Firebase");
   }
+};
+
+/**
+ * Busca as transações recorrentes do usuário (independente do período
+ * selecionado no dashboard), para verificar quais ocorrências estão vencidas.
+ */
+export const getRecurringTransactions = async (
+  userId: string
+): Promise<Transaction[]> => {
+  try {
+    const recurringQuery = query(
+      collection(db(), "users", userId, "transactions"),
+      where("isRecurring", "==", true)
+    );
+
+    const querySnapshot = await getDocs(recurringQuery);
+
+    return querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        date: data.date?.toDate() || new Date(),
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+        ...(data.nextOccurrenceDate && {
+          nextOccurrenceDate: data.nextOccurrenceDate.toDate(),
+        }),
+      } as Transaction;
+    });
+  } catch (error) {
+    console.error("Erro ao buscar transações recorrentes:", error);
+    throw new Error("Erro ao buscar transações recorrentes do Firebase");
+  }
+};
+
+/**
+ * Confirma a ocorrência vencida de uma transação recorrente: cria uma nova
+ * transação (não recorrente) com os mesmos dados na data de vencimento e
+ * avança a data da próxima ocorrência da transação recorrente original.
+ */
+export const confirmRecurringOccurrence = async (
+  userId: string,
+  recurringTransaction: Transaction
+): Promise<string> => {
+  if (
+    !recurringTransaction.recurrenceFrequency ||
+    !recurringTransaction.nextOccurrenceDate
+  ) {
+    throw new Error("Transação recorrente inválida");
+  }
+
+  const occurrenceDate = recurringTransaction.nextOccurrenceDate;
+
+  const newTransactionId = await addTransaction(userId, {
+    name: recurringTransaction.name,
+    amount: recurringTransaction.amount,
+    type: recurringTransaction.type,
+    category: recurringTransaction.category,
+    paymentMethod: recurringTransaction.paymentMethod,
+    date: occurrenceDate,
+    tags: recurringTransaction.tags,
+  });
+
+  const nextOccurrenceDate = calculateNextOccurrenceDate(
+    occurrenceDate,
+    recurringTransaction.recurrenceFrequency
+  );
+
+  await updateTransaction(userId, recurringTransaction.id, {
+    nextOccurrenceDate,
+  });
+
+  return newTransactionId;
+};
+
+/**
+ * Pula a ocorrência vencida de uma transação recorrente, sem criar uma nova
+ * transação, apenas avançando a data da próxima ocorrência.
+ */
+export const skipRecurringOccurrence = async (
+  userId: string,
+  recurringTransaction: Transaction
+): Promise<void> => {
+  if (
+    !recurringTransaction.recurrenceFrequency ||
+    !recurringTransaction.nextOccurrenceDate
+  ) {
+    throw new Error("Transação recorrente inválida");
+  }
+
+  const nextOccurrenceDate = calculateNextOccurrenceDate(
+    recurringTransaction.nextOccurrenceDate,
+    recurringTransaction.recurrenceFrequency
+  );
+
+  await updateTransaction(userId, recurringTransaction.id, {
+    nextOccurrenceDate,
+  });
+};
+
+/**
+ * Busca as contas a pagar do usuário (transações marcadas como `isBill`),
+ * independente do período selecionado no dashboard, para verificar quais
+ * estão próximas do vencimento ou já vencidas.
+ */
+export const getUpcomingBills = async (userId: string): Promise<Transaction[]> => {
+  try {
+    const billsQuery = query(
+      collection(db(), "users", userId, "transactions"),
+      where("isBill", "==", true)
+    );
+
+    const querySnapshot = await getDocs(billsQuery);
+
+    return querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        date: data.date?.toDate() || new Date(),
+        createdAt: data.createdAt?.toDate() || new Date(),
+        updatedAt: data.updatedAt?.toDate() || new Date(),
+        ...(data.dueDate && { dueDate: data.dueDate.toDate() }),
+      } as Transaction;
+    });
+  } catch (error) {
+    console.error("Erro ao buscar contas a pagar:", error);
+    throw new Error("Erro ao buscar contas a pagar do Firebase");
+  }
+};
+
+/**
+ * Marca uma conta a pagar como paga.
+ */
+export const markBillAsPaid = async (
+  userId: string,
+  transactionId: string
+): Promise<void> => {
+  await updateTransaction(userId, transactionId, { isPaid: true });
 };

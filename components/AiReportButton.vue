@@ -4,6 +4,7 @@ import DOMPurify from "isomorphic-dompurify";
 import { marked } from "marked";
 import generateAiReport from "@/app/_actions/generate-ai-report/index.js";
 import jsPDF from "jspdf";
+import { useSpeechSynthesis } from "~/composables/useSpeechSynthesis.js";
 
 interface Props {
   startDate?: Date;
@@ -15,6 +16,22 @@ const props = defineProps<Props>();
 const loading = ref(false);
 const report = ref<string | null>(null);
 const downloadingPdf = ref(false);
+
+const { isSupported: isSpeechSupported, isSpeaking, speak, stop: stopSpeaking } = useSpeechSynthesis();
+
+function handleReadAloud() {
+  if (!report.value) return;
+
+  if (isSpeaking.value) {
+    stopSpeaking();
+    return;
+  }
+
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = report.value;
+  const text = tempDiv.textContent || tempDiv.innerText || "";
+  speak(text);
+}
 
 async function handleGenerateReportClick() {
   loading.value = true;
@@ -235,6 +252,17 @@ async function handleDownloadPdf() {
           <Icon v-if="downloadingPdf" name="lucide:loader-circle" class="animate-spin" />
           <Icon v-else name="lucide:download" class="mr-2" />
           Baixar PDF
+        </Button>
+
+        <Button
+          v-if="report && !loading && isSpeechSupported"
+          variant="secondary"
+          :aria-label="isSpeaking ? 'Parar leitura do relatório' : 'Ouvir relatório em voz alta'"
+          @click="handleReadAloud"
+        >
+          <Icon v-if="isSpeaking" name="lucide:volume-x" class="mr-2" />
+          <Icon v-else name="lucide:volume-2" class="mr-2" />
+          {{ isSpeaking ? "Parar leitura" : "Ouvir relatório" }}
         </Button>
       </DialogFooter>
       <!-- <div v-if="!hasPremiumPlan">

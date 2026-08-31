@@ -10,7 +10,7 @@ const props = defineProps<{
 const emits = defineEmits(['update:modelValue'])
 
 const internalValue = ref(props.modelValue)
-const { formatted } = useMoney(internalValue)
+const { formatted } = useMoney(internalValue, { convert: false })
 
 watch(
   () => props.modelValue,
