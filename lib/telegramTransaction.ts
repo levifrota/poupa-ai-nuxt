@@ -193,10 +193,19 @@ export function getSaoPauloDateString(now: Date = new Date()): string {
  * Resolves a parsed transaction's date (an ISO "YYYY-MM-DD" string, or
  * `null` when the user didn't mention one) into a concrete `Date`, defaulting
  * to today (América/São Paulo) when not specified.
+ *
+ * Uses the fixed "-03:00" (América/São Paulo, no DST since 2019) offset
+ * instead of UTC ("Z") so the resulting instant represents LOCAL midnight in
+ * that timezone. Using "Z" (UTC midnight) would shift back a full day once
+ * displayed/re-read in a UTC-3 (or more negative) timezone — e.g. a user
+ * saying "ontem" (yesterday = Aug 30) would be stored as
+ * "2026-08-30T00:00:00Z", which is "2026-08-29T21:00" in São Paulo, and
+ * later rendered as Aug 29 anywhere `toLocaleDateString` isn't pinned to UTC
+ * (as the rest of the app's transaction list does).
  */
 export function resolveTelegramTransactionDate(date: string | null, now: Date = new Date()): Date {
   const isoDate = date ?? getSaoPauloDateString(now);
-  return new Date(`${isoDate}T00:00:00Z`);
+  return new Date(`${isoDate}T00:00:00-03:00`);
 }
 
 const TYPE_LABELS: Record<TransactionType, string> = {

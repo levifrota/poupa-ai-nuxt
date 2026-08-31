@@ -281,7 +281,7 @@ const steps: OnboardingStep[] = [
     targetSelector: '[aria-label="Adicionar transação por voz"]',
     position: "right",
     tips: [
-      "Diga algo como \"gastei 50 reais em mercado\"",
+      'Diga algo como "gastei 50 reais em mercado"',
       "Revise e confirme antes de salvar",
       "Recurso de acessibilidade para quem prefere ou precisa usar a voz",
     ],
@@ -389,7 +389,7 @@ const steps: OnboardingStep[] = [
     targetSelector: '[aria-label="Abrir chat com IA sobre suas finanças"]',
     position: "right",
     tips: [
-      "Pergunte, por exemplo, \"quanto gastei com mercado este mês?\"",
+      'Pergunte, por exemplo, "quanto gastei com mercado este mês?"',
       "As respostas usam o histórico das suas transações",
       "Complementa o relatório de IA com perguntas livres",
     ],
@@ -410,8 +410,7 @@ const steps: OnboardingStep[] = [
   },
   {
     title: "Exportar para CSV",
-    description:
-      "Exporte as transações do período selecionado para uma planilha (CSV).",
+    description: "Exporte as transações do período selecionado para uma planilha (CSV).",
     icon: "lucide:download",
     route: "/transactions",
     targetSelector: '[aria-label="Exportar transações para CSV"]',
@@ -593,6 +592,7 @@ const scrollToElement = (
 };
 
 const updatePositions = async () => {
+  if (!onboardingStore.isOnboardingActive) return;
   const step = currentStepConfig.value;
   if (!step) return;
 

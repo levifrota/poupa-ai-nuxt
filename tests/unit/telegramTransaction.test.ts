@@ -150,15 +150,15 @@ describe("getSaoPauloDateString", () => {
 });
 
 describe("resolveTelegramTransactionDate", () => {
-  it("uses the parsed date when the user mentioned one", () => {
+  it("uses the parsed date when the user mentioned one, anchored to São Paulo midnight", () => {
     const resolved = resolveTelegramTransactionDate("2026-08-15");
-    expect(resolved.toISOString()).toBe("2026-08-15T00:00:00.000Z");
+    expect(resolved.toISOString()).toBe("2026-08-15T03:00:00.000Z");
   });
 
   it("falls back to today (América/São Paulo) when no date was mentioned", () => {
     const now = new Date("2026-08-15T02:00:00Z");
     const resolved = resolveTelegramTransactionDate(null, now);
-    expect(resolved.toISOString()).toBe("2026-08-14T00:00:00.000Z");
+    expect(resolved.toISOString()).toBe("2026-08-14T03:00:00.000Z");
   });
 });
 
