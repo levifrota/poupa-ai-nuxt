@@ -27,8 +27,9 @@ export default defineNuxtConfig({
   runtimeConfig: {
     // Server-only secrets (never exposed to the client bundle).
     geminiApiKey: process.env.VITE_GEMINI_API_KEY,
-    telegramBotToken: process.env.TELEGRAM_BOT_TOKEN,
-    telegramWebhookSecret: process.env.TELEGRAM_WEBHOOK_SECRET,
+    telegramBotToken: process.env.NUXT_TELEGRAM_BOT_TOKEN || process.env.TELEGRAM_BOT_TOKEN,
+    telegramWebhookSecret:
+      process.env.NUXT_TELEGRAM_WEBHOOK_SECRET || process.env.TELEGRAM_WEBHOOK_SECRET,
     firebaseAdminProjectId:
       process.env.NUXT_FIREBASE_ADMIN_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID,
     firebaseAdminClientEmail: process.env.NUXT_FIREBASE_ADMIN_CLIENT_EMAIL,
