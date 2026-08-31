@@ -5,9 +5,11 @@ import {
   buildTelegramConfirmationText,
   buildTelegramTransactionPrompt,
   buildTelegramVoiceTransactionPrompt,
+  getSaoPauloDateString,
   isExpired,
   parseGeminiTransactionJson,
   parseTelegramCallbackData,
+  resolveTelegramTransactionDate,
   buildTelegramConfirmCallbackData,
   buildTelegramCancelCallbackData,
   type ParsedTelegramTransaction,
@@ -89,10 +91,12 @@ async function parseTransactionFromMessage(
   botToken: string,
   message: NonNullable<TelegramUpdate["message"]>
 ): Promise<ParsedTelegramTransaction> {
+  const referenceDate = getSaoPauloDateString();
+
   if (message.voice) {
     const audioBase64 = await downloadTelegramFileAsBase64(botToken, message.voice.file_id);
     const request = buildGeminiPartsRequest([
-      { text: buildTelegramVoiceTransactionPrompt() },
+      { text: buildTelegramVoiceTransactionPrompt(referenceDate) },
       { inline_data: { mime_type: "audio/ogg", data: audioBase64 } },
     ]);
     const response = await callGemini(geminiApiKey, request);
@@ -100,7 +104,7 @@ async function parseTransactionFromMessage(
   }
 
   const text = (message.text ?? "").slice(0, MAX_MESSAGE_TEXT_LENGTH);
-  const request = buildGeminiPartsRequest([{ text: buildTelegramTransactionPrompt(text) }]);
+  const request = buildGeminiPartsRequest([{ text: buildTelegramTransactionPrompt(text, referenceDate) }]);
   const response = await callGemini(geminiApiKey, request);
   return parseGeminiTransactionJson(extractGeminiText(response));
 }
@@ -196,7 +200,7 @@ async function handleCallbackQuery(
     type: pending.type,
     category: pending.category,
     paymentMethod: TransactionPaymentMethod.OTHER,
-    date: Timestamp.now(),
+    date: Timestamp.fromDate(resolveTelegramTransactionDate(pending.date ?? null)),
     tags: [],
     createdAt: FieldValue.serverTimestamp(),
     updatedAt: FieldValue.serverTimestamp(),

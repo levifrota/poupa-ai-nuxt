@@ -5,9 +5,11 @@ import {
   buildTelegramCancelCallbackData,
   buildTelegramConfirmCallbackData,
   buildTelegramConfirmationText,
+  getSaoPauloDateString,
   isExpired,
   parseGeminiTransactionJson,
   parseTelegramCallbackData,
+  resolveTelegramTransactionDate,
 } from "~/lib/telegramTransaction";
 
 describe("buildLinkCodeFromBytes", () => {
@@ -36,7 +38,32 @@ describe("parseGeminiTransactionJson", () => {
       amount: 120.5,
       type: TransactionType.EXPENSE,
       category: TransactionCategory.FOOD,
+      date: null,
     });
+  });
+
+  it("parses an explicit date mentioned by the user", () => {
+    const raw = JSON.stringify({
+      name: "Mercado",
+      amount: 120.5,
+      type: TransactionType.EXPENSE,
+      category: TransactionCategory.FOOD,
+      date: "2026-08-15",
+    });
+
+    expect(parseGeminiTransactionJson(raw).date).toBe("2026-08-15");
+  });
+
+  it("throws a friendly error for a malformed date", () => {
+    const raw = JSON.stringify({
+      name: "Mercado",
+      amount: 120.5,
+      type: TransactionType.EXPENSE,
+      category: TransactionCategory.FOOD,
+      date: "15/08/2026",
+    });
+
+    expect(() => parseGeminiTransactionJson(raw)).toThrow(/data/);
   });
 
   it("strips a markdown json fence before parsing", () => {
@@ -106,11 +133,32 @@ describe("buildTelegramConfirmationText", () => {
       amount: 120.5,
       type: TransactionType.EXPENSE,
       category: TransactionCategory.FOOD,
+      date: "2026-08-15",
     });
 
     expect(text).toContain("Mercado");
     expect(text).toContain("Despesa");
     expect(text).toMatch(/R\$\s?120,50/);
+    expect(text).toContain("15/08/2026");
+  });
+});
+
+describe("getSaoPauloDateString", () => {
+  it("formats a date as YYYY-MM-DD in the América/São Paulo timezone", () => {
+    expect(getSaoPauloDateString(new Date("2026-08-15T02:00:00Z"))).toBe("2026-08-14");
+  });
+});
+
+describe("resolveTelegramTransactionDate", () => {
+  it("uses the parsed date when the user mentioned one", () => {
+    const resolved = resolveTelegramTransactionDate("2026-08-15");
+    expect(resolved.toISOString()).toBe("2026-08-15T00:00:00.000Z");
+  });
+
+  it("falls back to today (América/São Paulo) when no date was mentioned", () => {
+    const now = new Date("2026-08-15T02:00:00Z");
+    const resolved = resolveTelegramTransactionDate(null, now);
+    expect(resolved.toISOString()).toBe("2026-08-14T00:00:00.000Z");
   });
 });
 
