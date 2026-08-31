@@ -158,6 +158,8 @@
 
     <SharedBudgetsSettings />
 
+    <TelegramLinkSettings />
+
     <!-- Seção de Ajuda -->
     <div class="bg-card rounded-lg p-6 shadow-sm">
       <h2 class="text-xl font-semibold mb-4">Ajuda</h2>
@@ -183,6 +185,7 @@ import { Icon } from "#components";
 import BudgetSettings from "~/components/BudgetSettings.vue";
 import PendingSharedBudgetInvites from "~/components/PendingSharedBudgetInvites.vue";
 import SharedBudgetsSettings from "~/components/SharedBudgetsSettings.vue";
+import TelegramLinkSettings from "~/components/TelegramLinkSettings.vue";
 import { CURRENCY_OPTIONS } from "~/constants/currencies";
 
 definePageMeta({

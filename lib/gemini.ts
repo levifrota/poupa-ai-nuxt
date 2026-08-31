@@ -4,7 +4,11 @@ const GEMINI_MODEL = "gemini-3.5-flash-lite";
 const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 export interface GeminiPart {
-  text: string;
+  text?: string;
+  inline_data?: {
+    mime_type: string;
+    data: string;
+  };
 }
 
 export interface GeminiContent {
@@ -47,6 +51,18 @@ export function buildGeminiRequestBody(messages: ChatMessage[]): GeminiRequestBo
     ...(systemMessage && {
       systemInstruction: { parts: [{ text: systemMessage.content }] },
     }),
+  };
+}
+
+/**
+ * Builds a one-shot (no chat history, no system message) Gemini request body
+ * from a raw list of parts. Used for single-purpose extraction calls (e.g.
+ * the Telegram bot's text/voice transaction parsing) instead of a
+ * multi-turn conversation.
+ */
+export function buildGeminiPartsRequest(parts: GeminiPart[]): GeminiRequestBody {
+  return {
+    contents: [{ role: "user", parts }],
   };
 }
 

@@ -25,6 +25,14 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ["~/app/assets/css/tailwind.css", "~/app/assets/css/fonts.css", "~/app/assets/css/icons.css"],
   runtimeConfig: {
+    // Server-only secrets (never exposed to the client bundle).
+    geminiApiKey: process.env.VITE_GEMINI_API_KEY,
+    telegramBotToken: process.env.TELEGRAM_BOT_TOKEN,
+    telegramWebhookSecret: process.env.TELEGRAM_WEBHOOK_SECRET,
+    firebaseAdminProjectId:
+      process.env.NUXT_FIREBASE_ADMIN_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID,
+    firebaseAdminClientEmail: process.env.NUXT_FIREBASE_ADMIN_CLIENT_EMAIL,
+    firebaseAdminPrivateKey: process.env.NUXT_FIREBASE_ADMIN_PRIVATE_KEY,
     public: {
       firebaseApiKey: process.env.VITE_FIREBASE_API_KEY,
       firebaseAuthDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -33,6 +41,7 @@ export default defineNuxtConfig({
       firebaseMessagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
       firebaseAppId: process.env.VITE_FIREBASE_APP_ID,
       firebaseMeasurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID,
+      telegramBotUsername: process.env.NUXT_PUBLIC_TELEGRAM_BOT_USERNAME,
     },
   },
  
