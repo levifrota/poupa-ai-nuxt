@@ -1,4 +1,4 @@
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 
 export interface CookiePreferences {
   /** Cookies essenciais para funcionamento do app (sempre ativo) */
