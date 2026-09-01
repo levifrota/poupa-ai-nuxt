@@ -2,7 +2,7 @@ import { ref, readonly } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCurrentUser } from 'vuefire'
 import type { AuthError } from 'firebase/auth'
-import { signUp, signIn, signInWithGoogle, logOut, getAuthErrorMessage, type SignUpData } from '~/service/authService'
+import { signUp, signIn, signInWithGoogle, logOut, sendPasswordReset, getAuthErrorMessage, type SignUpData } from '~/service/authService'
 
 export const useAuth = () => {
   const router = useRouter()
@@ -81,6 +81,25 @@ export const useAuth = () => {
     }
   }
 
+  const handleForgotPassword = async (email: string): Promise<boolean> => {
+    // Ensure we're on client side
+    if (import.meta.server) return false
+
+    loading.value = true
+    error.value = null
+
+    try {
+      await sendPasswordReset(email)
+      return true
+    } catch (err) {
+      const authError = err as AuthError
+      error.value = getAuthErrorMessage(authError.code)
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
   const clearError = (): void => {
     error.value = null
   }
@@ -93,6 +112,7 @@ export const useAuth = () => {
     handleSignIn,
     handleGoogleAuth,
     handleLogOut,
+    handleForgotPassword,
     clearError
   }
 }

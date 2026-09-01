@@ -27,7 +27,15 @@
           </div>
 
           <div class="space-y-2">
-            <label for="password" class="text-sm font-medium"> Senha </label>
+            <div class="flex items-center justify-between">
+              <label for="password" class="text-sm font-medium"> Senha </label>
+              <NuxtLink
+                to="/forgot-password"
+                class="text-sm font-semibold text-primary"
+              >
+                Esqueceu sua senha?
+              </NuxtLink>
+            </div>
             <input
               id="password"
               v-model="formData.password"

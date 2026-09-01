@@ -8,6 +8,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   updateProfile,
+  sendPasswordResetEmail,
   type User,
   type AuthError
 } from "firebase/auth"
@@ -121,6 +122,19 @@ export const logOut = async (): Promise<void> => {
   }
 }
 
+export const sendPasswordReset = async (email: string): Promise<void> => {
+  ensureClientSide()
+
+  try {
+    const auth = await waitForAuth()
+    await sendPasswordResetEmail(auth, email)
+  } catch (error) {
+    const authError = error as AuthError
+    console.error("Erro ao enviar email de redefinição de senha:", authError)
+    throw error
+  }
+}
+
 // Helper function to get user-friendly error messages
 export const getAuthErrorMessage = (errorCode: string): string => {
   const errorMessages: Record<string, string> = {
@@ -135,6 +149,7 @@ export const getAuthErrorMessage = (errorCode: string): string => {
     'auth/network-request-failed': 'Erro de conexão. Verifique sua internet.',
     'auth/configuration-not-found': 'Configuração do Firebase não encontrada.',
     'auth/invalid-credential': 'Credenciais inválidas. Tente novamente.',
+    'auth/missing-email': 'Informe um email.',
   }
   
   return errorMessages[errorCode] || 'Erro inesperado. Tente novamente.'
