@@ -86,7 +86,7 @@ function trackPageView(path: string, title: string): void {
   });
 }
 
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig();
   measurementId = config.public.firebaseMeasurementId as string;
 
