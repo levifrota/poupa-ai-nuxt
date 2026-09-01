@@ -18,6 +18,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "~/components/ui/dialog/index.js";
+import { Switch } from "~/components/ui/switch/index.js";
 import { PLANS, PlanId } from "~/constants/subscription.js";
 import { calculateYearlySavingsPercent } from "~/lib/subscription.js";
 
@@ -59,19 +60,11 @@ function handleSubscribeClick() {
       <span :class="billingCycle === 'monthly' ? 'font-semibold' : 'text-muted-foreground'">
         Mensal
       </span>
-      <button
-        type="button"
-        role="switch"
-        :aria-checked="billingCycle === 'yearly'"
+      <Switch
+        :model-value="billingCycle === 'yearly'"
         aria-label="Alternar entre cobrança mensal e anual"
-        class="relative h-6 w-11 cursor-pointer rounded-full bg-muted transition-colors"
-        @click="billingCycle = billingCycle === 'monthly' ? 'yearly' : 'monthly'"
-      >
-        <span
-          class="absolute top-1 h-4 w-4 rounded-full bg-primary transition-transform"
-          :class="billingCycle === 'yearly' ? 'translate-x-6' : 'translate-x-1'"
-        />
-      </button>
+        @update:model-value="billingCycle = $event ? 'yearly' : 'monthly'"
+      />
       <span :class="billingCycle === 'yearly' ? 'font-semibold' : 'text-muted-foreground'">
         Anual
         <span v-if="yearlySavingsPercent > 0" class="text-primary">

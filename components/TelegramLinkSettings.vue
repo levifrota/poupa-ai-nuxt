@@ -92,7 +92,7 @@ async function handleUnlink() {
 
 <template>
   <div
-    class="bg-card rounded-lg p-6 shadow-sm mb-6"
+    class="bg-card rounded-lg p-4 sm:p-6 shadow-sm mb-4 sm:mb-6"
     role="region"
     aria-label="Integração com o Telegram"
   >
@@ -158,7 +158,7 @@ async function handleUnlink() {
           </p>
           <div class="flex items-center gap-2">
             <code
-              class="bg-muted px-3 py-1.5 rounded font-mono text-base tracking-widest"
+              class="bg-muted px-3 py-1.5 rounded font-mono text-base tracking-widest break-all"
               aria-label="Código de vínculo"
               >{{ linkCode }}</code
             >

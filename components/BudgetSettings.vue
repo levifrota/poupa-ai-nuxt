@@ -1,12 +1,17 @@
 <template>
-  <div class="bg-card rounded-lg p-6 shadow-sm mb-6">
+  <div class="bg-card rounded-lg p-4 sm:p-6 shadow-sm mb-4 sm:mb-6">
     <h2 class="text-xl font-semibold mb-2">Orçamentos por Categoria</h2>
     <p class="text-sm text-muted-foreground mb-4">
       Defina um limite mensal para cada categoria de despesa. Você será alertado quando
       estiver perto de ultrapassar o limite.
     </p>
 
-    <div v-if="isLoading" class="flex items-center gap-2" role="status" aria-live="polite">
+    <div
+      v-if="isLoading"
+      class="flex items-center gap-2"
+      role="status"
+      aria-live="polite"
+    >
       <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary" />
       <span>Carregando orçamentos...</span>
     </div>
@@ -23,12 +28,15 @@
         <div class="flex items-center gap-2">
           <MoneyInput
             :id="`budget-${option.value}`"
-            class="w-40"
+            class="w-32 sm:w-40"
             :model-value="budgetsStore.getBudgetFor(option.value) ?? 0"
             :aria-label="`Limite mensal para ${option.label}`"
             @update:model-value="(value) => handleBudgetChange(option.value, value)"
           />
-          <span v-if="savingCategory === option.value" class="text-xs text-muted-foreground">
+          <span
+            v-if="savingCategory === option.value"
+            class="text-xs text-muted-foreground"
+          >
             Salvando...
           </span>
         </div>

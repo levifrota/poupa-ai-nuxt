@@ -1,8 +1,8 @@
 <template>
-  <div class="container mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-6">Configurações</h1>
+  <div class="container mx-auto p-4 sm:p-6">
+    <h1 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Configurações</h1>
 
-    <div class="bg-card rounded-lg p-6 shadow-sm mb-6">
+    <div class="bg-card rounded-lg p-4 sm:p-6 shadow-sm mb-4 sm:mb-6">
       <h2 class="text-xl font-semibold mb-4">Tema</h2>
 
       <div class="space-y-4">
@@ -61,7 +61,7 @@
       </div>
     </div>
 
-    <div class="bg-card rounded-lg p-6 shadow-sm mb-6">
+    <div class="bg-card rounded-lg p-4 sm:p-6 shadow-sm mb-4 sm:mb-6">
       <h2 class="text-xl font-semibold mb-4">Fonte</h2>
 
       <div class="space-y-6">
@@ -123,7 +123,7 @@
       </div>
     </div>
 
-    <div class="bg-card rounded-lg p-6 shadow-sm mb-6">
+    <div class="bg-card rounded-lg p-4 sm:p-6 shadow-sm mb-4 sm:mb-6">
       <h2 class="text-xl font-semibold mb-4">Moeda</h2>
 
       <div class="w-full max-w-xs">
@@ -161,7 +161,7 @@
     <TelegramLinkSettings />
 
     <!-- Seção de Ajuda -->
-    <div class="bg-card rounded-lg p-6 shadow-sm">
+    <div class="bg-card rounded-lg p-4 sm:p-6 shadow-sm">
       <h2 class="text-xl font-semibold mb-4">Ajuda</h2>
       <div class="space-y-4">
         <div>

@@ -161,11 +161,11 @@ const sharedBudgets = computed(() => sharedBudgetsStore.sharedBudgets);
 
 <template>
   <div
-    class="bg-card rounded-lg p-6 shadow-sm mb-6"
+    class="bg-card rounded-lg p-4 sm:p-6 shadow-sm mb-4 sm:mb-6"
     role="region"
     aria-label="Orçamentos compartilhados"
   >
-    <div class="flex items-center justify-between mb-2">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
       <h2 class="text-xl font-semibold">Orçamentos Compartilhados</h2>
       <Button size="sm" @click="isCreateDialogOpen = true">Novo Orçamento</Button>
     </div>

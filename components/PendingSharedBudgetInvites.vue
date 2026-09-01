@@ -71,7 +71,7 @@ async function handleDecline(sharedBudgetId: string, inviteId: string) {
 <template>
   <div
     v-if="isLoading || error || sharedBudgetsStore.pendingInvites.length > 0"
-    class="bg-card rounded-lg p-6 shadow-sm mb-6"
+    class="bg-card rounded-lg p-4 sm:p-6 shadow-sm mb-4 sm:mb-6"
   >
     <h2 class="text-xl font-semibold mb-4">Convites Pendentes</h2>
 
