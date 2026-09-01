@@ -23,8 +23,10 @@ import { useRoute } from "vue-router";
 
 const route = useRoute();
 
+const authPaths = ["/login", "/register", "/forgot-password", "/privacidade", "/termos"];
+
 const isAuthPage = computed(() => {
-  return route.path === "/login" || route.path === "/register";
+  return authPaths.includes(route.path);
 });
 </script>
 

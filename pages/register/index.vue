@@ -52,10 +52,32 @@
             >
           </div>
 
+          <div class="flex items-start space-x-2">
+            <input
+              id="lgpd-consent"
+              v-model="formData.acceptedTerms"
+              type="checkbox"
+              class="mt-1 h-4 w-4 rounded border-input accent-primary"
+              :disabled="loading"
+              required
+            >
+            <label for="lgpd-consent" class="text-xs text-muted-foreground leading-tight">
+              Li e concordo com os
+              <NuxtLink to="/termos" target="_blank" class="font-medium text-primary underline underline-offset-2">
+                Termos de Uso
+              </NuxtLink>
+              e a
+              <NuxtLink to="/privacidade" target="_blank" class="font-medium text-primary underline underline-offset-2">
+                Política de Privacidade
+              </NuxtLink>
+              do Poupa.ai.
+            </label>
+          </div>
+
           <button
             type="submit"
             class="w-full rounded-md bg-primary py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
-            :disabled="loading"
+            :disabled="loading || !formData.acceptedTerms"
           >
             {{ loading ? "Criando conta..." : "Cadastrar" }}
           </button>
@@ -127,6 +149,7 @@ const formData = reactive({
   name: "",
   email: "",
   password: "",
+  acceptedTerms: false,
 });
 
 const register = async () => {
