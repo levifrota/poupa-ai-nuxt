@@ -38,5 +38,6 @@ watch(
   </NuxtLayout>
   <ClientOnly>
     <OnboardingTour />
+    <CookieConsentBanner />
   </ClientOnly>
 </template>

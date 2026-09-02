@@ -81,6 +81,16 @@
             Cadastre-se
           </NuxtLink>
         </p>
+
+        <p class="text-center text-xs text-muted-foreground">
+          <NuxtLink to="/privacidade" class="underline underline-offset-2 hover:text-foreground">
+            Política de Privacidade
+          </NuxtLink>
+          ·
+          <NuxtLink to="/termos" class="underline underline-offset-2 hover:text-foreground">
+            Termos de Uso
+          </NuxtLink>
+        </p>
       </div>
     </div>
     <div class="hidden bg-muted lg:block">

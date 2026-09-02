@@ -3,7 +3,7 @@
     <div class="flex flex-col items-center justify-center">
       <div class="w-full max-w-md space-y-4">
         <header class="flex flex-col items-center justify-center space-y-2">
-          <img src="/logo.svg" alt="Poupa grana" class="w-48" >
+          <img src="/logo.svg" alt="Poupa grana" class="w-48" />
           <h1 class="text-2xl font-bold">Crie sua conta</h1>
         </header>
 
@@ -23,7 +23,7 @@
               class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               :disabled="loading"
               required
-            >
+            />
           </div>
 
           <div class="space-y-2">
@@ -36,7 +36,7 @@
               class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               :disabled="loading"
               required
-            >
+            />
           </div>
 
           <div class="space-y-2">
@@ -49,13 +49,43 @@
               :disabled="loading"
               required
               minlength="6"
-            >
+            />
+          </div>
+
+          <div class="flex items-start space-x-2">
+            <input
+              id="lgpd-consent"
+              v-model="formData.acceptedTerms"
+              type="checkbox"
+              class="h-4 w-4 rounded border-input accent-primary"
+              :disabled="loading"
+              required
+            />
+            <label for="lgpd-consent" class="text-xs text-muted-foreground leading-tight">
+              Li e concordo com os
+              <NuxtLink
+                to="/termos"
+                target="_blank"
+                class="font-medium text-primary underline underline-offset-2"
+              >
+                Termos de Uso
+              </NuxtLink>
+              e a
+              <NuxtLink
+                to="/privacidade"
+                target="_blank"
+                class="font-medium text-primary underline underline-offset-2"
+              >
+                Política de Privacidade
+              </NuxtLink>
+              do Poupa.ai.
+            </label>
           </div>
 
           <button
             type="submit"
             class="w-full rounded-md bg-primary py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
-            :disabled="loading"
+            :disabled="loading || !formData.acceptedTerms"
           >
             {{ loading ? "Criando conta..." : "Cadastrar" }}
           </button>
@@ -94,7 +124,7 @@
         src="/login.png"
         alt="Imagem de um celular com um gráfico de finanças"
         class="h-screen w-full object-cover"
-      >
+      />
     </div>
   </div>
 </template>
@@ -127,6 +157,7 @@ const formData = reactive({
   name: "",
   email: "",
   password: "",
+  acceptedTerms: false,
 });
 
 const register = async () => {
