@@ -77,6 +77,11 @@ export async function answerTelegramCallbackQuery(
  * Resolves a Telegram file id (e.g. from a voice message) to its downloadable
  * bytes, base64-encoded (ready to send to Gemini as `inline_data`).
  */
+// Safety cap on downloaded Telegram files (voice notes are normally a few
+// hundred KB) to avoid unbounded memory usage from an unexpectedly large or
+// malicious file reference.
+const MAX_TELEGRAM_FILE_BYTES = 20 * 1024 * 1024;
+
 export async function downloadTelegramFileAsBase64(
   botToken: string,
   fileId: string
@@ -91,6 +96,15 @@ export async function downloadTelegramFileAsBase64(
     throw new Error(`Falha ao baixar arquivo do Telegram (status ${response.status})`);
   }
 
+  const contentLength = response.headers.get("content-length");
+  if (contentLength && Number(contentLength) > MAX_TELEGRAM_FILE_BYTES) {
+    throw new Error("Arquivo do Telegram excede o tamanho máximo permitido.");
+  }
+
   const buffer = await response.arrayBuffer();
+  if (buffer.byteLength > MAX_TELEGRAM_FILE_BYTES) {
+    throw new Error("Arquivo do Telegram excede o tamanho máximo permitido.");
+  }
+
   return Buffer.from(buffer).toString("base64");
 }

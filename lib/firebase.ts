@@ -1,8 +1,4 @@
-import { useFirebaseAuth, useFirestore } from 'vuefire'
-
-export function getAuth() {
-  return useFirebaseAuth()!
-}
+import { useFirestore } from 'vuefire'
 
 export function getDb() {
   return useFirestore()!

@@ -62,13 +62,17 @@ onMounted(() => {
     return;
   }
 
-  const parsed = parseNotificationTransaction(sharedText.value);
-  parsedDefaults.value = {
-    ...(parsed.name && { name: parsed.name }),
-    ...(parsed.amount !== undefined && { amount: parsed.amount }),
-    ...(parsed.type && { type: parsed.type }),
-    ...(parsed.category && { category: parsed.category }),
-  };
+  try {
+    const parsed = parseNotificationTransaction(sharedText.value);
+    parsedDefaults.value = {
+      ...(parsed.name && { name: parsed.name }),
+      ...(parsed.amount !== undefined && { amount: parsed.amount }),
+      ...(parsed.type && { type: parsed.type }),
+      ...(parsed.category && { category: parsed.category }),
+    };
+  } catch (error) {
+    console.error("Erro ao interpretar transação compartilhada:", error);
+  }
   isDialogOpen.value = true;
 });
 

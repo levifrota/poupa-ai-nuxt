@@ -17,10 +17,9 @@ export const useBillsStore = defineStore("bills", () => {
 
   // Marca uma conta como paga após a confirmação do usuário
   function markAsPaid(transactionId: string) {
-    const bill = bills.value.find((b) => b.id === transactionId);
-    if (bill) {
-      bill.isPaid = true;
-    }
+    bills.value = bills.value.map((bill) =>
+      bill.id === transactionId ? { ...bill, isPaid: true } : bill
+    );
   }
 
   return {

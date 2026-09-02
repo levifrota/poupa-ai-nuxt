@@ -265,7 +265,11 @@ async function handleDownloadPdf() {
           {{ isSpeaking ? "Parar leitura" : "Ouvir relatório" }}
         </Button>
       </DialogFooter>
-      <!-- <div v-if="!hasPremiumPlan">
+      <!-- Future premium-gating preview (Feature #11 explicitly deferred
+           real gating everywhere) — do not enable without also implementing
+           an actual subscription/paywall check. Kept here as a reference for
+           when that work is scheduled.
+      <div v-if="!hasPremiumPlan">
           <DialogHeader>
               <DialogTitle>Relatório IA</DialogTitle>
               <DialogDescription>

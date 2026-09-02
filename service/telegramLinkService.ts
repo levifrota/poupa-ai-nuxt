@@ -7,6 +7,7 @@ import {
   getDocs,
   query,
   where,
+  limit,
   Timestamp,
 } from "firebase/firestore";
 import {
@@ -59,7 +60,7 @@ export async function createTelegramLinkCode(uid: string): Promise<string> {
  * Checks whether the given user already has a linked Telegram chat.
  */
 export async function getTelegramLinkStatus(uid: string): Promise<TelegramLinkStatus> {
-  const linksQuery = query(collection(db(), "telegramLinks"), where("uid", "==", uid));
+  const linksQuery = query(collection(db(), "telegramLinks"), where("uid", "==", uid), limit(1));
   const snapshot = await getDocs(linksQuery);
 
   if (snapshot.empty) {

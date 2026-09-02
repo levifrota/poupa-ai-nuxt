@@ -8,7 +8,7 @@
         </header>
 
         <!-- Error Alert -->
-        <div v-if="error" class="rounded-md bg-red-50 border border-red-200 p-3">
+        <div v-if="error" role="alert" class="rounded-md bg-red-50 border border-red-200 p-3">
           <p class="text-sm text-red-700">{{ error }}</p>
         </div>
 

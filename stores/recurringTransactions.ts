@@ -19,12 +19,11 @@ export const useRecurringTransactionsStore = defineStore(
 
     // Avança a data da próxima ocorrência após confirmar ou pular uma transação
     function updateNextOccurrenceDate(transactionId: string, nextOccurrenceDate: Date) {
-      const transaction = recurringTransactions.value.find(
-        (t) => t.id === transactionId
+      recurringTransactions.value = recurringTransactions.value.map((transaction) =>
+        transaction.id === transactionId
+          ? { ...transaction, nextOccurrenceDate }
+          : transaction
       );
-      if (transaction) {
-        transaction.nextOccurrenceDate = nextOccurrenceDate;
-      }
     }
 
     return {

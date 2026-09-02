@@ -43,11 +43,9 @@ function handleRejectNonEssential() {
       leave-from-class="translate-y-0 opacity-100"
       leave-to-class="translate-y-full opacity-0"
     >
-      <div
+      <section
         v-if="showBanner"
-        role="dialog"
         aria-label="Consentimento de cookies"
-        aria-modal="false"
         class="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card p-4 shadow-lg sm:p-6"
       >
         <div class="container mx-auto max-w-4xl">
@@ -176,7 +174,7 @@ function handleRejectNonEssential() {
             </p>
           </div>
         </div>
-      </div>
+      </section>
     </Transition>
   </Teleport>
 </template>

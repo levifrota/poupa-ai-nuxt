@@ -65,19 +65,32 @@ async function handleStartCommand(
   }
 
   const codeDocRef = db.collection("telegramLinkCodes").doc(code);
-  const codeDoc = await codeDocRef.get();
-  const codeData = codeDoc.data();
+  const linkRef = db.collection("telegramLinks").doc(String(chatId));
 
-  if (!codeDoc.exists || !codeData || isExpired((codeData.expiresAt as Timestamp).toDate())) {
+  // Wrapped in a transaction so two concurrent `/start <code>` calls for the
+  // same code can't both pass validation and both link — Firestore retries
+  // the losing transaction, which re-reads the (now-deleted) code doc and
+  // fails validation on the retry.
+  const isCodeValid = await db.runTransaction(async (tx) => {
+    const codeDoc = await tx.get(codeDocRef);
+    const codeData = codeDoc.data();
+
+    if (!codeDoc.exists || !codeData || isExpired((codeData.expiresAt as Timestamp).toDate())) {
+      return false;
+    }
+
+    tx.set(linkRef, {
+      uid: codeData.uid,
+      linkedAt: FieldValue.serverTimestamp(),
+    });
+    tx.delete(codeDocRef);
+    return true;
+  });
+
+  if (!isCodeValid) {
     await sendTelegramMessage(botToken, chatId, "❌ Código inválido ou expirado.");
     return;
   }
-
-  await db.collection("telegramLinks").doc(String(chatId)).set({
-    uid: codeData.uid,
-    linkedAt: FieldValue.serverTimestamp(),
-  });
-  await codeDocRef.delete();
 
   await sendTelegramMessage(
     botToken,
@@ -141,8 +154,12 @@ async function handleTransactionMessage(
   try {
     parsed = await parseTransactionFromMessage(geminiApiKey, botToken, message);
   } catch (error) {
-    const messageText = error instanceof Error ? error.message : "Erro ao processar a mensagem.";
-    await sendTelegramMessage(botToken, chatId, `⚠️ ${messageText}`);
+    console.error("Erro ao interpretar transação via Telegram:", error);
+    await sendTelegramMessage(
+      botToken,
+      chatId,
+      '⚠️ Não consegui entender essa transação. Tente descrever novamente com o valor e o tipo (ex: "gastei 50 reais no mercado").'
+    );
     return;
   }
 
@@ -167,7 +184,7 @@ async function handleCallbackQuery(
   botToken: string,
   callbackQuery: NonNullable<TelegramUpdate["callback_query"]>
 ): Promise<void> {
-  const chatId = callbackQuery.message?.chat.id;
+  const chatId = callbackQuery.message?.chat?.id;
   const messageId = callbackQuery.message?.message_id;
   const parsedCallback = callbackQuery.data ? parseTelegramCallbackData(callbackQuery.data) : undefined;
 
@@ -178,34 +195,55 @@ async function handleCallbackQuery(
 
   const db = getAdminFirestore();
   const pendingRef = db.collection("telegramPendingTransactions").doc(parsedCallback.pendingId);
-  const pendingDoc = await pendingRef.get();
-  const pending = pendingDoc.data();
 
-  if (!pendingDoc.exists || !pending || pending.chatId !== chatId) {
+  // Wrapped in a transaction so a duplicate/fast double-tap on the same
+  // inline button can't read the pending doc twice and insert the
+  // transaction twice before either delete completes.
+  const result = await db.runTransaction(async (tx) => {
+    const pendingDoc = await tx.get(pendingRef);
+    const pending = pendingDoc.data();
+
+    if (!pendingDoc.exists || !pending || pending.chatId !== chatId) {
+      return { status: "not-found" as const };
+    }
+
+    if (parsedCallback.action === "cancel") {
+      tx.delete(pendingRef);
+      return { status: "cancelled" as const };
+    }
+
+    const transactionRef = db
+      .collection("users")
+      .doc(pending.uid)
+      .collection("transactions")
+      .doc();
+
+    tx.set(transactionRef, {
+      name: pending.name,
+      amount: pending.amount,
+      type: pending.type,
+      category: pending.category,
+      paymentMethod: TransactionPaymentMethod.OTHER,
+      date: Timestamp.fromDate(resolveTelegramTransactionDate(pending.date ?? null)),
+      tags: [],
+      createdAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+    tx.delete(pendingRef);
+    return { status: "confirmed" as const };
+  });
+
+  if (result.status === "not-found") {
     await answerTelegramCallbackQuery(botToken, callbackQuery.id, "Essa transação não existe mais.");
     await editTelegramMessageText(botToken, chatId, messageId, "⌛ Essa confirmação expirou.");
     return;
   }
 
-  if (parsedCallback.action === "cancel") {
-    await pendingRef.delete();
+  if (result.status === "cancelled") {
     await answerTelegramCallbackQuery(botToken, callbackQuery.id);
     await editTelegramMessageText(botToken, chatId, messageId, "❌ Lançamento cancelado.");
     return;
   }
-
-  await db.collection("users").doc(pending.uid).collection("transactions").add({
-    name: pending.name,
-    amount: pending.amount,
-    type: pending.type,
-    category: pending.category,
-    paymentMethod: TransactionPaymentMethod.OTHER,
-    date: Timestamp.fromDate(resolveTelegramTransactionDate(pending.date ?? null)),
-    tags: [],
-    createdAt: FieldValue.serverTimestamp(),
-    updatedAt: FieldValue.serverTimestamp(),
-  });
-  await pendingRef.delete();
 
   await answerTelegramCallbackQuery(botToken, callbackQuery.id, "Transação salva!");
   await editTelegramMessageText(botToken, chatId, messageId, "✅ Transação salva com sucesso!");
@@ -225,7 +263,7 @@ export default defineEventHandler(async (event) => {
   try {
     if (update.callback_query) {
       await handleCallbackQuery(botToken, update.callback_query);
-    } else if (update.message) {
+    } else if (update.message?.chat?.id) {
       const chatId = update.message.chat.id;
       if (update.message.text?.startsWith("/start")) {
         await handleStartCommand(botToken, chatId, update.message.text);

@@ -41,12 +41,3 @@ export const calculateAccountBalances = (
   });
 };
 
-/**
- * Soma o saldo de todas as transações que não estão associadas a nenhuma
- * conta específica.
- */
-export const calculateUnassignedBalance = (transactions: Transaction[]): number => {
-  return transactions
-    .filter((transaction) => !transaction.accountId)
-    .reduce((total, transaction) => total + signedAmount(transaction), 0);
-};

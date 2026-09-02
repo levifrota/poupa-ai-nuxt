@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, onUnmounted } from "vue";
 
 /**
  * Wrapper reativo em cima da Web Speech API (SpeechSynthesis) para leitura de
@@ -35,6 +35,12 @@ export function useSpeechSynthesis(lang = "pt-BR") {
     window.speechSynthesis.cancel();
     isSpeaking.value = false;
   }
+
+  // Evita que uma fala em andamento continue (ou fique "presa") após o
+  // componente que a iniciou ser desmontado.
+  onUnmounted(() => {
+    stop();
+  });
 
   return { isSupported, isSpeaking, speak, stop };
 }

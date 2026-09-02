@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  calculateAccountBalances,
-  calculateUnassignedBalance,
-} from "~/lib/accountBalance";
+import { calculateAccountBalances } from "~/lib/accountBalance";
 import { AccountType, type Account } from "~/constants/accounts";
 import {
   TransactionCategory,
@@ -82,24 +79,5 @@ describe("calculateAccountBalances", () => {
 
     const result = calculateAccountBalances(transactions, accounts);
     expect(result[0].balance).toBe(0);
-  });
-});
-
-describe("calculateUnassignedBalance", () => {
-  it("sums only transactions without an accountId", () => {
-    const transactions = [
-      buildTransaction({ type: TransactionType.DEPOSIT, amount: 300, accountId: undefined }),
-      buildTransaction({ type: TransactionType.EXPENSE, amount: 50, accountId: undefined }),
-      buildTransaction({ type: TransactionType.DEPOSIT, amount: 999, accountId: "acc-1" }),
-    ];
-
-    expect(calculateUnassignedBalance(transactions)).toBe(250);
-  });
-
-  it("returns 0 when every transaction has an account", () => {
-    const transactions = [
-      buildTransaction({ type: TransactionType.DEPOSIT, amount: 300, accountId: "acc-1" }),
-    ];
-    expect(calculateUnassignedBalance(transactions)).toBe(0);
   });
 });
